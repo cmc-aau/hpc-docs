@@ -1,9 +1,9 @@
 site_name: Test docs
 site_description: 'A docs test'
-site_author: 'Michael Hausenblas'
+site_author: 'Kasper Skytte Andersen'
 docs_dir: docs/
-repo_name: 'mhausenblas/mkdocs-template'
-repo_url: 'https://github.com/mhausenblas/mkdocs-template'
+repo_name: 'cmc-aau/hpc-docs'
+repo_url: 'https://github.com/cmc-aau/hpc-docs'
 nav:
     - Home: index.md
 theme:
