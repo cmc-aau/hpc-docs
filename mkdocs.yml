@@ -1,10 +1,15 @@
-site_name: Test docs
-site_description: 'A docs test'
+site_name: BioCloud HPC user guide
+site_description: 'User guide for the BioCloud HPC at the section of Biotechnology at Aalborg University'
 site_author: 'Kasper Skytte Andersen'
 docs_dir: docs/
-repo_name: 'cmc-aau/hpc-docs'
-repo_url: 'https://github.com/cmc-aau/hpc-docs'
+repo_name: 'cmc-aau/biocloud-docs'
+repo_url: 'https://github.com/cmc-aau/biocloud-docs'
 nav:
-    - Home: index.md
+  - index.md
+  - access.md
+  - slurm.md
+  - software.md
+  - storage.md
+  - guides.md
 theme:
   name: 'material'
