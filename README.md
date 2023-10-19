@@ -1,7 +1,23 @@
 # Documentation website for the BioCloud HPC at AAU
 Built using [MkDocs](https://www.mkdocs.org/) with the [material theme](https://squidfunk.github.io/mkdocs-material/getting-started/).
 
-# Installation and usage
-Everything is markdown so `mkdocs` is not strictly needed locally. But in order to render the site locally before pushing to GitHub use the development container or install `mkdocs` and `mkdocs-material` using `pip`, then run `mkdocs serve`. Any changes pushed to GitHub will trigger a GitHub action that will automatically build and publish the website, so don't use `mkdocs build` or `mkdocs gh-deploy`.
+Any changes pushed to GitHub will trigger a GitHub action that will automatically build and publish the website, so don't use `mkdocs build` or `mkdocs gh-deploy`.
 
-This is a public repository and website, so don't publish anything sensitive.
+This is a public repository and website, so don't publish anything sensitive!
+
+## Testing locally
+Everything is markdown so `mkdocs` is not strictly needed locally unless you want to inspect the outcome of the changes before pushing to GitHub. If so you you can use `mkdocs` and `mkdocs-material` in a few different ways:
+ 
+ - Use the development container in VSCode
+Install the "Dev Containers" extension and reopen the folder in a container (F1 -> Dev Containers: Reopen in Container).
+
+ - Use pipenv
+Install `pipenv` from `pip` or `apt`, then run `pipenv install` to install the required packages.
+
+ - Install `mkdocs` and `mkdocs-material` locally using `pip` or `conda` or any other way you want.
+
+Run `mkdocs serve` or `pipenv run mkdocs serve` if using `pipenv`. This will serve the site locally, any changes are updated live in the local browser.
+
+## To-do
+github how to add SSH key
+CLAAUDIA link to VM's?
