@@ -24,3 +24,6 @@ These workstations are physically accessible around the labs, but are also avail
 | WS5         | 172.25.230.248  | 24t / 65 GB | 2x Nvidia RTX4090 | 32.768 |
 | P24-A100    | 172.25.230.250  | 160t / 512 GB | 4x Nvidia A100 | 27.648 | 
 | GridION     | 172.25.230.240 | 16t / 64 GB | 1x Nvidia Quadro GV100 | 5.120 |
+
+## Provisioning
+If you want to know exactly how everything is set up, refer to the [BioCloud ansible playbook](https://github.com/cmc-aau/biocloud). You need an invitation to the organization first since the repository is private for security reasons.
