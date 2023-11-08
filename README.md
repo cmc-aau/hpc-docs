@@ -21,3 +21,6 @@ Run `mkdocs serve` or `pipenv run mkdocs serve` if using `pipenv`. This will ser
 ## To-do
 github how to add SSH key
 CLAAUDIA link to VM's?
+https://github.com/NVIDIA/deepops/blob/master/docs/slurm-cluster/slurm-usage.md
+
+make new figure based on figure 1 from here https://slurm.schedmd.com/quickstart.html

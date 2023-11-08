@@ -11,5 +11,6 @@ nav:
   - software.md
   - storage.md
   - guides.md
+  - events.md
 theme:
   name: 'material'
