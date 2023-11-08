@@ -33,6 +33,8 @@ JOBID PARTITION     NAME     USER ST       TIME  NODES NODELIST(REASON)
    35 biocloud- interact ksa@bio.  R       8:28      1 bio-oscloud04
 ```
 
+To get live information about the whole cluster, the ressource utilization of individual nodes, number of SLURM jobs running etc, visit the [Grafana dashboard](http://bio-ospikachu04.srv.aau.dk:3000/).
+
 ## Requesting ressources and job submission
 To request ressources through SLURM you need to be familiar with the following 3 commands depending on your needs. They all share the same options to define ressource constraints (number of CPUs, memory, GPU, etc), time limits, email for job status notifications etc (overview of the most [essential settings](#most-commonly-used-settings) is shown further down), but their use-case and how they work differ:
 
