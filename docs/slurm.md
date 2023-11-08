@@ -36,7 +36,7 @@ JOBID PARTITION     NAME     USER ST       TIME  NODES NODELIST(REASON)
 To get live information about the whole cluster, the ressource utilization of individual nodes, number of SLURM jobs running etc, visit the [Grafana dashboard](http://bio-ospikachu04.srv.aau.dk:3000/).
 
 ## Requesting ressources and job submission
-To request ressources through SLURM you need to be familiar with the following 3 commands depending on your needs. They all share the same options to define ressource constraints (number of CPUs, memory, GPU, etc), time limits, email for job status notifications etc (overview of the most [essential settings](#most-commonly-used-settings) is shown further down), but their use-case and how they work differ:
+To request ressources through SLURM you need to be familiar with the following 3 commands depending on your needs. They all share the same options to define ressource constraints (number of CPUs, memory, GPU, etc), time limits, email for job status notifications etc (overview of the most [essential settings](#most-essential-options) is shown further down), but their use-case and how they work differ:
 
  - `srun` (interactive): Request ressources and run a command/script in the foreground once ressources become available. Ressources are freed for new jobs immediately once the command exits.
  - `salloc` (interactive): Request ressources and allocate them to a new shell session. Ressources remain allocated until the terminal session is exited (CTRL+d or `exit` or close window).
@@ -86,7 +86,8 @@ $ minimap2 -t 10 database.fastq input.fastq > out.file
 ...
 ```
 
-When using `salloc` it's important to keep in mind that the allocated ressources remain reserved only for you until you `exit` the shell session. So don't leave it hanging for too long if you know you are not going to use it actively, otherwise other users might have needed the ressources.
+???+ Important
+      When using `salloc` it's important to keep in mind that the allocated ressources remain reserved only for you until you `exit` the shell session. So don't leave it hanging for too long if you know you are not going to use it actively, otherwise other users might have needed the ressources.
 
 ### `sbatch` example
 The `sbatch` is in many cases the best way to use SLURM. It's different in the way that the ressources are requested. It's done by `#SBATCH` comment-style lines in a shell script, and the script is then submitted to SLURM using an `sbatch script.sh` command. This is ideal for submitting large jobs that will run for many hours or days, but of course also for testing/development work. A full-scale example SLURM batch script could look like this:
@@ -120,7 +121,7 @@ minimap2 -t ${max_threads} database.fastq input.fastq > out.file
 
 Submit the batch script to the SLURM job queue using `sbatch minimap2test.sh`, and it will then start once the requested amount of ressources are available (also taking into account your past usage and priorities of other jobs etc, all 3 job submission commands do that). If you set the `--mail-user` and `--mail-type` arguments you should get a notification email once the job starts and finishes with additional details like how many ressources you have actually used compared to what you have requested. This is essential information for future jobs to avoid overbooking. As the job is handled by slurm in the background by the SLURM daemons on the individual compute nodes you won't see any output to the terminal, it will instead be written to the file defined by `--output`. To follow along use `tail -f /user_data/abc/slurmjobs/job_123.txt`.
 
-### Most essential settings
+### Most essential options
 There are plenty of options with the SLURM job submission commands, but below are the most important ones for our current setup and common use-cases. If you need anything else you can start with the [SLURM cheatsheet](https://slurm.schedmd.com/pdfs/summary.pdf), or else refer to the SLURM documentation for the individual commands [`srun`](https://slurm.schedmd.com/srun.html), [`salloc`](https://slurm.schedmd.com/salloc.html), and [`sbatch`](https://slurm.schedmd.com/sbatch.html).
 
 | Option               | Description                                                                                                  |
@@ -134,7 +135,7 @@ There are plenty of options with the SLURM job submission commands, but below ar
 | --mem                | Specifies the memory limit per node or per task for the job.             |
 | --nodes              | Indicates the total number of compute nodes to be allocated for the job.                                    |
 | --nodelist           | Specifies a comma-separated list of specific compute nodes to be allocated for the job.                     |
-| --gres               | List of generic consumable ressources to use. This is only needed if you need to use a GPU. |
+| --gres               | List of "generic consumable ressources" to use, for example a GPU. |
 | --partition          | The SLURM partition to which the job is submitted. Default is to use the `biocloud-cpu` partition. |
 | --time               | Defines the maximum time limit for job execution. It can be expressed in minutes, hours, or days.          |
 | --mail-type          | Configures email notifications for job events such as "BEGIN," "END," "FAIL," etc.                         |
@@ -142,7 +143,8 @@ There are plenty of options with the SLURM job submission commands, but below ar
 
 Most options are self-explanatory. But for our setup and common use-cases you almost always want to set `--nodes` to 1, meaning your job will only run on a single compute node at a time. For multithreaded applications you mostly only need to set `ntasks` to `1` because threads are spawned from a single process/task, and then increase `--cpus-per-task` instead. For jobs that will run many things in parallel, fx when using GNU `parallel` or `xargs`, you must instead increase `ntasks` accordingly and set `--cpus-per-task` to `1`, because multiple and independent processes will be launched that likely don't use any multithreading.
 
-Should it be needed the BioCloud is properly set up with the `OpenMPI` and `PMIx` message interfaces for distributed work across multiple compute nodes, but it requires you to [tailor your scripts and commands](https://curc.readthedocs.io/en/latest/programming/parallel-programming-fundamentals.html) specifically for distributed work and is a topic for another time. You can run "brute-force parallel" jobs, however, using for example [GNU parallel](https://curc.readthedocs.io/en/latest/software/GNUParallel.html) and distribute them across nodes, but this is only for experienced users and they must figure that out for themselves for now.
+??? "Jobs that span multiple compute nodes"
+      If needed the BioCloud is properly set up with the `OpenMPI` and `PMIx` message interfaces for distributed work across multiple compute nodes, but it requires you to [tailor your scripts and commands](https://curc.readthedocs.io/en/latest/programming/parallel-programming-fundamentals.html) specifically for distributed work and is a topic for another time. You can run "brute-force parallel" jobs, however, using for example [GNU parallel](https://curc.readthedocs.io/en/latest/software/GNUParallel.html) and distribute them across nodes, but this is only for experienced users and they must figure that out for themselves for now.
 
 If you need to use one or more GPUs you need to specify `--partition=biocloud-gpu` and set `--gres=gpu:x`, where `x` refers to the number of GPUs you need. Please don't do CPU work on the `biocloud-gpu` partition unless you also need a GPU.
 
@@ -153,9 +155,43 @@ Below are some nice to know commands for controlling and checking up on running 
 Use [`squeue`](https://slurm.schedmd.com/squeue.html), for example:
 ```
 $ squeue
+JOBID PARTITION     NAME     USER ST       TIME  NODES NODELIST(REASON)
+   24 biocloud- interact ksa@bio.  R       2:15      1 bio-oscloud04
 ```
 
-Overview of status codes available [here](https://curc.readthedocs.io/en/latest/running-jobs/squeue-status-codes.html).
+??? "Job state codes (ST)"
+      | Status	Code | Explaination |
+      | --- | --- |
+      | COMPLETED | CD | The job has completed successfully. |
+      | COMPLETING | CG | The job is finishing but some processes are still active. |
+      | FAILED | F | The job terminated with a non-zero exit code and failed to execute. |
+      | PENDING | PD | The job is waiting for resource allocation. It will eventually run. |
+      | PREEMPTED | PR | The job was terminated because of preemption by another job. |
+      | RUNNING | R | The job currently is allocated to a node and is running. |
+      | SUSPENDED | S | A running job has been stopped with its cores released to other jobs. |
+      | STOPPED | ST | A running job has been stopped with its cores retained. |
+
+      A complete list can be found in SLURM's [documentation](https://slurm.schedmd.com/squeue.html#lbAG)
+
+??? "Job reason codes (REASON )"
+      | Reason Code | Explaination |
+      | --- | --- |
+      | Priority | One or more higher priority jobs is in queue for running. Your job will eventually run. |
+      | Dependency | This job is waiting for a dependent job to complete and will run afterwards. |
+      | Resources | The job is waiting for resources to become available and will eventually run. |
+      | InvalidAccount | The job’s account is invalid. Cancel the job and rerun with correct account. |
+      | InvaldQoS | The job’s QoS is invalid. Cancel the job and rerun with correct account. |
+      | QOSGrpCpuLimit | All CPUs assigned to your job’s specified QoS are in use; job will run eventually. |
+      | QOSGrpMaxJobsLimit | Maximum number of jobs for your job’s QoS have been met; job will run eventually. |
+      | QOSGrpNodeLimit | All nodes assigned to your job’s specified QoS are in use; job will run eventually. |
+      | PartitionCpuLimit | All CPUs assigned to your job’s specified partition are in use; job will run eventually. |
+      | PartitionMaxJobsLimit | Maximum number of jobs for your job’s partition have been met; job will run eventually. |
+      | PartitionNodeLimit | All nodes assigned to your job’s specified partition are in use; job will run eventually. |
+      | AssociationCpuLimit | All CPUs assigned to your job’s specified association are in use; job will run eventually. |
+      | AssociationMaxJobsLimit | Maximum number of jobs for your job’s association have been met; job will run eventually. |
+      | AssociationNodeLimit | All nodes assigned to your job’s specified association are in use; job will run eventually. |
+
+      A complete list can be found in SLURM's [documentation](https://slurm.schedmd.com/squeue.html#lbAF)
 
 ### Cancel a job
 Get the job ID from `squeue -u $(whoami)`, then use [`scancel`](https://slurm.schedmd.com/scancel.html), for example:
@@ -191,17 +227,16 @@ With additional details:
 sstat --jobs=your_job-id --format=jobid,cputime,maxrss,ntasks
 ```
 
-Useful format variables:
-
-| Variable | Description |
-| --- | --- |
-| avecpu | Average CPU time of all tasks in job. |
-| averss | Average resident set size of all tasks. |
-| avevmsize | Average virtual memory of all tasks in a job. |
-| jobid | The id of the Job. |
-| maxrss | Maximum number of bytes read by all tasks in the job. |
-| maxvsize | Maximum number of bytes written by all tasks in the job. |
-| ntasks | Number of tasks in a job. |
+??? "Useful format variables"
+      | Variable | Description |
+      | --- | --- |
+      | avecpu | Average CPU time of all tasks in job. |
+      | averss | Average resident set size of all tasks. |
+      | avevmsize | Average virtual memory of all tasks in a job. |
+      | jobid | The id of the Job. |
+      | maxrss | Maximum number of bytes read by all tasks in the job. |
+      | maxvsize | Maximum number of bytes written by all tasks in the job. |
+      | ntasks | Number of tasks in a job. |
 
 ### Job usage accounting
 To see usage accounting information about jobs use [`sacct`](https://slurm.schedmd.com/sacct.html):
