@@ -3,7 +3,7 @@
 ## Introduction to SLURM
 SLURM (Simple Linux Utility for Resource Management) is a highly flexible and powerful job scheduler for managing and scheduling computational workloads on high-performance computing (HPC) clusters. SLURM is designed to efficiently allocate resources and manage job execution on clusters of any size, from a single server to tens of thousands. SLURM manages resources on an HPC cluster by dividing them into partitions. Users submit jobs to these partitions from a login-node, and then the SLURM controller schedules and allocates resources to those jobs based on available resources and user-defined constraints. SLURM also stores detailed usage information of all users' jobs in a usage accounting database, which allows enforcement of fair-share policies and priorities for job scheduling for each partition. The BioCloud servers are currently divided into two partitions with the same usage policies (currently no limit FIFO, first-in-first-out): the `biocloud-cpu` for CPU intensive jobs and the `biocloud-gpu` for jobs that benefit from a GPU.
 
-Overview figure here
+**Overview figure here**
 
 ### SLURM Components
 - **Controller nodes**: Controls everything and collects usage, job state information, ressource allocation on each compute node etc
@@ -183,6 +183,23 @@ Use [`sstat`](https://slurm.schedmd.com/sstat.html) to show the status and exit 
 ```
 $ sstat
 ```
+
+With additional details:
+```
+sstat --jobs=your_job-id --format=jobid,cputime,maxrss,ntasks
+```
+
+Useful format variables:
+
+| Variable | Description |
+| --- | --- |
+| avecpu | Average CPU time of all tasks in job. |
+| averss | Average resident set size of all tasks. |
+| avevmsize | Average virtual memory of all tasks in a job. |
+| jobid | The id of the Job. |
+| maxrss | Maximum number of bytes read by all tasks in the job. |
+| maxvsize | Maximum number of bytes written by all tasks in the job. |
+| ntasks | Number of tasks in a job. |
 
 ### Job usage accounting
 To see usage accounting information about jobs use [`sacct`](https://slurm.schedmd.com/sacct.html):

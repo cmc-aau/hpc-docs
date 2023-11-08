@@ -1,12 +1,46 @@
-# WIP - Software
-software
-  - modules
-  - conda envs
-  - containers
-  - R pkgs and versions (use renv)
-Describe how to use containers from https://biocontainers.pro/
-https://galaxyproject.org/eu/
+# Software
 
+## Modules
+```
+$ module avail
+$ module load minimap2
+```
 
-https://www.hpc.iastate.edu/guides/virtual-environments/conda-environments #add the section "Pip Installs in a Conda Environment"
-Conda environments with R packages, use `r-{package}`, list here https://anaconda.org/r/repo?sort=_name&sort_order=asc
+## Conda environments
+Environments on shared storage, use mamba to create environments, much faster
+```
+$ mamba create -n minimap2 -c bioconda minimap2
+```
+
+```
+$ conda activate minimap2
+```
+
+### Installing packages using pip within conda environments
+Software that can only be installed with pip have to be installed in a Conda environment by using pip in the environment. While issues can arise, per the [Conda guide for using pip in a Conda environment](https://www.anaconda.com/blog/using-pip-in-a-conda-environment), there are some best practices to follow to reduce their likelihood, namely:
+
+ - Use pip only after conda package installs
+ - Use conda environments for isolation (Don't perform pip installs in the "root" environment)
+ - Recreate the entire environment if changes are needed after pip packages have been installed
+ - Use the `--no-cache-dir` option for pip installation commands to prevent pip filling your home directory with cached data
+
+An install command would look like:
+
+```
+$ python3 -m pip install <package> --no-cache-dir
+```
+
+### R and installing R packages within conda environments
+Use `r-{package}`, list here https://anaconda.org/r/repo?sort=_name&sort_order=asc. Otherwise [renv](https://rstudio.github.io/renv/articles/renv.html) is highly recommended for project reproducibility.
+
+## Singularity/apptainer containers
+```
+$ apptainer run docker://hello-world
+```
+
+### Biocontainers
+
+https://biocontainers.pro/
+
+## Docker containers
+Not supported yet, run them through apptainer instead.
