@@ -105,6 +105,7 @@ Host *.srv.aau.dk
 Host axomamma.srv.aau.dk
 Host bio-ospikachu01.srv.aau.dk
 Host bio-ospikachu02.srv.aau.dk
+Host bio-ospikachu03.srv.aau.dk
 ```
 
 ### SSH Public Key Authentication
