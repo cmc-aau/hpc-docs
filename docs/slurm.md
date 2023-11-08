@@ -95,16 +95,11 @@ The `sbatch` is in many cases the best way to use SLURM. It's different in the w
 **minimap2test.sh**
 ```bash
 #!/usr/bin/env bash
-
-# set a max_threads variable to ensure the same amount of threads/CPUs is 
-# both allocated and used throughout the script
-max_threads=10
-
 #SBATCH --job-name=minimap2test
 #SBATCH --output=/user_data/abc/slurmjobs/job_%j.txt
 #SBATCH --ntasks-per-node=1
 #SBATCH --ntasks=1
-#SBATCH --cpus-per-task=${max_threads}
+#SBATCH --cpus-per-task=10
 #SBATCH --mem=10G
 #SBATCH --nodes=1
 #SBATCH --time=60:00
@@ -115,8 +110,9 @@ max_threads=10
 module load minimap2
 
 # run one or more commands as part a full pipeline script,
-# or call scripts from elsewhere
-minimap2 -t ${max_threads} database.fastq input.fastq > out.file
+# or call scripts from elsewhere. Make sure you use the same
+# number of max threads as requested 
+minimap2 -t 10 database.fastq input.fastq > out.file
 ```
 
 Submit the batch script to the SLURM job queue using `sbatch minimap2test.sh`, and it will then start once the requested amount of ressources are available (also taking into account your past usage and priorities of other jobs etc, all 3 job submission commands do that). If you set the `--mail-user` and `--mail-type` arguments you should get a notification email once the job starts and finishes with additional details like how many ressources you have actually used compared to what you have requested. This is essential information for future jobs to avoid overbooking. As the job is handled by slurm in the background by the SLURM daemons on the individual compute nodes you won't see any output to the terminal, it will instead be written to the file defined by `--output`. To follow along use `tail -f /user_data/abc/slurmjobs/job_123.txt`.
@@ -224,7 +220,7 @@ $ sstat
 
 With additional details:
 ```
-sstat --jobs=your_job-id --format=jobid,cputime,maxrss,ntasks
+sstat --jobs=your_job-id --format=jobid,avecpu,maxrss,ntasks
 ```
 
 ??? "Useful format variables"
@@ -237,6 +233,8 @@ sstat --jobs=your_job-id --format=jobid,cputime,maxrss,ntasks
       | maxrss | Maximum number of bytes read by all tasks in the job. |
       | maxvsize | Maximum number of bytes written by all tasks in the job. |
       | ntasks | Number of tasks in a job. |
+      
+      For all variables see the [SLURM documentation](https://slurm.schedmd.com/sstat.html#SECTION_Job-Status-Fields)
 
 ### Job usage accounting
 To see usage accounting information about jobs use [`sacct`](https://slurm.schedmd.com/sacct.html):
