@@ -4,3 +4,6 @@ guides
  - git
  - github
 
+RSlurm
+snakemake
+git

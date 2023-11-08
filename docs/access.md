@@ -1,7 +1,9 @@
 # Getting access
 
 ## Introduction
-SSH (Secure Shell) is a widely used protocol for securely accessing remote Linux servers and is the primary way to access the BioCloud servers. Connecting through a virtual desktop is sometimes also needed for GUI apps and is possible using X2Go. This page provides instructions on how to access any BioCloud server through SSH using a few different SSH clients and platforms as well as how to set up X2Go client for virtual desktops. There are many other SSH clients available, but it is entirely up to you which you prefer. Regardless of the client everything will run over the SSH protocol (port 22). You authenticate using your AAU email and password (possibly also a second factor) and you must be on the AAU network to access any of the servers unless you are connected to the AAU network from the outside using either VPN or by using the AAU SSH gateway, both are described later under [external access](#external-access). All servers are accessed by their hostname listed in the [hardware overview](index.md).
+SSH (Secure Shell) is a widely used protocol for securely accessing remote Linux servers and is the primary way to access the BioCloud servers. Connecting through a virtual desktop is sometimes also needed for GUI apps and is possible using X2Go on the `axomamma.srv.aau.dk` server only. This page provides instructions on how to access the BioCloud through SSH using a few different SSH clients and platforms as well as how to set up the X2Go client for a virtual desktop. There are many other SSH clients available, it is entirely up to you which you prefer. Regardless of the client everything will run over the SSH protocol (port 22). You authenticate using your AAU email and password (possibly also a second factor) and you must be on the AAU network unless you are connected to the AAU network from the outside using either VPN or by using the AAU SSH gateway, both are described later under [external access](#external-access).
+
+If you need to run GUI apps like CLC, Arb, RStudio, etc, you need to use `axomamma.srv.aau.dk` as hostname and install and set up the [X2Go client](#access-through-x2go-virtual-desktop). For anything else, you need to learn how to submit SLURM jobs through one of the login-nodes `bio-ospikachu01.srv.aau.dk`, `bio-ospikachu02.srv.aau.dk`, or `bio-ospikachu03.srv.aau.dk`. Preferably add all of them to distribute usage. After succesful login consult the [Slurm guide](slurm.md).
 
 ## Access through SSH
 It's rarely enough with just a terminal because you more often than not need to edit some scripts in order to do anything, so below are some instructions on how to connect using a few popular code editors with built-in SSH support, but also [just a terminal](#just-a-terminal).
@@ -12,11 +14,11 @@ It's rarely enough with just a terminal because you more often than not need to 
 #### Installation (Windows, macOS, or Linux)
 Download and install using the instructions on the official [website](https://code.visualstudio.com/).
 
-#### Connecting to a server
+#### Connecting to a server or login-node
 1. Open VS Code and install the "Remote - SSH" extension from the Extensions sidebar menu.
 2. Click on the "Remote Explorer" icon after the extension has been installed.
-3. Add one or more of the BioCloud servers from the [overview](index.md) by either:
-    - clicking on the "+" icon and enter your AAU email followed by `@` and then the server's hostname, for example: `abc@bio.aau.dk@bio-oscloud02.srv.aau.dk`
+3. Add a host by either:
+    - clicking on the "+" icon and enter your AAU email followed by `@` and then the server's hostname, for example: `abc@bio.aau.dk@bio-ospikachu01.srv.aau.dk`
     - Add all servers at once using the [SSH config template](#ssh-config-file) provided below by clicking the gear icon "Open SSH Config File" and paste its contents (optional).
 4. Connect and log in with your SSH password.
 5. Once connected open a project or workspace folder (or create one while doing so) by clicking File -> Open Folder (CTRL+k CTRL+o, CMD instead of CTRL if on macOS)
@@ -29,7 +31,7 @@ Download and install MobaXterm Home Edition from the official [website](https://
 
 #### Connecting to a server
 1. Open MobaXterm and click on the "Start local terminal" button.
-2. In the terminal, use the `ssh` command to connect to a server by entering AAU email followed by `@` and then the server's hostname, for example: `ssh abc@bio.aau.dk@bio-oscloud02.srv.aau.dk`.
+2. In the terminal, use the `ssh` command to connect to a server by entering AAU email followed by `@` and then the server's hostname, for example: `ssh abc@bio.aau.dk@bio-ospikachu01.srv.aau.dk`.
 
 If you add the servers to your [SSH config file](#ssh-config-file) the server hostnames should auto-complete.
 
@@ -38,7 +40,7 @@ For a simple terminal you can on Windows use for example [PuTTY](https://www.put
 
 ## Access through X2Go (virtual desktop)
 #### Installation (Windows, macOS, or Linux)
-On Windows and macOS download X2Go Client from the [X2Go website](https://wiki.x2go.org/doku.php/doc:installation:x2goclient). Run the installer and follow the installation wizard, just use default settings. On Linux just use your distribution's package manager to install `x2goclient`. For example on Ubuntu: `sudo apt-get install x2goclient`. X2Go Client should now be available from the applications menu.
+On Windows and macOS download X2Go Client from the [X2Go website](https://wiki.x2go.org/doku.php/doc:installation:x2goclient). Run the installer and follow the installation wizard, just use default settings. On Linux use your distribution's package manager to install `x2goclient`, for example on Debian/Ubuntu: `sudo apt-get install x2goclient`. X2Go Client should now be available from the applications menu.
 
 #### Connecting to a server
 1. Open X2Go Client
@@ -101,14 +103,8 @@ Host *.srv.aau.dk
 
 # only needed for auto-completion of hostnames
 Host axomamma.srv.aau.dk
-Host bio-oscloud02.srv.aau.dk
-Host bio-oscloud03.srv.aau.dk
-Host bio-oscloud04.srv.aau.dk
-Host bio-oscloud05.srv.aau.dk
-Host bio-oscloud06.srv.aau.dk
-Host bio-oscloud07.srv.aau.dk
-Host bio-oscloud08.srv.aau.dk
-Host bio-oscloud09.srv.aau.dk
+Host bio-ospikachu01.srv.aau.dk
+Host bio-ospikachu02.srv.aau.dk
 ```
 
 ### SSH Public Key Authentication
