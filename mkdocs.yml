@@ -7,10 +7,23 @@ repo_url: 'https://github.com/cmc-aau/biocloud-docs'
 nav:
   - index.md
   - access.md
-  - slurm.md
-  - software.md
-  - storage.md
-  - guides.md
+  - Ressource management:
+    - slurm/intro.md
+    - slurm/request.md
+    - slurm/jobcontrol.md
+    - slurm/other.md
+  - Software:
+    - software/modules.md
+    - software/conda.md
+    - software/containers.md
+  - Storage:
+    - storage.md
+  - Guides:
+    - guides/codepractices.md
+    - guides/git.md
+    - guides/snakemake.md
+    - guides/other.md
+    #- ood.md
   - events.md
 theme:
   name: material
@@ -18,6 +31,7 @@ theme:
     scheme: slate
   features:
     - content.code.copy
+    - navigation.footer
 markdown_extensions:
   - pymdownx.highlight:
       anchor_linenums: true
