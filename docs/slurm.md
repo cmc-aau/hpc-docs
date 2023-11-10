@@ -42,7 +42,7 @@ To request ressources through SLURM you need to be familiar with the following 3
  - `salloc` (interactive): Request ressources and allocate them to a new shell session. Ressources remain allocated until the terminal session is exited (CTRL+d or `exit` or close window).
  - `sbatch` (non-interactive): Hand over a job to SLURM for later execution in the background whenever ressources become available. Ressources are freed for new jobs immediately once the script/command exits.
 
-### `srun` example
+### `srun`
 `srun` is ideal for running quick commands that don't take too long, for example when testing parts of a script on toy-data or similar, because it runs in the foreground (closing window or a momentary disconnect will stop the command), for example:
 
 ```
@@ -63,7 +63,7 @@ salloc: Nodes bio-oscloud04 are ready for job
 ...
 ```
 
-### `salloc` example
+### `salloc`
 `salloc` is ideal for testing and development purposes where you need ressources for only a few hours or a work day, or if you need to experiment in the terminal with multiple commands without having to request ressources every single time with `srun`, for example:
 
 ```
@@ -89,7 +89,7 @@ $ minimap2 -t 10 database.fastq input.fastq > out.file
 ???+ Important
       When using `salloc` it's important to keep in mind that the allocated ressources remain reserved only for you until you `exit` the shell session. So don't leave it hanging for too long if you know you are not going to use it actively, otherwise other users might have needed the ressources.
 
-### `sbatch` example
+### `sbatch` (recommended)
 The `sbatch` is in many cases the best way to use SLURM. It's different in the way that the ressources are requested. It's done by `#SBATCH` comment-style lines in a shell script, and the script is then submitted to SLURM using an `sbatch script.sh` command. This is ideal for submitting large jobs that will run for many hours or days, but of course also for testing/development work. A full-scale example SLURM batch script could look like this:
 
 **minimap2test.sh**
