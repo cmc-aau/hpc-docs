@@ -94,7 +94,7 @@ The `sbatch` is in many cases the best way to use SLURM. It's different in the w
 
 **minimap2test.sh**
 ```bash
-#!/usr/bin/env bash
+#!/usr/bin/bash -l
 #SBATCH --job-name=minimap2test
 #SBATCH --output=/user_data/abc/slurmjobs/job_%j.txt
 #SBATCH --ntasks-per-node=1
@@ -115,6 +115,9 @@ module load minimap2
 minimap2 -t 10 database.fastq input.fastq > out.file
 ```
 
+???+ Important
+      The `bash -l` in the top "shebang" line is required for the compute nodes to be able to load conda environments correctly.
+
 Submit the batch script to the SLURM job queue using `sbatch minimap2test.sh`, and it will then start once the requested amount of ressources are available (also taking into account your past usage and priorities of other jobs etc, all 3 job submission commands do that). If you set the `--mail-user` and `--mail-type` arguments you should get a notification email once the job starts and finishes with additional details like how many ressources you have actually used compared to what you have requested. This is essential information for future jobs to avoid overbooking. As the job is handled by slurm in the background by the SLURM daemons on the individual compute nodes you won't see any output to the terminal, it will instead be written to the file defined by `--output`. To follow along use `tail -f /user_data/abc/slurmjobs/job_123.txt`.
 
 ### Most essential options
@@ -133,11 +136,13 @@ There are plenty of options with the SLURM job submission commands, but below ar
 | --nodelist           | Specifies a comma-separated list of specific compute nodes to be allocated for the job.                     |
 | --gres               | List of "generic consumable ressources" to use, for example a GPU. |
 | --partition          | The SLURM partition to which the job is submitted. Default is to use the `biocloud-cpu` partition. |
-| --time               | Defines the maximum time limit for job execution. It can be expressed in minutes, hours, or days.          |
-| --mail-type          | Configures email notifications for job events such as "BEGIN," "END," "FAIL," etc.                         |
+| --time               | Defines the maximum time limit for job execution. It can be expressed in minutes, hours, or days. [Details here](https://slurm.schedmd.com/sbatch.html#OPT_time)          |
+| --mail-type          | Configures email notifications for job events such as "BEGIN", "END", "FAIL", or "ALL". [Details here](https://slurm.schedmd.com/sbatch.html#OPT_mail-type)                       |
 | --mail-user          | Specifies the email address where job notifications are sent.                                                |
 
-Most options are self-explanatory. But for our setup and common use-cases you almost always want to set `--nodes` to 1, meaning your job will only run on a single compute node at a time. For multithreaded applications you mostly only need to set `ntasks` to `1` because threads are spawned from a single process/task, and then increase `--cpus-per-task` instead. For jobs that will run many things in parallel, fx when using GNU `parallel` or `xargs`, you must instead increase `ntasks` accordingly and set `--cpus-per-task` to `1`, because multiple and independent processes will be launched that likely don't use any multithreading.
+Most options are self-explanatory. But for our setup and common use-cases you almost always want to set `--nodes` to 1, meaning your job will only run on a single compute node at a time. For multithreaded applications (most are nowadays) you mostly only need to set `ntasks` to `1` because threads are spawned from a single process (=task in SLURM parlor), and then increase `--cpus-per-task` instead.
+
+Jobs that will spawn many parallel processes, fx when using GNU `parallel` or `xargs`, will require you to increase `ntasks` instead and set `--cpus-per-task` to `1`, as many independent processes will be launched that likely don't use any multithreading (depending on your exact command(s)/script). If they also use multithreading you must also increase `--cpus-per-task`, and the total number of CPU allocated by slurm will thus be `cpus-per-task * ntasks`.
 
 ??? "Jobs that span multiple compute nodes"
       If needed the BioCloud is properly set up with the `OpenMPI` and `PMIx` message interfaces for distributed work across multiple compute nodes, but it requires you to [tailor your scripts and commands](https://curc.readthedocs.io/en/latest/programming/parallel-programming-fundamentals.html) specifically for distributed work and is a topic for another time. You can run "brute-force parallel" jobs, however, using for example [GNU parallel](https://curc.readthedocs.io/en/latest/software/GNUParallel.html) and distribute them across nodes, but this is only for experienced users and they must figure that out for themselves for now.
