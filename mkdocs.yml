@@ -19,6 +19,7 @@ nav:
   - Storage:
     - storage.md
   - Guides:
+    - guides/basics.md
     - guides/codepractices.md
     - guides/git.md
     - guides/snakemake.md
