@@ -1,9 +1,19 @@
 # Requesting ressources and job submission
-To request ressources through SLURM you need to be familiar with the following 3 commands depending on your needs. They all share the same options to define ressource constraints (number of CPUs, memory, GPU, etc), time limits, email for job status notifications etc (overview of the most [essential settings](#most-essential-options) is shown further down), but their use-case and how they work differ:
+There are several ways to request ressources and run jobs at different complexity levels through SLURM, but here are the most essential ways for interactive (foreground) and non-interactive (background) use. Generally you need to be familiar with 3 SLURM commands depending on your needs. They all share the same options to define trackable ressource constraints (TRES in SLURM parlor, fx number of CPUs, memory, GPU, etc), time limits, email for job status notifications etc, but their use-cases differ.
 
- - `salloc` (interactive): Request ressources and allocate them to a new shell session. Ressources remain allocated until the terminal session is exited (CTRL+d or `exit` or close window).
+## Interactive
+To immediately request and allocate ressources (once available) and start an interactive shell directly on the allocated compute node(s) through SLURM, use for example:
+```
+srun --ntasks 1 --cpus-per-task 32 --mem 128G --pty /bin/bash
+```
+SLURM will then find a compute node with 32 CPUs and 128GB memory available and start an interactive shell for a single process (task in SLURM parlor) with the requested ressource constraints. Ressources will remain allocated until the shell is exited with CTRL+d, `exit`, or if closing window. You can also use `srun` to run a command/script directly instead of an interactive shell. Ressources are freed immediately for other jobs once the command/script exits.
+
+## Non-interactive
+Fo
+
+ - `srun`: Request ressources and run a command/script. Ressources are freed 
+ - `salloc`: Request ressources and allocate them to a job ID. Use one or more `srun` commands to start one or more tasks within the allocation.
  - `sbatch` (non-interactive): Hand over a job to SLURM for later execution in the background whenever ressources become available. Ressources are freed for new jobs immediately once the script/command exits.
- - `srun`: Mostly only used to run parallel jobs within the context of a SLURM job where ressources are already allocated. `srun` will likely not be necessary for now.
 
 ## `salloc`
 `salloc` is ideal for testing and development purposes where you need ressources for only a few hours or a work day, or if you need to experiment in the terminal with multiple commands without having to request ressources every single time with `srun`, for example:
@@ -25,7 +35,7 @@ $ minimap2 -t 10 database.fastq input.fastq > out.file
 ???+ Important
       When using `salloc` it's important to keep in mind that the allocated ressources remain reserved only for you until you `exit` the shell session. So don't leave it hanging for too long if you know you are not going to use it actively, otherwise other users might have needed the ressources.
 
-## `sbatch` (recommended)
+## Non-interactive
 The `sbatch` is in many cases the best way to use SLURM. It's different in the way that the ressources are requested. It's done by `#SBATCH` comment-style lines in a shell script, and the script is then submitted to SLURM using an `sbatch script.sh` command. This is ideal for submitting large jobs that will run for many hours or days, but of course also for testing/development work. A full-scale example SLURM batch script could look like this:
 
 **minimap2test.sh**
