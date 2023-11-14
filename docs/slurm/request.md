@@ -23,13 +23,13 @@ Ressources are then freed immediately for other jobs once the command/script exi
 ???+ Note
       Keep in mind that with interactive jobs briefly losing connection to the login-node can result in the job being killed. This is to avoid that ressources would otherwise remain blocked due to unresponsive shell sessions. If you still see the job in the `squeue` overview, however, use [`sattach`](https://slurm.schedmd.com/sattach.html) to reattach to a running interactive job.
 
-[`srun`](https://slurm.schedmd.com/srun.html) is also used if multiple tasks (separate processes) must be run within the same ressource allocation (job) already obtained through [`salloc`](https://slurm.schedmd.com/salloc.html) or [`sbatch`](#non-interactive-jobs), see XXXXXXXXXXXXXXXx.
+[`srun`](https://slurm.schedmd.com/srun.html) is also used if multiple tasks (separate processes) must be run within the same ressource allocation (job) already obtained through [`salloc`](https://slurm.schedmd.com/salloc.html) or [`sbatch`](#non-interactive-jobs), see [example](#multi-node-multi-task-example) below.
 
 ## Non-interactive jobs
 SLURM batch scripts is in many cases the preferred way to start jobs and is the recommended way to use SLURM. It's different in the way that the ressources are requested. It's done by `#SBATCH` comment-style directives in a shell script, and the script is then submitted to SLURM using an `sbatch script.sh` command. This is ideal for submitting large jobs that will run for many hours or days, but of course also for testing/development work. Ideally, a SLURM batch script should always contain (in order):
 
  - Any number of `#SBATCH` lines with options defining ressource constraints and other [options](#most-essential-options) for the subsequent task(s) being run
- - A list of commands to load required software modules or conda environments required for *all tasks*
+ - A list of commands to load required software modules or conda environments required for *all tasks*. This can also be done within any external scripts.
  - The main body of the script/workflow, or otherwise any number of `srun` calls to start external commands/scripts as asynchronous SLURM tasks within the same ressource allocation (=job ID)
 
 Submit the batch script to the SLURM job queue using `sbatch script.sh`, and it will then start once the requested amount of ressources are available (also taking into account your past usage and priorities of other jobs etc, all 3 job submission commands do that). If you set the `--mail-user` and `--mail-type` arguments you should get a notification email once the job starts and finishes with additional details like how many ressources you have actually used compared to what you have requested. This is essential information for future jobs to avoid overbooking and maximize ressource utilization of the cluster.
@@ -92,7 +92,7 @@ srun --ntasks 1 minimap2 -t 192 database.fastq input5.fastq > out.file5
 ```
 
 ???+ Important
-      The `bash -l` in the top "shebang" line is required for the compute nodes to be able to load conda environments correctly.
+      The `bash -l` in the top "shebang" line is required for the compute nodes to be able to load software modules and conda environments correctly.
 
 ## Most essential options
 There are plenty of options with the SLURM job submission commands, but below are the most important ones for our current setup and common use-cases. If you need anything else you can start with the [SLURM cheatsheet](https://slurm.schedmd.com/pdfs/summary.pdf), or else refer to the SLURM documentation for the individual commands [`srun`](https://slurm.schedmd.com/srun.html), [`salloc`](https://slurm.schedmd.com/salloc.html), and [`sbatch`](https://slurm.schedmd.com/sbatch.html).
