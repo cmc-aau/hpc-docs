@@ -1,53 +1,51 @@
 # Requesting ressources and job submission
-There are several ways to request ressources and run jobs at different complexity levels through SLURM, but here are the most essential ways for interactive (foreground) and non-interactive (background) use. Generally you need to be familiar with 3 SLURM commands depending on your needs. They all share the same options to define trackable ressource constraints (TRES in SLURM parlor, fx number of CPUs, memory, GPU, etc), time limits, email for job status notifications etc, but their use-cases differ.
+There are several ways to request ressources and run jobs at different complexity levels through SLURM, but here are the most essential ways for interactive (foreground) and non-interactive (background) use. Generally you need to be familiar with 3 SLURM job submission commands depending on your needs. These are [`srun`](https://slurm.schedmd.com/srun.html), [`salloc`](https://slurm.schedmd.com/salloc.html), and [`sbatch`](https://slurm.schedmd.com/sbatch.html). They all share the same options to define trackable ressource constraints ("TRES" in SLURM parlor, fx number of CPUs, memory, GPU, etc), time limits, email for job status notifications, and many other things, but their use-cases differ. Regardless of how jobs are submitted, if your job should happen to exceed the amount of allocated memory (or the total amount allocated to SLURM jobs on each compute node too), SLURM will simply kill your job and you must start over with more memory. Exceeding the number of allocated CPUs is simply not even possible.
 
-## Interactive
+## Interactive jobs
+An interactive shell is useful for testing and development purposes where you need ressources for only a short time, or to experiment with scripts and workflows on minimal example data before submitting larger jobs using [`sbatch`](#non-interactive-jobs) that will run for much longer in the background.
+
 To immediately request and allocate ressources (once available) and start an interactive shell directly on the allocated compute node(s) through SLURM, use for example:
 ```
 srun --ntasks 1 --cpus-per-task 32 --mem 128G --pty /bin/bash
 ```
-SLURM will then find a compute node with 32 CPUs and 128GB memory available and start an interactive shell for a single process (task in SLURM parlor) with the requested ressource constraints. Ressources will remain allocated until the shell is exited with CTRL+d, `exit`, or if closing window. You can also use `srun` to run a command/script directly instead of an interactive shell. Ressources are freed immediately for other jobs once the command/script exits.
-
-## Non-interactive
-Fo
-
- - `srun`: Request ressources and run a command/script. Ressources are freed 
- - `salloc`: Request ressources and allocate them to a job ID. Use one or more `srun` commands to start one or more tasks within the allocation.
- - `sbatch` (non-interactive): Hand over a job to SLURM for later execution in the background whenever ressources become available. Ressources are freed for new jobs immediately once the script/command exits.
-
-## `salloc`
-`salloc` is ideal for testing and development purposes where you need ressources for only a few hours or a work day, or if you need to experiment in the terminal with multiple commands without having to request ressources every single time with `srun`, for example:
-
-```
-$ salloc --ntasks 1 --cpus-per-task 10 --mem 10G
-salloc: Granted job allocation 37
-salloc: Waiting for resource configuration
-salloc: Nodes bio-oscloud04 are ready for job
-
-$ module load minimap2
-
-$ minimap2 -t 10 database.fastq input.fastq > out.file
-[M::mm_idx_gen::5.591*1.18] collected minimizers
-[M::mm_idx_gen::6.954*1.34] sorted minimizers
-[M::main::6.970*1.34] loaded/built the index for 120408 target sequence(s)
-```
+Here SLURM will then find a compute node with 32 CPUs and 128GB memory available and start an interactive BASH shell for a single process ("task" in SLURM parlor) on the allocated compute node within the requested ressource constraints. Ressources will remain allocated until the shell is exited with `CTRL+d`, typing `exit`, or if closing the window.
 
 ???+ Important
-      When using `salloc` it's important to keep in mind that the allocated ressources remain reserved only for you until you `exit` the shell session. So don't leave it hanging for too long if you know you are not going to use it actively, otherwise other users might have needed the ressources.
+      When using an interactive shell it's important to keep in mind that the allocated ressources remain allocated only for you until you `exit` the shell session. So don't leave it hanging idle for too long if you know you are not going to use it actively, otherwise other users might have needed the ressources in the meantime.
 
-## Non-interactive
-The `sbatch` is in many cases the best way to use SLURM. It's different in the way that the ressources are requested. It's done by `#SBATCH` comment-style lines in a shell script, and the script is then submitted to SLURM using an `sbatch script.sh` command. This is ideal for submitting large jobs that will run for many hours or days, but of course also for testing/development work. A full-scale example SLURM batch script could look like this:
+You can also use [`srun`](https://slurm.schedmd.com/srun.html) to run a single command/script (SLURM task) directly on the allocated compute node instead of first starting an interactive shell. Any required software modules or conda environments must then be loaded before issuing the command. For example:
+```
+module load minimap2
+srun --ntasks 1 --cpus-per-task 32 --mem 128G /path/to/script/or/command
+```
+Ressources are then freed immediately for other jobs once the command/script exits, and the terminal will be blocked for the entire duration, hence for larger jobs it's ideal to submit a job through [`sbatch`](#non-interactive-jobs) instead, which will run in the background.
+
+???+ Note
+      Keep in mind that with interactive jobs briefly losing connection to the login-node will also result in the job being killed. This is to avoid that ressources would otherwise remain blocked due to unresponsive shell sessions.
+
+[`srun`](https://slurm.schedmd.com/srun.html) is also used if multiple tasks (separate processes) must be run within the same ressource allocation (job) already obtained through [`salloc`](https://slurm.schedmd.com/salloc.html) or [`sbatch`](#non-interactive-jobs).
+
+## Non-interactive jobs
+SLURM batch scripts are in many cases the best way to use SLURM. It's different in the way that the ressources are requested. It's done by `#SBATCH` comment-style lines in a shell script, and the script is then submitted to SLURM using an `sbatch script.sh` command. This is ideal for submitting large jobs that will run for many hours or days, but of course also for testing/development work. Ideally, a SLURM batch script should always contain (in order):
+
+ - Any number of `#SBATCH` lines with options defining ressource constraints and other [options](#most-essential-options) for the task(s) being run
+ - A list of commands to load required software modules or conda environments required for *all tasks*
+ - The main body of the script/workflow, or otherwise any number of `srun` calls to start external commands/scripts as asynchronous SLURM tasks within the same ressource allocation (=job ID)
+
+### Single-node, single-task example
+A full-scale example SLURM `sbatch` script for a single task could look like this:
 
 **minimap2test.sh**
 ```bash
 #!/usr/bin/bash -l
 #SBATCH --job-name=minimap2test
-#SBATCH --output=job_%j_%x.txt
-#SBATCH --ntasks-per-node=1
+#SBATCH --output=job_%j_%x.out
+#SBATCH --error=job_%j_%x.err
+#SBATCH --nodes=1
 #SBATCH --ntasks=1
+#SBATCH --ntasks-per-node=1
 #SBATCH --cpus-per-task=10
 #SBATCH --mem=10G
-#SBATCH --nodes=1
 #SBATCH --time=60:00
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user=abc@bio.aau.dk
@@ -64,7 +62,10 @@ minimap2 -t 10 database.fastq input.fastq > out.file
 ???+ Important
       The `bash -l` in the top "shebang" line is required for the compute nodes to be able to load conda environments correctly.
 
-Submit the batch script to the SLURM job queue using `sbatch minimap2test.sh`, and it will then start once the requested amount of ressources are available (also taking into account your past usage and priorities of other jobs etc, all 3 job submission commands do that). If you set the `--mail-user` and `--mail-type` arguments you should get a notification email once the job starts and finishes with additional details like how many ressources you have actually used compared to what you have requested. This is essential information for future jobs to avoid overbooking. As the job is handled by slurm in the background by the SLURM daemons on the individual compute nodes you won't see any output to the terminal, it will instead be written to the file defined by `--output`. To follow along use `tail -f /user_data/abc/slurmjobs/job_123.txt`. The line `--output=job_%j_%x.txt` above would result in an output file named job_xx_minimap2test.txt in the current working directory.
+Submit the batch script to the SLURM job queue using `sbatch minimap2test.sh`, and it will then start once the requested amount of ressources are available (also taking into account your past usage and priorities of other jobs etc, all 3 job submission commands do that). If you set the `--mail-user` and `--mail-type` arguments you should get a notification email once the job starts and finishes with additional details like how many ressources you have actually used compared to what you have requested. This is essential information for future jobs to avoid overbooking and maximize ressource utilization of the cluster.
+
+???- "Non-interactive job output (`stdout`/`stderr` streams)"
+      As the job is handled by SLURM in the background by the SLURM daemons on the individual compute nodes you won't see any output to the terminal. It will instead be written to the file(s) defined by `--output` and `--error`. To follow along use `tail -f job_123.out`. The line `--output=job_%j_%x.out` above would result in an output file named `job_xx_minimap2test.out` in the current working directory.
 
 
 ## Most essential options
@@ -72,24 +73,25 @@ There are plenty of options with the SLURM job submission commands, but below ar
 
 | Option               | Description                                                                                                  |
 | -------------------  | ------------------------------------------------------------------------------------------------------------  |
-| --job-name           | A user-defined name for the job or task. This name helps identify the job in logs and accounting records.    |
-| --begin              | Specifies a start time for the job to begin execution. Jobs won't start before this time.                  |
-| --output             | Defines the name of the output file for the job's standard output (stdout) ideally on shared storage, see filename patterns [here](https://slurm.schedmd.com/sbatch.html#SECTION_%3CB%3Efilename-pattern%3C/B%3E).                                |
-| --ntasks-per-node    | Specifies the number of tasks to be launched per allocated compute node.                                     |
-| --ntasks             | Indicates the total number of tasks or processes that the job should execute.                               |
-| --cpus-per-task      | Sets the number of CPU cores allocated per task. Required for parallel and multithreaded applications.         |
-| --mem                | Specifies the memory limit per node or per task for the job.             |
-| --nodes              | Indicates the total number of compute nodes to be allocated for the job.                                    |
-| --nodelist           | Specifies a comma-separated list of specific compute nodes to be allocated for the job.                     |
-| --gres               | List of "generic consumable ressources" to use, for example a GPU. |
-| --partition          | The SLURM partition to which the job is submitted. Default is to use the `biocloud-cpu` partition. |
-| --time               | Defines the maximum time limit for job execution. It can be expressed in minutes, hours, or days. [Details here](https://slurm.schedmd.com/sbatch.html#OPT_time)          |
-| --mail-type          | Configures email notifications for job events such as "BEGIN", "END", "FAIL", or "ALL". [Details here](https://slurm.schedmd.com/sbatch.html#OPT_mail-type)                       |
-| --mail-user          | Specifies the email address where job notifications are sent.                                                |
+| `--job-name`           | A user-defined name for the job or task. This name helps identify the job in logs and accounting records.    |
+| `--begin`              | Specifies a start time for the job to begin execution. Jobs won't start before this time.                  |
+| `--output`, `--error`             | Redirect the job's standard output/error (`stdout`/`stderr`) to a file, ideally on network storage. All directories in the path must exist before the job can start. By default `stderr` and `stdout` are merged into a file `slurm-%j.out` in the current workdir, where `%j` is the job allocation number. See filename patterns [here](https://slurm.schedmd.com/sbatch.html#SECTION_%3CB%3Efilename-pattern%3C/B%3E).                                |
+| `--ntasks-per-node`    | Specifies the number of tasks to be launched per allocated compute node.                                     |
+| `--ntasks`             | Indicates the total number of tasks or processes that the job should execute.                               |
+| `--cpus-per-task`      | Sets the number of CPU cores allocated per task. Required for parallel and multithreaded applications.         |
+| `--mem`, `--mem-per-cpu`, or `--mem-per-gpu`                | Specifies the memory limit per node, or per allocated CPU/GPU. These are mutually exclusive.             |
+| `--nodes`              | Indicates the total number of compute nodes to be allocated for the job.                                    |
+| `--nodelist`           | Specifies a comma-separated list of specific compute nodes to be allocated for the job.                     |
+| `--gres`               | List of "generic consumable ressources" to use, for example a GPU. |
+| `--partition`          | The SLURM partition to which the job is submitted. Default is to use the `biocloud-cpu` partition. |
+| `--chdir` | Set the working directory of the batch script before it's executed. Environment variables are not supported. |
+| `--time`               | Defines the maximum time limit for job execution. It can be expressed in minutes, hours, or days. [Details here](https://slurm.schedmd.com/sbatch.html#OPT_time)          |
+| `--mail-type`          | Configures email notifications for certain job events. One or more comma-separated values of: `NONE`, `ALL`, `BEGIN`, `END`, `FAIL`, `REQUEUE`, `ARRAY_TASKS`. [Details here](https://slurm.schedmd.com/sbatch.html#OPT_mail-type)                       |
+| `--mail-user`          | Specifies the email address where job notifications are sent.                                                |
 
 Most options are self-explanatory. But for our setup and common use-cases you almost always want to set `--nodes` to 1, meaning your job will only run on a single compute node at a time. For multithreaded applications (most are nowadays) you mostly only need to set `ntasks` to `1` because threads are spawned from a single process (=task in SLURM parlor), and then increase `--cpus-per-task` instead.
 
-Jobs that will spawn many parallel processes, fx when using GNU `parallel` or `xargs`, will require you to increase `ntasks` instead and set `--cpus-per-task` to `1`, as many independent processes will be launched that likely don't use any multithreading (depending on your exact command(s)/script). If they also use multithreading you must also increase `--cpus-per-task`, and the total number of CPU allocated by slurm will thus be `cpus-per-task * ntasks`.
+Jobs that will spawn many parallel processes, fx when using GNU `parallel` or `xargs`, will require you to increase `ntasks` instead and set `--cpus-per-task` to `1`, as many independent processes will be launched that likely don't use any multithreading (depending on your exact command(s)/script). If they also use multithreading you must also increase `--cpus-per-task`, and the total number of CPUs allocated by SLURM will thus be `cpus-per-task * ntasks`.
 
 ??? "Jobs that span multiple compute nodes"
       If needed the BioCloud is properly set up with the `OpenMPI` and `PMIx` message interfaces for distributed work across multiple compute nodes, but it requires you to [tailor your scripts and commands](https://curc.readthedocs.io/en/latest/programming/parallel-programming-fundamentals.html) specifically for distributed work and is a topic for another time. You can run "brute-force parallel" jobs, however, using for example [GNU parallel](https://curc.readthedocs.io/en/latest/software/GNUParallel.html) and distribute them across nodes, but this is only for experienced users and they must figure that out for themselves for now.
