@@ -69,14 +69,15 @@ $ scontrol update JobId=24 NumNodes=1 NumTasks=1 CPUsPerTask=1
 ```
 
 ## Job status information
-Use [`sstat`](https://slurm.schedmd.com/sstat.html) to show the status and usage accounting information of running jobs.
+Use [`sstat`](https://slurm.schedmd.com/sstat.html) to show the status and live usage accounting information of running jobs. For batch scripts you need to add `.batch` to the job ID, for example:
 ```
-$ sstat
+$ sstat 24.batch
 ```
 
-With additional details:
+This will print EVERY metric, so it's nice to select only a few most relevant ones, for example:
+
 ```
-sstat --jobs=your_job-id --format=jobid,avecpu,maxrss,ntasks
+sstat --jobs24.batch --format=jobid,avecpu,maxrss,ntasks
 ```
 
 ??? "Useful format variables"

@@ -21,7 +21,7 @@ srun --ntasks 1 --cpus-per-task 32 --mem 128G /path/to/script/or/command
 Ressources are then freed immediately for other jobs once the command/script exits. The terminal will be blocked for the entire duration, hence for larger jobs it's ideal to submit a job through [`sbatch`](#non-interactive-jobs) instead, which will run in the background.
 
 ???+ Note
-      Keep in mind that with interactive jobs briefly losing connection to the login-node can result in the job being killed. This is to avoid that ressources would otherwise remain blocked due to unresponsive shell sessions. If you still see the job in the `squeue` overview, however, use [`sattach`](https://slurm.schedmd.com/sattach.html) to reattach to a running interactive job.
+      Keep in mind that with interactive jobs briefly losing connection to the login-node can result in the job being killed. This is to avoid that ressources would otherwise remain blocked due to unresponsive shell sessions. If you still see the job in the `squeue` overview, however, use [`sattach`](https://slurm.schedmd.com/sattach.html) to reattach to a running interactive job, just remember to append `.interactive` to the job ID, fx `38.interactive`.
 
 [`srun`](https://slurm.schedmd.com/srun.html) is also used if multiple tasks (separate processes) must be run within the same ressource allocation (job) already obtained through [`salloc`](https://slurm.schedmd.com/salloc.html) or [`sbatch`](#non-interactive-jobs), see [example](#multi-node-multi-task-example) below.
 

@@ -19,14 +19,25 @@ To get an overview of running jobs use `squeue`, example output:
 ```
 # everything
 $ squeue
-JOBID PARTITION     NAME     USER ST       TIME  NODES NODELIST(REASON)
-   24 biocloud- interact ksa@bio.  R       2:15      1 bio-oscloud04
+             JOBID PARTITION     NAME     USER ST       TIME  NODES NODELIST(REASON)
+               103 biocloud- 001-SG-0 jm12em@b  R    2:38:03      1 bio-oscloud04
+               109 biocloud- sourdoug ft25sh@b  R    1:06:50      1 bio-oscloud04
 
 # specific user (usually yourself)
 $ squeue -u $(whoami)
-JOBID PARTITION     NAME     USER ST       TIME  NODES NODELIST(REASON)
-   35 biocloud- interact ksa@bio.  R       8:28      1 bio-oscloud04
+             JOBID PARTITION     NAME     USER ST       TIME  NODES NODELIST(REASON)
+               113 biocloud- minimap2 ksa@bio.  R       0:04      1 bio-oscloud04
 ```
+
+Or get a more detailed overview of current ressource allocations and which jobs are running on all compute nodes with the wrapper script from [slurm_tools](https://github.com/OleHolmNielsen/Slurm_tools) `pestat`:
+```
+$ pestat
+Hostname            Partition     Node Num_CPU  CPUload  Memsize  Freemem  Joblist
+                                 State Use/Tot  (15min)     (MB)     (MB)  JobID User ...
+bio-oscloud04   biocloud-cpu*     mix  160 192    8.11*   957078   815942  110 ft25sh@bio.aau.dk 112 ksa@bio.aau.dk
+```
+
+See `pestat -h` for more options.
 
 ## Live monitoring
 For live monitoring of the whole cluster, the ressource utilization of individual nodes, number of SLURM jobs running etc, visit the [Grafana dashboard](http://bio-ospikachu04.srv.aau.dk:3000/) (only available on the internal AAU network).
