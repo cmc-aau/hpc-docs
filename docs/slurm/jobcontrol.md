@@ -6,7 +6,7 @@ Use [`squeue`](https://slurm.schedmd.com/squeue.html), for example:
 ```
 $ squeue
 JOBID PARTITION     NAME     USER ST       TIME  NODES NODELIST(REASON)
-   24 biocloud- interact ksa@bio.  R       2:15      1 bio-oscloud04
+   24 general interact ksa@bio.  R       2:15      1 bio-oscloud04
 ```
 
 ??? "Job state codes (ST)"
@@ -99,12 +99,12 @@ To view the status of past jobs and their usage accounting information use [`sac
 $ sacct
 JobID           JobName  Partition    Account  AllocCPUS      State ExitCode 
 ------------ ---------- ---------- ---------- ---------- ---------- -------- 
-7            biobank_d+ biocloud-+ compute-a+        180  COMPLETED      0:0 
+7            biobank_d+ general+ compute-a+        180  COMPLETED      0:0 
 7.batch           batch            compute-a+        180  COMPLETED      0:0 
 7.extern         extern            compute-a+        180  COMPLETED      0:0 
-8            interacti+ biocloud-+ compute-a+          1     FAILED      2:0 
+8            interacti+ general+ compute-a+          1     FAILED      2:0 
 8.extern         extern            compute-a+          1  COMPLETED      0:0 
-9            interacti+ biocloud-+ compute-a+          1  COMPLETED      0:0 
+9            interacti+ general+ compute-a+          1  COMPLETED      0:0 
 9.extern         extern            compute-a+          1  COMPLETED      0:0
 ```
 

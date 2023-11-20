@@ -28,8 +28,8 @@ Ressources are then freed immediately for other jobs once the command/script exi
 ## Non-interactive jobs
 SLURM batch scripts is in many cases the preferred way to start jobs and is the recommended way to use SLURM. It's different in the way that the ressources are requested. It's done by `#SBATCH` comment-style directives in a shell script, and the script is then submitted to SLURM using an `sbatch script.sh` command. This is ideal for submitting large jobs that will run for many hours or days, but of course also for testing/development work. Ideally, a SLURM batch script should always contain (in order):
 
- - Any number of `#SBATCH` lines with options defining ressource constraints and other [options](#most-essential-options) for the subsequent task(s) being run
- - A list of commands to load required software modules or conda environments required for *all tasks*. This can also be done within any external scripts.
+ - Any number of `#SBATCH` lines with options defining ressource constraints and other [options](#most-essential-options) for the subsequent SLURM task(s) being run
+ - A list of commands to load required software modules or conda environments that are required for *all tasks*. This can also be done within any external scripts being run.
  - The main body of the script/workflow, or otherwise any number of `srun` calls to start external commands/scripts as asynchronous SLURM tasks within the same ressource allocation (=job ID)
 
 Submit the batch script to the SLURM job queue using `sbatch script.sh`, and it will then start once the requested amount of ressources are available (also taking into account your past usage and priorities of other jobs etc, all 3 job submission commands do that). If you set the `--mail-user` and `--mail-type` arguments you should get a notification email once the job starts and finishes with additional details like how many ressources you have actually used compared to what you have requested. This is essential information for future jobs to avoid overbooking and maximize ressource utilization of the cluster.
@@ -109,7 +109,7 @@ There are plenty of options with the SLURM job submission commands, but below ar
 | `--nodes`              | Indicates the total number of compute nodes to be allocated for the job.                                    |
 | `--nodelist`           | Specifies a comma-separated list of specific compute nodes to be allocated for the job.                     |
 | `--gres`               | List of "generic consumable ressources" to use, for example a GPU. |
-| `--partition`          | The SLURM partition to which the job is submitted. Default is to use the `biocloud-cpu` partition. |
+| `--partition`          | The SLURM partition to which the job is submitted. Default is to use the `general` partition. |
 | `--chdir` | Set the working directory of the batch script before it's executed. Environment variables are not supported. |
 | `--time`               | Defines the maximum time limit for job execution. It can be expressed in minutes, hours, or days. [Details here](https://slurm.schedmd.com/sbatch.html#OPT_time)          |
 | `--mail-type`          | Configures email notifications for certain job events. One or more comma-separated values of: `NONE`, `ALL`, `BEGIN`, `END`, `FAIL`, `REQUEUE`, `ARRAY_TASKS`. [Details here](https://slurm.schedmd.com/sbatch.html#OPT_mail-type)                       |
@@ -122,7 +122,7 @@ Jobs that will spawn many parallel processes, fx when using GNU `parallel` or `x
 ??? "Jobs that span multiple compute nodes"
       If needed the BioCloud is properly set up with the `OpenMPI` and `PMIx` message interfaces for distributed work across multiple compute nodes, but it requires you to [tailor your scripts and commands](https://curc.readthedocs.io/en/latest/programming/parallel-programming-fundamentals.html) specifically for distributed work and is a topic for another time. You can run "brute-force parallel" jobs, however, using for example [GNU parallel](https://curc.readthedocs.io/en/latest/software/GNUParallel.html) and distribute them across nodes, but this is only for experienced users and they must figure that out for themselves for now.
 
-If you need to use one or more GPUs you need to specify `--partition=biocloud-gpu` and set `--gres=gpu:x`, where `x` refers to the number of GPUs you need. Please don't do CPU work on the `biocloud-gpu` partition unless you also need a GPU.
+If you need to use one or more GPUs you need to specify `--partition=gpu` and set `--gres=gpu:x`, where `x` refers to the number of GPUs you need. Please don't do CPU work on the `gpu` partition unless you also need a GPU.
 
 ## How many ressources should I request for my job(s)?
 Exactly how many ressources your job(s) need(s) is something you have to experiment with and learn over time based on past experience. It's important to do a bit of experimentation before submitting large jobs to obtain a qualified guess since the utilization of all the allocated ressources across the cluster is ultimately based on people's own assessments alone. Below are some tips regarding CPU and memory.

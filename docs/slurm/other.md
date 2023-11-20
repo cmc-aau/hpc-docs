@@ -22,7 +22,7 @@ JobId=24 JobName=interactive
    AccrueTime=Unknown
    StartTime=2023-11-01T11:20:01 EndTime=2023-11-15T11:20:01 Deadline=N/A
    SuspendTime=None SecsPreSuspend=0 LastSchedEval=2023-11-01T11:20:01 Scheduler=Main
-   Partition=biocloud-cpu AllocNode:Sid=bio-ospikachu02:340145
+   Partition=general AllocNode:Sid=bio-ospikachu02:340145
    ReqNodeList=(null) ExcNodeList=(null)
    NodeList=bio-ospikachu05
    BatchHost=bio-ospikachu05
