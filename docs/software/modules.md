@@ -15,3 +15,8 @@ $ module spider
 ```
 $ module load minimap2
 ```
+
+## Unload a module
+```
+$ module unload minimap2
+```
