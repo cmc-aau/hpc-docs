@@ -69,7 +69,7 @@ $ scontrol update JobId=24 NumNodes=1 NumTasks=1 CPUsPerTask=1
 ```
 
 ## Job status information
-Use [`sstat`](https://slurm.schedmd.com/sstat.html) to show the status and live usage accounting information of running jobs. For batch scripts you need to add `.batch` to the job ID, for example:
+Use [`sstat`](https://slurm.schedmd.com/sstat.html) to show the status and live usage accounting information of **running** jobs. For batch scripts you need to add `.batch` to the job ID, for example:
 ```
 $ sstat 24.batch
 ```
@@ -94,18 +94,15 @@ sstat --jobs24.batch --format=jobid,avecpu,maxrss,ntasks
       For all variables see the [SLURM documentation](https://slurm.schedmd.com/sstat.html#SECTION_Job-Status-Fields)
 
 ## Job usage accounting
-To view the status of past jobs and their usage accounting information use [`sacct`](https://slurm.schedmd.com/sacct.html).
+To view the status of **past** jobs and their usage accounting information use [`sacct`](https://slurm.schedmd.com/sacct.html). `sacct` will return **everything** accounted for by default which is very inconvenient to view in a terminal window, so below are only the most essential columns shown:
 ```
-$ sacct
-JobID           JobName  Partition    Account  AllocCPUS      State ExitCode 
------------- ---------- ---------- ---------- ---------- ---------- -------- 
-7            biobank_d+ general+ compute-a+        180  COMPLETED      0:0 
-7.batch           batch            compute-a+        180  COMPLETED      0:0 
-7.extern         extern            compute-a+        180  COMPLETED      0:0 
-8            interacti+ general+ compute-a+          1     FAILED      2:0 
-8.extern         extern            compute-a+          1  COMPLETED      0:0 
-9            interacti+ general+ compute-a+          1  COMPLETED      0:0 
-9.extern         extern            compute-a+          1  COMPLETED      0:0
+$ sacct -o jobid,jobname,start,end,NNodes,NCPUS,ReqMem,CPUTime,AveRSS,MaxRSS --user=$USER --units=G -j 138
+JobID           JobName               Start                 End   NNodes      NCPUS     ReqMem    CPUTime     AveRSS     MaxRSS 
+------------ ---------- ------------------- ------------------- -------- ---------- ---------- ---------- ---------- ---------- 
+138          interacti+ 2023-11-21T10:43:48 2023-11-21T10:43:59        1         16        20G   00:02:56                       
+138.interac+ interacti+ 2023-11-21T10:43:48 2023-11-21T10:43:59        1         16              00:02:56          0          0 
+138.extern       extern 2023-11-21T10:43:48 2023-11-21T10:43:59        1         16              00:02:56      0.00G      0.00G 
+
 ```
 
 There are a huge number of other options to show, see [SLURM docs](https://slurm.schedmd.com/sacct.html#SECTION_Job-Accounting-Fields). If you really want to see everything use `sacct --long > file.txt` and dump it into a file or else it's too much for the terminal.

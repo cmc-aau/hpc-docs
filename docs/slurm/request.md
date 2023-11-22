@@ -50,7 +50,7 @@ A full-scale example SLURM `sbatch` script for a single task could look like thi
 #SBATCH --ntasks-per-node=1
 #SBATCH --cpus-per-task=10
 #SBATCH --mem=10G
-#SBATCH --time=60:00
+#SBATCH --time=2-00:00:00
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user=abc@bio.aau.dk
 
@@ -76,7 +76,7 @@ An example SLURM `sbatch` script for parallel (independent) execution across mul
 #SBATCH --ntasks-per-node=1
 #SBATCH --cpus-per-task=192
 #SBATCH --mem=500G
-#SBATCH --time=60:00
+#SBATCH --time=2-00:00:00
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user=abc@bio.aau.dk
 
@@ -90,6 +90,8 @@ srun --ntasks 1 minimap2 -t 192 database.fastq input3.fastq > out.file3
 srun --ntasks 1 minimap2 -t 192 database.fastq input4.fastq > out.file4
 srun --ntasks 1 minimap2 -t 192 database.fastq input5.fastq > out.file5
 ```
+
+For more examples of parallel jobs and array jobs see for example [this page](https://kb.swarthmore.edu/display/ACADTECH/Running+an+array+or+batch+job+on+Strelka) for now.
 
 ???+ Important
       The `bash -l` in the top "shebang" line is required for the compute nodes to be able to load software modules and conda environments correctly.
@@ -111,7 +113,7 @@ There are plenty of options with the SLURM job submission commands, but below ar
 | `--gres`               | List of "generic consumable ressources" to use, for example a GPU. |
 | `--partition`          | The SLURM partition to which the job is submitted. Default is to use the `general` partition. |
 | `--chdir` | Set the working directory of the batch script before it's executed. Environment variables are not supported. |
-| `--time`               | Defines the maximum time limit for job execution. It can be expressed in minutes, hours, or days. [Details here](https://slurm.schedmd.com/sbatch.html#OPT_time)          |
+| `--time`               | Defines the maximum time limit for job execution before it will be killed automatically. Format `DD-HH:MM:SS`. Maximum allowed value is that of the partition used. [Details here](https://slurm.schedmd.com/sbatch.html#OPT_time)          |
 | `--mail-type`          | Configures email notifications for certain job events. One or more comma-separated values of: `NONE`, `ALL`, `BEGIN`, `END`, `FAIL`, `REQUEUE`, `ARRAY_TASKS`. [Details here](https://slurm.schedmd.com/sbatch.html#OPT_mail-type)                       |
 | `--mail-user`          | Specifies the email address where job notifications are sent.                                                |
 
