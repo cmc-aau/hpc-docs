@@ -17,13 +17,6 @@ nav:
     - software/conda.md
     - software/containers.md
   - storage.md
-  - Guides:
-    - guides/basics.md
-    - guides/codepractices.md
-    - guides/git.md
-    - guides/snakemake.md
-    - guides/other.md
-    #- ood.md
   - events.md
 theme:
   name: material
