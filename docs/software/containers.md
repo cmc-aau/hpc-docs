@@ -9,7 +9,7 @@ Containers provide a convenient and portable way to package and run applications
  - Archive an analysis for long-term reproducibility and/or publication
 
 ## Singularity/Apptainer
-Singularity is a tool for running software containers on HPC systems, very similar to Docker, but singularity is made specifically with scientific computing in mind. Singularity allows running Docker and any other OCI-based container natively and is a replacement for Docker on HPC systems. Singularity has a few extra advantages:
+[Singularity/Apptainer](https://apptainer.org/docs/user/main/index.html) is a tool for running software containers on HPC systems, very similar to Docker, but singularity is made specifically with scientific computing in mind. Singularity allows running Docker and any other OCI-based container natively and is a replacement for Docker on HPC systems. Singularity has a few extra advantages:
 
  - Security: a user in the container is the same user with the same privileges/permissions as the one running the container, so no privilege escalation is possible
  - Ease of deployment: no daemon running as root on each node, a container is simply an executable
@@ -24,7 +24,6 @@ Building container images requires the user to have root/admin privileges. Curre
 
 
 ### Running a container
-Remember to use SLURM before running anything big.
 ```
 # pull a container
 $ apptainer pull ubuntu_22.04.sif docker://ubuntu:22.04
@@ -39,7 +38,7 @@ $ apptainer shell ubuntu_22.04.sif
 For additional guidance use the Apptainer usage guide [here](https://apptainer.org/docs/user/main/index.html).
 
 ## Biocontainers
-So many nice containers here, plug and play: https://biocontainers.pro/.
+So many nice plug and play containers with bioinformatic software here [https://biocontainers.pro/](https://biocontainers.pro/). Perfect for running production pipelines using snakemake workflows etc.
 
 ## Docker containers
 Not supported directly, run them through apptainer instead.
