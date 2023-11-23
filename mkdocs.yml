@@ -16,8 +16,7 @@ nav:
     - software/modules.md
     - software/conda.md
     - software/containers.md
-  - Storage:
-    - storage.md
+  - storage.md
   - Guides:
     - guides/basics.md
     - guides/codepractices.md

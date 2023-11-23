@@ -16,7 +16,7 @@ Install `pipenv` from `pip` or `apt`, then run `pipenv install` to install the r
 
  - Install `mkdocs` and `mkdocs-material` locally using `pip` or `conda` or any other way you want.
 
-Run `mkdocs serve` or `pipenv run mkdocs serve` if using `pipenv`. This will serve the site locally, any changes are updated live in the local browser.
+Run `mkdocs serve` or `pipenv run mkdocs serve` if using `pipenv`. This will serve the site locally, any changes are updated live in the local browser. To show both editor and website side-by-side within VSCode hit F1 -> Simple browser: Show -> http://127.0.0.1:8000.
 
 ## To-do
 github how to add SSH key
