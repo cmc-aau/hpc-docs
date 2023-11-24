@@ -7,7 +7,7 @@ The BioCloud compute nodes are divided into separate partitions depending on the
 ![SLURM overview](img/slurm-overview-inverted.png)
 
 ## Getting started
-Start with obtaining shell access to either of the 3 login nodes `bio-oscloud[01-03].srv.aau.dk` as described in [Getting access](../access.md). To start with it's always nice to get an overview of the cluster, it's partitions, and how many ressources that are currently allocated. This is achieved with the `sinfo` command, example output:
+Start with obtaining shell access to either of the 3 login nodes `bio-ospikachu[01-03].srv.aau.dk` as described in [Getting access](../access.md). To start with it's always nice to get an overview of the cluster, it's partitions, and how many ressources that are currently allocated. This is achieved with the `sinfo` command, example output:
 
 ```
 $ sinfo
