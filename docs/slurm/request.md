@@ -119,8 +119,6 @@ There are plenty of options with the SLURM job submission commands, but below ar
 
 Most options are self-explanatory. But for our setup and common use-cases you almost always want to set `--nodes` to 1, meaning your job will only run on a single compute node at a time. For multithreaded applications (most are nowadays) you mostly only need to set `ntasks` to `1` because threads are spawned from a single process (=task in SLURM parlor), and thus increase `--cpus-per-task` instead.
 
-Jobs that will spawn many parallel processes, fx when using GNU `parallel` or `xargs`, will require you to increase `ntasks` instead and set `--cpus-per-task` to `1`, as many independent processes will be launched that likely don't use any multithreading (depending on your exact command(s)/script). If they are each multithreaded too you must also increase `--cpus-per-task`, and the total number of CPUs allocated by SLURM will thus be `cpus-per-task * ntasks`.
-
 ??? "Jobs that span multiple compute nodes"
       If needed the BioCloud is properly set up with the `OpenMPI` and `PMIx` message interfaces for distributed work across multiple compute nodes, but it requires you to [tailor your scripts and commands](https://curc.readthedocs.io/en/latest/programming/parallel-programming-fundamentals.html) specifically for distributed work and is a topic for another time. You can run "brute-force parallel" jobs, however, using for example [GNU parallel](https://curc.readthedocs.io/en/latest/software/GNUParallel.html) and distribute them across nodes, but this is only for experienced users and they must figure that out for themselves for now.
 
