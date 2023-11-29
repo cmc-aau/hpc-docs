@@ -1,5 +1,12 @@
 # Other commands / FAQ
-Below are some nice to know commands and example output. This will continously be populated as people ask for certain things. Your question here!
+Below are some nice to know commands with example output and some common problems. This will continously be populated as people ask for certain things. **Your question here!**
+
+## I'm not allowed to submit jobs
+```
+salloc: error: Job submit/allocate failed: Invalid account or account/partition combination specified
+```
+
+This error means you have not been associated with any usage account yet, so you must contact an administrator to add your user to the correct account.
 
 ## How can I get a more detailed overview of the job queue and their requested ressources
 ```

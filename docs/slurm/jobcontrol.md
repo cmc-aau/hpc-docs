@@ -43,6 +43,22 @@ JOBID PARTITION     NAME     USER ST       TIME  NODES NODELIST(REASON)
 
       A complete list can be found in SLURM's [documentation](https://slurm.schedmd.com/squeue.html#lbAF)
 
+## Prevent pending job from starting
+Pending jobs can be marked in a "hold" state to prevent them from starting
+```
+scontrol hold <job_id>
+```
+
+To release a queued job from the ‘hold’ state :
+```
+scontrol release <job_id>
+```
+
+To cancel and rerun (requeue) a particular job:
+```
+scontrol requeue <job_id>
+```
+
 ## Cancel a job
 With `sbatch` you won't be able to just hit CTRL+c to stop what's running like you're used to in a terminal. Instead you must use `scancel`. Get the job ID from `squeue -u $(whoami)`, then use [`scancel`](https://slurm.schedmd.com/scancel.html) to cancel a running job, for example:
 ```
@@ -62,11 +78,19 @@ Resume again with
 $ scontrol resume 24
 ```
 
-## Adjust allocated ressources
-It's also possible to adjust allocated ressources to free them up for others to use without having to stop anything, for example:
+## Modifying job attributes
+Only a few job attributes can be changed after a job is submitted. These attributes include:
+
+ - wall clock limit
+ - job name
+ - job dependency
+
+For example:
 ```
-$ scontrol update JobId=24 NumNodes=1 NumTasks=1 CPUsPerTask=1
+$ scontrol update JobId=$JobID timelimit=<new timelimit>
 ```
+
+
 
 ## Job status information
 Use [`sstat`](https://slurm.schedmd.com/sstat.html) to show the status and live usage accounting information of **running** jobs. For batch scripts you need to add `.batch` to the job ID, for example:
