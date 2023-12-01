@@ -22,7 +22,7 @@ Ressources are then freed immediately for other jobs once the command/script exi
 
 [`srun`](https://slurm.schedmd.com/srun.html) is also used if multiple tasks (separate processes) must be run within the same ressource allocation (job) already obtained through [`salloc`](https://slurm.schedmd.com/salloc.html) or [`sbatch`](#non-interactive-jobs), see [example](#multi-node-multi-task-example) below.
 
-???- Connectivity and interactive jobs
+???- "Connectivity and interactive jobs"
       Keep in mind that with interactive jobs briefly losing connection to the login-node can result in the job being killed. This is to avoid that ressources would otherwise remain blocked due to unresponsive shell sessions. If you still see the job in the `squeue` overview, however, use [`sattach`](https://slurm.schedmd.com/sattach.html) to reattach to a running interactive job, just remember to append `.interactive` to the job ID, fx `38.interactive`.
 
 ## Non-interactive jobs
