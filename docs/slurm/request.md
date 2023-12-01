@@ -6,7 +6,7 @@ An interactive shell is useful for testing and development purposes where you ne
 
 To immediately request and allocate ressources (once available) and start an interactive shell directly on the allocated compute node(s) through SLURM, use [`salloc`](https://slurm.schedmd.com/salloc.html), for example:
 ```
-salloc --ntasks 1 --cpus-per-task 32 --mem 128G
+salloc --cpus-per-task 32 --mem 128G
 ```
 Here SLURM will find a compute node with 32 CPUs and 128GB memory available and start an interactive shell on the allocated compute node(s) within the requested ressource constraints. Ressources will remain allocated until the shell is exited with `CTRL+d`, typing `exit`, or if closing the window.
 
@@ -20,10 +20,10 @@ srun --ntasks 1 --cpus-per-task 32 --mem 128G /path/to/script/or/command
 ```
 Ressources are then freed immediately for other jobs once the command/script exits. The terminal will be blocked for the entire duration, hence for larger jobs it's ideal to submit a job through [`sbatch`](#non-interactive-jobs) instead, which will run in the background.
 
-???+ Note
-      Keep in mind that with interactive jobs briefly losing connection to the login-node can result in the job being killed. This is to avoid that ressources would otherwise remain blocked due to unresponsive shell sessions. If you still see the job in the `squeue` overview, however, use [`sattach`](https://slurm.schedmd.com/sattach.html) to reattach to a running interactive job, just remember to append `.interactive` to the job ID, fx `38.interactive`.
-
 [`srun`](https://slurm.schedmd.com/srun.html) is also used if multiple tasks (separate processes) must be run within the same ressource allocation (job) already obtained through [`salloc`](https://slurm.schedmd.com/salloc.html) or [`sbatch`](#non-interactive-jobs), see [example](#multi-node-multi-task-example) below.
+
+???- Connectivity and interactive jobs
+      Keep in mind that with interactive jobs briefly losing connection to the login-node can result in the job being killed. This is to avoid that ressources would otherwise remain blocked due to unresponsive shell sessions. If you still see the job in the `squeue` overview, however, use [`sattach`](https://slurm.schedmd.com/sattach.html) to reattach to a running interactive job, just remember to append `.interactive` to the job ID, fx `38.interactive`.
 
 ## Non-interactive jobs
 SLURM batch scripts is in many cases the preferred way to start jobs and is the recommended way to use SLURM. It's different in the way that the ressources are requested. It's done by `#SBATCH` comment-style directives in a shell script, and the script is then submitted to SLURM using an `sbatch script.sh` command. This is ideal for submitting large jobs that will run for many hours or days, but of course also for testing/development work. Ideally, a SLURM batch script should always contain (in order):
@@ -48,11 +48,15 @@ A full-scale example SLURM `sbatch` script for a single task could look like thi
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --ntasks-per-node=1
+#SBATCH --partition=general
 #SBATCH --cpus-per-task=10
 #SBATCH --mem=10G
 #SBATCH --time=2-00:00:00
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user=abc@bio.aau.dk
+
+# Exit on first error and if any variables are unset
+set -eu
 
 # load software modules or environments
 module load minimap2
@@ -74,11 +78,15 @@ An example SLURM `sbatch` script for parallel (independent) execution across mul
 #SBATCH --nodes=5
 #SBATCH --ntasks=5
 #SBATCH --ntasks-per-node=1
+#SBATCH --partition=general
 #SBATCH --cpus-per-task=192
-#SBATCH --mem=500G
+#SBATCH --mem=950G
 #SBATCH --time=2-00:00:00
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user=abc@bio.aau.dk
+
+# Exit on first error and if any variables are unset
+set -eu
 
 # load software modules or environments
 module load minimap2
@@ -122,15 +130,15 @@ Most options are self-explanatory. But for our setup and common use-cases you al
 ??? "Jobs that span multiple compute nodes"
       If needed the BioCloud is properly set up with the `OpenMPI` and `PMIx` message interfaces for distributed work across multiple compute nodes, but it requires you to [tailor your scripts and commands](https://curc.readthedocs.io/en/latest/programming/parallel-programming-fundamentals.html) specifically for distributed work and is a topic for another time. You can run "brute-force parallel" jobs, however, using for example [GNU parallel](https://curc.readthedocs.io/en/latest/software/GNUParallel.html) and distribute them across nodes, but this is only for experienced users and they must figure that out for themselves for now.
 
-If you need to use one or more GPUs you need to specify `--partition=gpu` and set `--gres=gpu:x`, where `x` refers to the number of GPUs you need. Please don't do CPU work on the `gpu` partition unless you also need a GPU.
+If you need to use one or more GPUs you need to specify `--partition=gpu` and set `--gres=gpu:x`, where `x` refers to the number of GPUs you need. Please don't do CPU work on the `gpu` partition unless you also need a GPU. It's also worth considering `--cpus-per-gpu` and `--mem-per-gpu` because if you use all GPU's on a GPU node, you might as well also use all available ressources. Additional details [here](https://slurm.schedmd.com/gres.html).
 
 ## How many ressources should I request for my job(s)?
 Exactly how many ressources your job(s) need(s) is something you have to experiment with and learn over time based on past experience. It's important to do a bit of experimentation before submitting large jobs to obtain a qualified guess since the utilization of all the allocated ressources across the cluster is ultimately based on people's own assessments alone. Below are some tips regarding CPU and memory.
 
 ### CPUs/threads
-In general the number of CPUs that you book only affects how long the job will take to finish. Since most tools don't use 100% of each and every allocated thread throughout the duration (due to for example I/O delays, internal thread communication, single-threaded job steps etc), our partitions are set with an **oversubscription factor of 1.5** (not yet, just preparing docs for it) to optimize ressource utilization. This means that SLURM will in total allocate more CPUs than there are physical cores or hyper-threads on each compute node. For example, SLURM will allocate up to 288 CPUs on a compute node with 192 threads across all SLURM jobs on the node. The number of threads is not a hard limit like the physical amount of memory is, on the other hand, and SLURM will never exceed the maximum physical memory of each compute node. Instead jobs are killed if they exceed the allocated amount of memory for the job, or not be allowed to start in the first place.
+In general the number of CPUs that you book only affects how long the job will take to finish and how many jobs can run concurrently. The only thing to really consider is how many CPUs you want to use for the particular job out of your max limit. If you use all CPUs for one job, you can't start more jobs until the first one has finished, the choice is yours. But regardless, it's very important to ensure that your jobs actually fully utilize the allocated number of CPUs, so don't start a job with `20` allocated CPUs if you only set max threads for a certain tool to `10`, for example. The number of CPUs is not a hard limit like the physical amount of memory is, on the other hand, and SLURM will never exceed the maximum physical memory of each compute node. Instead jobs are killed if they exceed the allocated amount of memory for the job, or not be allowed to start in the first place. With CPUs your jobs simply won't detect any more CPUs than those allocated.
 
 ### Memory
-Requesting a sensible maximum amount of memory is important to avoid crashing jobs. It's generally best to **allocate more memory** than what you need, so that the job doesn't crash and the spent ressources don't go to waste and could have been used for something else. To obtain a qualified guess you can start the job based on an initial expectation, and then set a job time limit of maybe 5-10 minutes just to see if it might crash due to exceeding the allocated ressources, and if not you will see the maximum memory usage for the job in the email notification report. Then adjust accordingly and submit again with 10-15% extra than what was used at maximum. Different steps of a workflow will in many cases unavoidably need more memory than others, and so it might be a good idea to either split the job into multiple jobs, or use workflow tools that support cluster execution, for example [snakemake](https://snakemake.readthedocs.io/en/stable/executing/cluster.html).
+Requesting a sensible maximum amount of memory is important to avoid crashing jobs. It's generally best to **allocate more memory** than what you need, so that the job doesn't crash and the spent ressources don't go to waste and could have been used for something else anyways. To obtain a qualified guess you can start the job based on an initial expectation, and then set a job time limit of maybe 5-10 minutes just to see if it might crash due to exceeding the allocated memory, and if not you will see the maximum memory usage for the job in the email notification report. Then adjust accordingly and submit again with a little extra than what was used at maximum. Different steps of a workflow will in many cases, unavoidably need more memory than others, and so it might be a good idea to either split the job into multiple jobs, or use workflow tools that support cluster execution, for example [snakemake](https://snakemake.readthedocs.io/en/stable/executing/cluster.html).
 
-Our compute nodes have plenty of memory, but some tools require lots of memory. If you know that your job is going to use a lot of memory, say 1TB, you might as well also request more CPUs, since your job will likely allocate a full compute node alone, and you can then finish the job faster. This of course depends on which compute node your job is allocated to, so you might want to request ressources on individual compute nodes specifically using the `nodelist` option, refer to the [hardware overview](../index.md).
+Our compute nodes have plenty of memory, but some tools require lots of memory. If you know that your job is going to use a lot of memory (per CPU that is), you should likely submit the job to the `high-mem` partition. In order to fully utilize each compute node a general rule of thumb is to use a **maximum** of 1000 GB / 192t ~= **5GB per CPU** for the compute nodes on the `general` partition, or **10 GB per CPU** on the `high-mem` partition. If you know that you are almost going to fully saturate the memory on a compute node (depending on partition), you might as well also request more CPUs up to the total of a single compute node, since your job will likely allocate a full compute node alone, and you can then finish the job faster. If needed you can also submit directly to the individual compute nodes specifically using the `nodelist` option, refer to the [hardware overview](../index.md) for hostnames and compute node specs.
