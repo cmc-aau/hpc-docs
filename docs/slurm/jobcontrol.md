@@ -1,12 +1,12 @@
-# Job control and usage accounting
-Below are some nice to know commands for controlling and checking up on running jobs, current and past.
+# Job control and useful commands
+Below are some nice to know commands for controlling and checking up on jobs, current and past.
 
 ## Get job status info
 Use [`squeue`](https://slurm.schedmd.com/squeue.html), for example:
 ```
 $ squeue
-JOBID PARTITION     NAME     USER ST       TIME  NODES NODELIST(REASON)
-   24 general interact ksa@bio.  R       2:15      1 bio-oscloud04
+JOBID         NAME       USER       TIME    TIME_LEFT CPU MIN_ME ST PARTITION NODELIST(REASON)
+ 2380         dRep ab12cd@bio 1-01:36:22  12-22:23:38  80   300G  R   general bio-oscloud02
 ```
 
 ??? "Job state codes (ST)"
@@ -42,6 +42,14 @@ JOBID PARTITION     NAME     USER ST       TIME  NODES NODELIST(REASON)
       | AssociationNodeLimit | All nodes assigned to your job’s specified association are in use; job will run eventually. |
 
       A complete list can be found in SLURM's [documentation](https://slurm.schedmd.com/squeue.html#lbAF)
+
+The columns to show can be customized using the `--format` option, but can also be set with the environment variable `SQUEUE_FORMAT` to avoid typing it every time. You can always override this to suit your needs in your `.bashrc` file. The default format is currently:
+
+```
+SQUEUE_FORMAT="%.6i %.12j %.10u %.10M %.12L %.3C %.6m %.2t %.9P %R"
+```
+
+See a full list [here](https://slurm.schedmd.com/squeue.html#OPT_format).
 
 ## Prevent pending job from starting
 Pending jobs can be marked in a "hold" state to prevent them from starting
@@ -90,8 +98,6 @@ For example:
 $ scontrol update JobId=$JobID timelimit=<new timelimit>
 ```
 
-
-
 ## Job status information
 Use [`sstat`](https://slurm.schedmd.com/sstat.html) to show the status and live usage accounting information of **running** jobs. For batch scripts you need to add `.batch` to the job ID, for example:
 ```
@@ -101,7 +107,7 @@ $ sstat 24.batch
 This will print EVERY metric, so it's nice to select only a few most relevant ones, for example:
 
 ```
-sstat --jobs24.batch --format=jobid,avecpu,maxrss,ntasks
+$ sstat --jobs24.batch --format=jobid,avecpu,maxrss,ntasks
 ```
 
 ??? "Useful format variables"
@@ -117,16 +123,22 @@ sstat --jobs24.batch --format=jobid,avecpu,maxrss,ntasks
       
       For all variables see the [SLURM documentation](https://slurm.schedmd.com/sstat.html#SECTION_Job-Status-Fields)
 
-## Job usage accounting
-To view the status of **past** jobs and their usage accounting information use [`sacct`](https://slurm.schedmd.com/sacct.html). `sacct` will return **everything** accounted for by default which is very inconvenient to view in a terminal window, so below are only the most essential columns shown:
-```
-$ sacct -o jobid,jobname,start,end,NNodes,NCPUS,ReqMem,CPUTime,AveRSS,MaxRSS --user=$USER --units=G -j 138
-JobID           JobName               Start                 End   NNodes      NCPUS     ReqMem    CPUTime     AveRSS     MaxRSS 
------------- ---------- ------------------- ------------------- -------- ---------- ---------- ---------- ---------- ---------- 
-138          interacti+ 2023-11-21T10:43:48 2023-11-21T10:43:59        1         16        20G   00:02:56                       
-138.interac+ interacti+ 2023-11-21T10:43:48 2023-11-21T10:43:59        1         16              00:02:56          0          0 
-138.extern       extern 2023-11-21T10:43:48 2023-11-21T10:43:59        1         16              00:02:56      0.00G      0.00G 
+## Job efficiency metrics
+To view the efficiency of individual jobs use `seff`, for example:
 
 ```
+$ seff 2357
+Job ID: 2357
+Cluster: biocloud
+User/Group: <redacted>
+State: COMPLETED (exit code 0)
+Nodes: 1
+Cores per node: 96
+CPU Utilized: 60-11:06:29
+CPU Efficiency: 45.76% of 132-02:48:00 core-walltime
+Job Wall-clock time: 1-09:01:45
+Memory Utilized: 383.42 GB
+Memory Efficiency: 45.11% of 850.00 GB
+```
 
-There are a huge number of other options to show, see [SLURM docs](https://slurm.schedmd.com/sacct.html#SECTION_Job-Accounting-Fields). If you really want to see everything use `sacct --long > file.txt` and dump it into a file or else it's too much for the terminal.
+This will also be shown in notification emails.

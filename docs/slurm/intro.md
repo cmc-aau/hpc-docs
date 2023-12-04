@@ -1,7 +1,7 @@
 # Introduction to SLURM
 SLURM (Simple Linux Utility for Resource Management) is a highly flexible and powerful job scheduler for managing and scheduling computational workloads on high-performance computing (HPC) clusters. SLURM is designed to efficiently allocate resources and manage job execution on clusters of any size, from a single server to tens of thousands. SLURM manages resources on an HPC cluster by dividing compute nodes into partitions. Users submit jobs to these partitions from a login-node, and then the SLURM controller schedules and allocates resources to those jobs based on available resources and user-defined constraints. SLURM also stores detailed usage information of all users' jobs in a usage accounting database, which allows enforcement of fair-share policies and priorities for job scheduling for each partition.
 
-The BioCloud compute nodes are divided into separate partitions depending on their hardware, see the [hardware overview](index.md) for an up to date list. They currently share the same usage policy groups (currently no limit first-in-first-out).
+The BioCloud compute nodes are divided into separate partitions depending on their hardware, see the [hardware overview](../index.md) for an up to date list. They currently share the same usage policy groups (currently no limit first-in-first-out).
 
 ## BioCloud SLURM cluster overview
 ![SLURM overview](img/slurm-overview-inverted.png)
