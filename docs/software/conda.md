@@ -18,7 +18,7 @@ dependencies:
  - samtools=1.18
 ```
 
-Then create the environment with `mamba env create -f requirements.yml`. You can also export an **activated** environment and dump the exact versions used into a YAML file with `mamba env export > requirements.yml`.
+Then create the environment with `mamba env create -f requirements.yml`. You can also export an **activated** environment and dump the exact versions used into a YAML file with `mamba env export > requirements.yml`. Note that when you export an environment the file will also contain a `prefix` line, which you should remove.
 
 Activate and deactivate environments with
 ```
@@ -37,9 +37,9 @@ Software that can only be installed with pip have to be installed in a Conda env
  - Use pip only after conda package installs
  - Use conda environments for isolation (Don't perform pip installs in the "root" environment)
  - Recreate the entire environment if changes are needed after pip packages have been installed
+ - Use `--no-cache-dir` with any `pip install` commands
 
-An install command would look like:
-
+After activating the conda environment an install command would look like the following:
 ```
 $ python3 -m pip install <package> --no-cache-dir
 ```
