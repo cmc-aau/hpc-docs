@@ -27,13 +27,13 @@ If you need to enable other users to access a file/folder you need to set the gr
 folder="some_folder/"
 
 # create the folder if it doesn't exist already
-mkdir -p $folder
+mkdir -p "$folder"
 
 # set group ownership
 chown -R :bio_server_users@bio.aau.dk "$folder"
 
 # If there are already files with weak permissions, correct them with:
-chmod -R o-x $folder
+chmod -R o-x "$folder"
 
 # set the setGID sticky bit to ensure new files and folders inherit group ownership
 chmod 2775 "$folder"
