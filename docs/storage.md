@@ -21,23 +21,20 @@ If you need to move large amounts of data (or numerous files at once regardless 
 ## Shared folders
 If you need to enable other users to access a file/folder you need to set the group ownership of the folder to the `bio_server_users@bio.aau.dk` group and set the [setGID](https://www.geeksforgeeks.org/setuid-setgid-and-sticky-bits-in-linux-file-permissions/) bit on folders (to ensure child files/folders will inherit the ownership of a parent folder). Example below.
 
-**Never** use `chmod 777`. It's a major security weakness that can allow anyone (even users outside of the university authentication system, human or not) to do anything they want with a file/folder and potentially place hidden payload there. Folders will be scanned regularly for insecure permissions and corrected without notice. 
+**Never** use `chmod 777`. It's a major security weakness that can allow anyone (even users outside of the university authentication system, human or not) to do anything they want with a file/folder and potentially place hidden payload there. Folders will be scanned regularly for insecure permissions and corrected without notice. Only `owner` and `group` should have the execute bit set, never `other`. See [permissions in Linux](https://www.geeksforgeeks.org/permissions-in-linux/) to learn about file and folder permissions on Linux systems.
 
 ```
 folder="some_folder/"
 
-# create the folder
+# create the folder if it doesn't exist already
 mkdir -p $folder
 
-# set  group ownership
+# set group ownership
 chown -R :bio_server_users@bio.aau.dk "$folder"
 
-# If there are already files with weak permissions, correct them with for example:
-find "$folder" -type d -exec chmod 775 {} \;
-find "$folder" -type f -exec chmod 664 {} \;
+# If there are already files with weak permissions, correct them with:
+chmod -R o-x $folder
 
 # set the setGID sticky bit to ensure new files and folders inherit group ownership
 chmod 2775 "$folder"
 ```
-
-This can only be done on folders that you own, so ask other users or an administrator if you need to change ownership on an existing folder that you don't own.
