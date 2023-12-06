@@ -81,57 +81,33 @@ $ scontrol show config
 ```
 
 ## SLURM environment variables
-SLURM jobs will have a variety of environment variables set based on the job specification, which might become handy programmatically. They all start with `SLURM_` or `SLURMD_`:
+SLURM jobs will have a variety of environment variables set within job allocations, which might become handy programmatically. Below is an overview of relevant ones. For all of them refer to the SLURM documentation for [https://slurm.schedmd.com/sbatch.html#SECTION_INPUT-ENVIRONMENT-VARIABLES](input environment variables) and [https://slurm.schedmd.com/sbatch.html#SECTION_OUTPUT-ENVIRONMENT-VARIABLES](output environment variables). Some may not be present for your particular job, to list only those currently available within a job run for example `env | grep -iE 'SLURM|SBATCH'`.
 
-```
-$ srun env | grep SLURM
-SLURM_STEP_NUM_TASKS=<redacted>
-SLURM_JOB_USER=<redacted>
-SLURM_TASKS_PER_NODE=<redacted>
-SLURM_JOB_UID=<redacted>
-SLURM_TASK_PID=<redacted>
-SLURM_LOCALID=<redacted>
-SLURM_SUBMIT_DIR=<redacted>
-SLURMD_NODENAME=<redacted>
-SLURM_JOB_START_TIME=<redacted>
-SLURM_STEP_NODELIST=<redacted>
-SLURM_CLUSTER_NAME=<redacted>
-SLURM_JOB_END_TIME=<redacted>
-SLURM_CPUS_ON_NODE=<redacted>
-SLURM_JOB_CPUS_PER_NODE=<redacted>
-SLURM_GTIDS=<redacted>
-SLURM_JOB_PARTITION=<redacted>
-SLURM_JOB_NUM_NODES=<redacted>
-SLURM_STEPID=<redacted>
-SLURM_JOBID=<redacted>
-SLURM_PTY_PORT=<redacted>
-SLURM_LAUNCH_NODE_IPADDR=<redacted>
-SLURM_JOB_QOS=<redacted>
-SLURM_PTY_WIN_ROW=<redacted>
-SLURMD_DEBUG=<redacted>
-SLURM_PROCID=<redacted>
-SLURM_TOPOLOGY_ADDR=<redacted>
-SLURM_PMIX_MAPPING_SERV=<redacted>
-SLURM_TOPOLOGY_ADDR_PATTERN=<redacted>
-SLURM_SRUN_COMM_HOST=<redacted>
-SLURM_PMIXP_ABORT_AGENT_PORT=<redacted>
-SLURM_WORKING_CLUSTER=<redacted>
-SLURM_PTY_WIN_COL=<redacted>
-SLURM_NODELIST=<redacted>
-SLURM_SRUN_COMM_PORT=<redacted>
-SLURM_STEP_ID=<redacted>
-SLURM_JOB_ACCOUNT=<redacted>
-SLURM_PRIO_PROCESS=<redacted>
-SLURM_NNODES=<redacted>
-SLURM_SUBMIT_HOST=<redacted>
-SLURM_JOB_ID=<redacted>
-SLURM_NODEID=<redacted>
-SLURM_STEP_NUM_NODES=<redacted>
-SLURM_STEP_TASKS_PER_NODE=<redacted>
-SLURM_MPI_TYPE=<redacted>
-SLURM_CONF=<redacted>
-SLURM_JOB_NAME=<redacted>
-SLURM_STEP_LAUNCHER_PORT=<redacted>
-SLURM_JOB_GID=<redacted>
-SLURM_JOB_NODELIST=<redacted>
-```
+| Variable(s) | Description |
+| :--- | :--- |
+| `SLURM_ARRAY_TASK_COUNT` | Total number of tasks in a job array |
+| `SLURM_ARRAY_TASK_ID` | Job array ID (index) number |
+| `SLURM_ARRAY_TASK_MAX` | Job array's maximum ID (index) number |
+| `SLURM_ARRAY_TASK_MIN` | Job array's minimum ID (index) number |
+| `SLURM_ARRAY_TASK_STEP` | Job array's index step size |
+| `SLURM_ARRAY_JOB_ID` | Job array's master job ID number |
+| `SLURM_CLUSTER_NAME` | Name of the cluster on which the job is executing |
+| `SLURM_CPUS_ON_NODE` | Number of CPUS on the allocated node |
+| `SLURM_CPUS_PER_TASK` | Number of cpus requested per task. Only set if the  |--cpus-per-task option is specified.
+| `SLURM_JOB_ACCOUNT` | Account name associated of the job allocation |
+| `SLURM_JOBID`, `SLURM_JOB_ID` | The ID of the job allocation |
+| `SLURM_JOB_CPUS_PER_NODE` | Count of processors available to the job on this  |node.
+| `SLURM_JOB_DEPENDENCY` | Set to value of the --dependency option |
+| `SLURM_JOB_NAME` | Name of the job |
+| `SLURM_NODELIST`, `SLURM_JOB_NODELIST` | List of nodes allocated to the job |
+| `SLURM_NNODES`, `SLURM_JOB_NUM_NODES` | Total number of different nodes in the  |job's resource allocation
+| `SLURM_MEM_PER_NODE` | Takes the value of --mem if this option was specified. |
+| `SLURM_MEM_PER_CPU` | Takes the value of --mem-per-cpu if this option was  |specified.
+| `SLURM_NTASKS`, `SLURM_NPROCS` | Same as -n or --ntasks if either of these  |options was specified.
+| `SLURM_NTASKS_PER_NODE` | Number of tasks requested per node. Only set if the  |--ntasks-per-node option is specified.
+| `SLURM_NTASKS_PER_SOCKET` | Number of tasks requested per socket. Only set if  |the --ntasks-per-socket option is specified.
+| `SLURM_SUBMIT_DIR` | The directory from which sbatch was invoked |
+| `SLURM_SUBMIT_HOST` | The hostname of the computer from which sbatch was  |invoked
+| `SLURM_TASK_PID` | The process ID of the task being started |
+| `SLURMD_NODENAME` | Name of the node running the job script |
+| `SLURM_JOB_GPUS` | GPU IDs allocated to the job (if any). |
