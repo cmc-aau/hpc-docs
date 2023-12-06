@@ -3,11 +3,12 @@ All users belong to an account (usually their PI) and all usage is tracked per u
 
 ## Show QOS info and limitations
 ```
-$ sacctmgr show qos format=name,priority,grptres,maxtres,maxtrespu,maxjobspu,maxtrespa,maxjobspa
-      Name   Priority       GrpTRES       MaxTRES     MaxTRESPU MaxJobsPU     MaxTRESPA MaxJobsPA 
----------- ---------- ------------- ------------- ------------- --------- ------------- --------- 
-    normal          0                                   cpu=576                                   
-  highprio          1                                  cpu=1024                                   
+$ sacctmgr show qos format=name,priority,grptres,mintres,maxtres,maxtrespu,maxjobspu,maxtrespa,maxjobspa
+      Name   Priority       GrpTRES       MinTRES       MaxTRES     MaxTRESPU MaxJobsPU     MaxTRESPA MaxJobsPA 
+---------- ---------- ------------- ------------- ------------- ------------- --------- ------------- --------- 
+    normal          0                cpu=1,mem=1G                     cpu=576                                   
+  highprio          1                cpu=1,mem=1G                    cpu=1024                                   
+                                 
 ```
 
 ## Undergraduate students
