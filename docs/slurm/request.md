@@ -8,7 +8,7 @@ To immediately request and allocate ressources (once available) and start an int
 ```
 salloc --cpus-per-task 32 --mem 128G
 ```
-Here SLURM will find a compute node with 32 CPUs and 128GB memory available and start an interactive shell on the allocated compute node(s) within the requested ressource constraints. Ressources will remain allocated until the shell is exited with `CTRL+d`, typing `exit`, or if closing the window.
+Here SLURM will find a compute node with 32 CPUs and 128GB memory available and start an interactive shell on the allocated compute node(s) within the requested ressource constraints. Ressources will remain allocated until the shell is exited with `CTRL+d`, typing `exit`, or if closing the window. If it takes more than a few seconds to allocate ressources, your job might be queued due to a variety of reasons. If so check the [`REASON` codes](jobcontrol.md#get-job-status-info) for the job with `squeue`.
 
 ???+ Important
       When using an interactive shell it's important to keep in mind that the allocated ressources remain allocated only for you until you `exit` the shell session. So don't leave it hanging idle for too long if you know you are not going to actively use it, otherwise other users might have needed the ressources in the meantime. For the same reasons, it's **not allowed** to use `salloc` or `srun` within an emulated terminal with `screen` or `tmux`, because ressources will remain allocated even though nothing is running after commands/scripts have finished. It's much better to use [`sbatch`](#non-interactive-jobs) instead.
