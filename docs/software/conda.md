@@ -4,8 +4,6 @@
 [Cheatsheet here](https://docs.conda.io/projects/conda/en/latest/_downloads/843d9e0198f2a193a3484886fa28163c/conda-cheatsheet.pdf)
 
 ## Creating and activating an environment
-`conda` is notoriously slow for resolving dependencies and creating environments, so it's recommended to use [`mamba`](https://mamba.readthedocs.io/en/latest/) instead of `conda` when creating and manipulating environments as it is MUCH faster (written in C++). `conda` and `mamba` have identical sub-commands and options and can be used interchangibly.
-
 The best practice is to note everything down in a YAML file before you forget things and keep it in the root of the project folder, for example:
 
 **requirements.yml**
@@ -18,7 +16,7 @@ dependencies:
  - samtools=1.18
 ```
 
-Then create the environment with `mamba env create -f requirements.yml`. You can also export an **activated** environment and dump the exact versions used into a YAML file with `mamba env export > requirements.yml`. Note that when you export an environment the file will also contain a `prefix` line, which you should remove.
+Then create the environment with `mamba env create -f requirements.yml`. You can also export an **activated** environment and dump the exact versions used into a YAML file with `mamba env export > requirements.yml`. Note that when you export an environment the file will also contain a `prefix` line, which you should remove. `conda` is notoriously slow for resolving dependencies and creating environments, so it's recommended to use [`mamba`](https://mamba.readthedocs.io/en/latest/) instead of `conda` when creating and manipulating environments as it is MUCH faster (written in C++). `conda` and `mamba` otherwise have identical sub-commands and options and can be used interchangibly, but after building environments you don't really need `mamba` anymore.
 
 Activate and deactivate environments with
 ```
