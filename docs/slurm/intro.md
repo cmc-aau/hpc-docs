@@ -35,8 +35,8 @@ $ squeue
   3333 as-predictio user07@bio 2-19:42:49   6-04:17:11   5    16G  R       gpu bio-oscloud09
   3372      checkm2 user02@bio   21:37:50   6-02:22:10 192  1800G  R  high-mem bio-oscloud08
 
-# specific user (usually yourself)
-$ squeue -u $(whoami)
+# your own jobs only
+$ squeue --me
  JOBID         NAME       USER       TIME    TIME_LEFT CPU MIN_ME ST PARTITION NODELIST(REASON)
   3333 as-predictio user07@bio 2-19:42:49   6-04:17:11   5    16G  R       gpu bio-oscloud09
 ```
