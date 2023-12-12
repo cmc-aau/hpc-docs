@@ -13,15 +13,15 @@ Example output (A=allocated, I=idle, O=other, T=total):
 ```
 $ sinfo -o "%C"
 CPUS(A/I/O/T)
-10/374/0/38
+620/596/240/1456
 ```
 
 ## Show reserved compute nodes
 Reservations will also be used for scheduled maintenance, so that SLURM simply won't jobs to start if they have a `time` limit set that spans into the reservation.
 ```
 $ sinfo -T
-RESV_NAME      STATE           START_TIME             END_TIME     DURATION  NODELIST
-group1       ACTIVE  2021-08-31T10:23:01  2021-12-15T09:23:01  106-00:00:00  node[01,02]
+RESV_NAME       STATE           START_TIME             END_TIME     DURATION  NODELIST
+maintenance  INACTIVE  2023-12-18T23:00:00  2023-12-20T01:00:00   1-02:00:00  bio-oscloud[02-09]
 ```
 
 ## Show details about a particular job

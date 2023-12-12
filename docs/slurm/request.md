@@ -8,10 +8,11 @@ To immediately request and allocate ressources (once available) and start an int
 ```
 salloc --cpus-per-task 32 --mem 128G
 ```
+
 Here SLURM will find a compute node with 32 CPUs and 128GB memory available and start an interactive shell on the allocated compute node(s) within the requested ressource constraints. Ressources will remain allocated until the shell is exited with `CTRL+d`, typing `exit`, or if closing the window. If it takes more than a few seconds to allocate ressources, your job might be queued due to a variety of reasons. If so check the [`REASON` codes](jobcontrol.md#get-job-status-info) for the job with `squeue`.
 
 ???+ Important
-      When using an interactive shell it's important to keep in mind that the allocated ressources remain allocated only for you until you `exit` the shell session. So don't leave it hanging idle for too long if you know you are not going to actively use it, otherwise other users might have needed the ressources in the meantime. For the same reasons, it's **not allowed** to use `salloc` or `srun` within an emulated terminal with `screen` or `tmux`, because ressources will remain allocated even though nothing is running after commands/scripts have finished. It's much better to use [`sbatch`](#non-interactive-jobs) instead.
+      When using an interactive shell it's important to keep in mind that the allocated ressources remain allocated only for you until you `exit` the shell session. So don't leave it hanging idle for too long if you know you are not going to actively use it, otherwise other users might have needed the ressources in the meantime. For the same reasons, it's **not allowed** to use `salloc` or `srun` within an emulated terminal with `screen` or `tmux`, because ressources will remain allocated even though nothing is running after commands/scripts have finished. It's much better to use [`sbatch`](#non-interactive-jobs) instead. As a last resort if you really insist on an interactive session you can append for example `; exit` to the last command you execute to ensure that the job allocation is automatically terminated when the command exits (regardless of exit status). You can also just set a time limit when starting the session using `salloc --time=1:00:00` to terminate the session when time's up, here 1 hour. Or just use `sbatch`!! :)
 
 To execute a command/script in the foreground through SLURM use [`srun`](https://slurm.schedmd.com/srun.html) to run a SLURM task directly on an allocated compute node instead of first starting an interactive shell. Any required software modules or conda environments must be loaded before issuing the command, for example:
 ```
@@ -44,7 +45,6 @@ A full-scale example SLURM `sbatch` script for a single task could look like thi
 #!/usr/bin/bash -l
 #SBATCH --job-name=minimap2test
 #SBATCH --output=job_%j_%x.out
-#SBATCH --error=job_%j_%x.err
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --ntasks-per-node=1
@@ -74,7 +74,6 @@ An example SLURM `sbatch` script for parallel (independent) execution across mul
 #!/usr/bin/bash -l
 #SBATCH --job-name=minimap2test
 #SBATCH --output=job_%j_%x.out
-#SBATCH --error=job_%j_%x.err
 #SBATCH --nodes=5
 #SBATCH --ntasks=5
 #SBATCH --ntasks-per-node=1
@@ -120,7 +119,7 @@ There are plenty of options with the SLURM job submission commands, but below ar
 | `--nodelist`           | Specifies a comma-separated list of specific compute nodes to be allocated for the job.                     |
 | `--gres`               | List of "generic consumable ressources" to use, for example a GPU. |
 | `--partition`          | The SLURM partition to which the job is submitted. Default is to use the `general` partition. |
-| `--chdir` | Set the working directory of the batch script before it's executed. Environment variables are not supported. |
+| `--chdir` | Set the working directory of the batch script before it's executed. Setting this using environment variables is not supported. |
 | `--time`               | Defines the maximum time limit for job execution before it will be killed automatically. Format `DD-HH:MM:SS`. Maximum allowed value is that of the partition used. [Details here](https://slurm.schedmd.com/sbatch.html#OPT_time)          |
 | `--mail-type`          | Configures email notifications for certain job events. One or more comma-separated values of: `NONE`, `ALL`, `BEGIN`, `END`, `FAIL`, `REQUEUE`, `ARRAY_TASKS`. [Details here](https://slurm.schedmd.com/sbatch.html#OPT_mail-type)                       |
 | `--mail-user`          | Specifies the email address where job notifications are sent.                                                |
