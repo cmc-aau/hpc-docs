@@ -103,6 +103,12 @@ For more examples of parallel jobs and array jobs see for example [this page](ht
 ???+ Important
       The `bash -l` in the top "shebang" line is required for the compute nodes to be able to load software modules and conda environments correctly.
 
+??? "Jobs that span multiple compute nodes"
+      If needed the BioCloud is properly set up with the `OpenMPI` and `PMIx` message interfaces for distributed work across multiple compute nodes, but it requires you to [tailor your scripts and commands](https://curc.readthedocs.io/en/latest/programming/parallel-programming-fundamentals.html) specifically for distributed work and is a topic for another time. You can run "brute-force parallel" jobs, however, using for example [GNU parallel](https://curc.readthedocs.io/en/latest/software/GNUParallel.html) and distribute them across nodes, but this is only for experienced users and they must figure that out for themselves for now.
+
+## Requesting one or more GPUs
+If you need to use one or more GPUs you need to specify `--partition=gpu` and set `--gres=gpu:x`, where `x` refers to the number of GPUs you need. Please don't do CPU work on the `gpu` partition unless you also need a GPU. It's also worth considering using `--cpus-per-gpu` and `--mem-per-gpu` because if you use all GPU's on a GPU node, you might as well also use all available CPUs and memory. Additional details [here](https://slurm.schedmd.com/gres.html).
+
 ## Most essential options
 There are plenty of options with the SLURM job submission commands, but below are the most important ones for our current setup and common use-cases. If you need anything else you can start with the [SLURM cheatsheet](https://slurm.schedmd.com/pdfs/summary.pdf), or else refer to the SLURM documentation for the individual commands [`srun`](https://slurm.schedmd.com/srun.html), [`salloc`](https://slurm.schedmd.com/salloc.html), and [`sbatch`](https://slurm.schedmd.com/sbatch.html).
 
@@ -125,11 +131,6 @@ There are plenty of options with the SLURM job submission commands, but below ar
 | `--mail-user`          | Specifies the email address where job notifications are sent.                                                |
 
 Most options are self-explanatory. But for our setup and common use-cases you almost always want to set `--nodes` to 1, meaning your job will only run on a single compute node at a time. For multithreaded applications (most are nowadays) you mostly only need to set `ntasks` to `1` because threads are spawned from a single process (=task in SLURM parlor), and thus increase `--cpus-per-task` instead.
-
-??? "Jobs that span multiple compute nodes"
-      If needed the BioCloud is properly set up with the `OpenMPI` and `PMIx` message interfaces for distributed work across multiple compute nodes, but it requires you to [tailor your scripts and commands](https://curc.readthedocs.io/en/latest/programming/parallel-programming-fundamentals.html) specifically for distributed work and is a topic for another time. You can run "brute-force parallel" jobs, however, using for example [GNU parallel](https://curc.readthedocs.io/en/latest/software/GNUParallel.html) and distribute them across nodes, but this is only for experienced users and they must figure that out for themselves for now.
-
-If you need to use one or more GPUs you need to specify `--partition=gpu` and set `--gres=gpu:x`, where `x` refers to the number of GPUs you need. Please don't do CPU work on the `gpu` partition unless you also need a GPU. It's also worth considering `--cpus-per-gpu` and `--mem-per-gpu` because if you use all GPU's on a GPU node, you might as well also use all available ressources. Additional details [here](https://slurm.schedmd.com/gres.html).
 
 ## How many ressources should I request for my job(s)?
 Exactly how many ressources your job(s) need(s) is something you have to experiment with and learn over time based on past experience. It's important to do a bit of experimentation before submitting large jobs to obtain a qualified guess since the utilization of all the allocated ressources across the cluster is ultimately based on people's own assessments alone. Below are some tips regarding CPU and memory.
