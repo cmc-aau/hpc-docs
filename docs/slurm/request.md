@@ -82,8 +82,8 @@ An example SLURM `sbatch` script for parallel (independent) execution across mul
 #SBATCH --ntasks=5
 #SBATCH --ntasks-per-node=1
 #SBATCH --partition=general
-#SBATCH --cpus-per-task=192
-#SBATCH --mem=950G
+#SBATCH --cpus-per-task=60
+#SBATCH --mem-per-cpu=3G
 #SBATCH --time=2-00:00:00
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user=abc@bio.aau.dk
@@ -146,7 +146,7 @@ In general the number of CPUs that you book only affects how long the job will t
 The number of CPUs is not a hard limit like the physical amount of memory is, on the other hand, and SLURM will never exceed the maximum physical memory of each compute node. Instead jobs are killed if they exceed the allocated amount of memory for the job (only if no other jobs need the memory), or not be allowed to start in the first place. With CPUs your jobs simply won't detect any more CPUs than those allocated.
 
 ### Memory
-Requesting a sensible maximum amount of memory is important to avoid crashing jobs. It's generally best to **allocate more memory** than what you need, so that the job doesn't crash and the spent ressources don't go to waste and could have been used for something else anyways. To obtain a qualified guess you can start the job based on an initial expectation, and then set a job time limit of maybe 5-10 minutes just to see if it might crash due to exceeding the allocated memory, and if not you will see the maximum memory usage for the job in the email notification report. Then adjust accordingly and submit again with a little extra than what was used at maximum. Different steps of a workflow will in many cases, unavoidably, need more memory than others, so again, if they run for a long time, split it into multiple jobs or use [snakemake](https://snakemake.readthedocs.io/en/stable/executing/cluster.html).
+Requesting a sensible maximum amount of memory is important to avoid crashing jobs. It's generally best to **allocate more memory** than what you need, so that the job doesn't crash and the spent ressources don't go to waste and could have been used for something else anyways. To obtain a qualified guess you can start the job based on an initial expectation, and then set a job time limit of maybe 5-10 minutes just to see if it might crash due to exceeding the allocated memory, and if not you will see the maximum memory usage for the job in the email notification report (or use `seff <jobid>`). Then adjust accordingly and submit again with a little extra than what was used at maximum. Different steps of a workflow will in many cases, unavoidably, need more memory than others, so again, if they run for a long time, split it into multiple jobs or use [snakemake](https://snakemake.readthedocs.io/en/stable/executing/cluster.html).
 
 Our compute nodes have plenty of memory, but some tools require lots of memory. If you know that your job is going to use a lot of memory (per CPU that is), you should likely submit the job to the `high-mem` partition. In order to fully utilize each compute node a general rule of thumb is to:
 
