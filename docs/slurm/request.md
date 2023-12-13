@@ -35,6 +35,8 @@ SLURM batch scripts is in many cases the preferred way to start jobs and is the 
 
 Submit the batch script to the SLURM job queue using `sbatch script.sh`, and it will then start once the requested amount of ressources are available (also taking into account your past usage and priorities of other jobs etc, all 3 job submission commands do that). If you set the `--mail-user` and `--mail-type` arguments you should get a notification email once the job starts and finishes with additional details like how many ressources you have actually used compared to what you have requested. This is essential information for future jobs to avoid overbooking and maximize ressource utilization of the cluster.
 
+You can also simply add `#SBATCH` lines to any shell script you already have, and also run the script with arguments, so for example instead of `bash script.sh -i input -o output ...` you can simply run `sbatch script.sh -i input -o output ...`.
+
 ???- "Non-interactive job output (`stdout`/`stderr` streams)"
       As the job is handled by SLURM in the background by the SLURM daemons on the individual compute nodes you won't see any output to the terminal. It will instead be written to the file(s) defined by `--output` and `--error`. To follow along use for example `tail -f job_123.out`.
 
