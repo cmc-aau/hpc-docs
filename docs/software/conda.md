@@ -30,10 +30,10 @@ conda env list
 ```
 
 ## Installing packages using pip within conda environments
-Software that can only be installed with pip have to be installed in a Conda environment by using pip inside the environment. While issues can arise, per the [Conda guide for using pip in a Conda environment](https://www.anaconda.com/blog/using-pip-in-a-conda-environment), there are some best practices to follow to reduce their likelihood, namely:
+Software that can only be installed with pip have to be installed in a Conda environment by using pip inside the environment. While issues can arise, per the [Conda guide for using pip in a Conda environment](https://www.anaconda.com/blog/using-pip-in-a-conda-environment), there are some best practices to follow to reduce their likelihood:
 
  - Use pip only after conda package installs
- - Use conda environments for isolation (Don't perform pip installs in the "root" environment)
+ - Use conda environments for isolation (Don't perform pip installs in the `base` environment)
  - Recreate the entire environment if changes are needed after pip packages have been installed
  - Use `--no-cache-dir` with any `pip install` commands
 
@@ -41,6 +41,20 @@ After activating the conda environment an install command would look like the fo
 ```
 $ python3 -m pip install <package> --no-cache-dir
 ```
+
+If you then export the conda environment to a YAML file using `conda env export > requirements.yml`, software dependencies installed using pip should show under a separate `- pip:` field, for example:
+```
+name: myproject
+channels:
+  - bioconda
+dependencies:
+ - minimap2=2.26
+ - samtools=1.18
+ - pip:
+   - virtualenv==20.25.0
+```
+
+Be aware that specific versions are specified using double `==` with `pip` dependencies.
 
 ## R and installing R packages within conda environments
 Use `r-{package}`, list [here](https://anaconda.org/r/repo?sort=_name&sort_order=asc). Otherwise using [renv](https://rstudio.github.io/renv/articles/renv.html) is **highly recommended** for project reproducibility and portability.
