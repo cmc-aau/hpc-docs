@@ -53,7 +53,7 @@ A full-scale example SLURM `sbatch` script for a single task could look like thi
 #SBATCH --partition=general
 #SBATCH --cpus-per-task=10
 #SBATCH --mem=10G
-#SBATCH --time=2-00:00:00
+#SBATCH --time=2:00:00:00
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user=abc@bio.aau.dk
 
