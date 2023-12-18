@@ -1,9 +1,9 @@
 # Introduction to Snakemake for HPC Users
 
-![snake-img]("./media/bashvsnake.png")
+![snake-img](media/bashvsnake.png)
 
 ## What is Snakemake?
-
+<p>Author: ChatGPT  | Reviewed by: <a href="mailto:semoda@bio.aau.dk">Sebastian Mølvang Dall</a>    |   Review Date: 18-12-2023</p>
 Snakemake is a workflow management system that simplifies the definition and execution of complex data analysis pipelines. It's an open-source tool, designed to scale from simple to complex workflows, providing both flexibility and reproducibility. Snakemake workflows are defined in a human-readable, Python-based language, making them both accessible and powerful.
 
 ## Key Features of Snakemake
