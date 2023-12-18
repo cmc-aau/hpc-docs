@@ -1,7 +1,10 @@
 # Executing snakemake on the bioservers
+
+![snake-slurm-img](media/slurmwsnake.png)
+
 ## The basics
 
-The exact way to run snakemake depends on the structure of your workflow. The important thing to know is that snakemake will always work at the directory where you run the command. This means that if you have a workflow that looks like this:
+The exact way to run snakemake depends on the structure of your workflow. The important thing to know is that snakemake will always work at the directory where you run the command. This means that if you have a directory structure that looks like this:
 
 ```
 .
