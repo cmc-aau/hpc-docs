@@ -2,7 +2,7 @@
 Below are some nice to know commands for controlling and checking up on jobs, current and past.
 
 ## Get job status info
-Use [`squeue`](https://slurm.schedmd.com/squeue.html), for example:
+Use [`squeue`](https://slurm.schedmd.com/archive/slurm-23.02.6/squeue.html), for example:
 ```
 $ squeue
 JOBID         NAME       USER       TIME    TIME_LEFT CPU MIN_ME ST PARTITION NODELIST(REASON)
@@ -21,7 +21,7 @@ JOBID         NAME       USER       TIME    TIME_LEFT CPU MIN_ME ST PARTITION NO
       | SUSPENDED | S | A running job has been stopped with its cores released to other jobs. |
       | STOPPED | ST | A running job has been stopped with its cores retained. |
 
-      A complete list can be found in SLURM's [documentation](https://slurm.schedmd.com/squeue.html#lbAG)
+      A complete list can be found in SLURM's [documentation](https://slurm.schedmd.com/archive/slurm-23.02.6/squeue.html#lbAG)
 
 ??? "Job reason codes (REASON )"
       | Reason Code | Explaination |
@@ -41,7 +41,7 @@ JOBID         NAME       USER       TIME    TIME_LEFT CPU MIN_ME ST PARTITION NO
       | AssociationMaxJobsLimit | Maximum number of jobs for your job’s association have been met; job will run eventually. |
       | AssociationNodeLimit | All nodes assigned to your job’s specified association are in use; job will run eventually. |
 
-      A complete list can be found in SLURM's [documentation](https://slurm.schedmd.com/squeue.html#lbAF)
+      A complete list can be found in SLURM's [documentation](https://slurm.schedmd.com/archive/slurm-23.02.6/squeue.html#lbAF)
 
 The columns to show can be customized using the `--format` option, but can also be set with the environment variable `SQUEUE_FORMAT` to avoid typing it every time. You can always override this to suit your needs in your `.bashrc` file. The default format is currently:
 
@@ -49,7 +49,7 @@ The columns to show can be customized using the `--format` option, but can also 
 SQUEUE_FORMAT="%.6i %.12j %.10u %.10M %.12L %.3C %.6m %.2t %.9P %R"
 ```
 
-See a full list [here](https://slurm.schedmd.com/squeue.html#OPT_format).
+See a full list [here](https://slurm.schedmd.com/archive/slurm-23.02.6/squeue.html#OPT_format).
 
 ## Prevent pending job from starting
 Pending jobs can be marked in a "hold" state to prevent them from starting
@@ -68,15 +68,15 @@ scontrol requeue <job_id>
 ```
 
 ## Cancel a job
-With `sbatch` you won't be able to just hit CTRL+c to stop what's running like you're used to in a terminal. Instead you must use `scancel`. Get the job ID from `squeue -u $(whoami)`, then use [`scancel`](https://slurm.schedmd.com/scancel.html) to cancel a running job, for example:
+With `sbatch` you won't be able to just hit CTRL+c to stop what's running like you're used to in a terminal. Instead you must use `scancel`. Get the job ID from `squeue -u $(whoami)`, then use [`scancel`](https://slurm.schedmd.com/archive/slurm-23.02.6/scancel.html) to cancel a running job, for example:
 ```
 $ scancel 24
 ```
 
-If the particular job doesn't stop and doesn't respond, consider using [`skill`](https://slurm.schedmd.com/skill.html) instead.
+If the particular job doesn't stop and doesn't respond, consider using [`skill`](https://slurm.schedmd.com/archive/slurm-23.02.6/skill.html) instead.
 
 ## Pause or resume a job
-Use [`scontrol`](https://slurm.schedmd.com/scontrol.html) to control your own jobs, for example suspend a running job:
+Use [`scontrol`](https://slurm.schedmd.com/archive/slurm-23.02.6/scontrol.html) to control your own jobs, for example suspend a running job:
 ```
 $ scontrol suspend 24
 ```
@@ -99,7 +99,7 @@ $ scontrol update JobId=$JobID timelimit=<new timelimit>
 ```
 
 ## Job status information
-Use [`sstat`](https://slurm.schedmd.com/sstat.html) to show the status and live usage accounting information of **running** jobs. For batch scripts you need to add `.batch` to the job ID, for example:
+Use [`sstat`](https://slurm.schedmd.com/archive/slurm-23.02.6/sstat.html) to show the status and live usage accounting information of **running** jobs. For batch scripts you need to add `.batch` to the job ID, for example:
 ```
 $ sstat 24.batch
 ```
@@ -121,7 +121,7 @@ $ sstat --jobs24.batch --format=jobid,avecpu,maxrss,ntasks
       | maxvsize | Maximum number of bytes written by all tasks in the job. |
       | ntasks | Number of tasks in a job. |
       
-      For all variables see the [SLURM documentation](https://slurm.schedmd.com/sstat.html#SECTION_Job-Status-Fields)
+      For all variables see the [SLURM documentation](https://slurm.schedmd.com/archive/slurm-23.02.6/sstat.html#SECTION_Job-Status-Fields)
 
 ## Job efficiency metrics
 To view the efficiency of individual jobs use `seff`, for example:
