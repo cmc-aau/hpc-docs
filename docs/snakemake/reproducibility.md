@@ -58,12 +58,12 @@ It is also possible to specify an existing conda environment. For example, if we
 
 ```python
 rule samtools_index:
+    conda:
+        "samtools_env"
     input:
         "data/{sample}.bam"
     output:
         "data/{sample}.bam.bai"
-    conda:
-        "samtools_env"
     shell:
         "samtools index {input}"
 ```
