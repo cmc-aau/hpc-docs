@@ -42,8 +42,18 @@ data/
 
 Specifying these in a configfile would not make sense.
 
-Instead we can use the `glob_wildcards` function from snakemake to populate the `<SAMPLES>` variable. The `glob_wildcards` function takes a pattern and a directory and returns a list of all the files that match the pattern in the directory. In our case we want all the files in the `data` folder that ends with `.txt`. We can do this like this:
+Instead we can use the `glob` or `glob_wildcards` to populate the `<SAMPLES>` variable. The `glob_wildcards` function takes a pattern and a directory and returns a list of all the files that match the pattern in the directory. In our case we want all the files in the `data` folder that ends with `.txt`. We can do this like this:
 
+### Using glob_wildcards
+```python
+import os
+from snakemake.io import glob_wildcards
+# import other modules if needed
+
+SAMPLES = glob_wildcards("data/{sample}.txt").sample
+```
+
+### Using glob
 ```python
 import os
 import glob
@@ -59,7 +69,7 @@ The `FILES` variable will now contain a list of all the files in the `data` fold
 ["sample1", "sample2", "sample3", ..., "sample1000"]
 ```
 
-We can now use the `SAMPLES` variable in the `rule all`:
+In any case, we can now use the `SAMPLES` variable in the `rule all`:
 
 ```python
 import os
@@ -69,6 +79,10 @@ import glob
 FILES = glob.glob("data/*.txt")
 SAMPLES = [os.path.basename(f).split(".")[0] for f in FILES]
 
+# or
+# 
+# from snakemake.io import glob_wildcards
+# SAMPLES = glob_wildcards("data/{sample}.txt").sample
 
 # define the output files
 rule all:
@@ -160,7 +174,7 @@ rule fastp:
 
 Here we use the dataframe to extract the R1 and R2 files for each sample as input for the `fastp` rule. We also use the dataframe to specify the output files for the `rule all`. Having a metadata file makes the pipeline feel more as a tool, which can be used for multiple projects.
 
-## Temporary files
+## Temporary files and protected files
 Often in workflows, we need to create temporary files. These files are not needed after the workflow is done, and can be deleted. Snakemake has a built-in feature for this. Going back to the getting started workflow.
 
 ```python
@@ -203,6 +217,17 @@ rule module_2:
 
 After executing the `module_2` rule, snakemake will delete the temporary file.
 
+Additionally, we can also tell snakemake to protect a file. This way we cannot accidentally overwrite the file. We can do this by adding the `protected` keyword to the rule. This will tell snakemake to not overwrite the file, if it already exists:
+
+```python
+rule module_2:
+    input:
+        "tmp/{sample}.txt"
+    output:
+        protected("results/{sample}.txt")
+    shell:
+        "cat {input} > {output}"
+```
 
 ## Adding resources to rules
 ### Threads
@@ -254,7 +279,34 @@ snakemake --cores 40
 
 This will allow snakemake to run 5 jobs in parallel, each with 8 threads.
 
+> **Note:** running snakemake with fewer threads (`--cores 1`) will downscale the threads argument. For example, if we run snakemake with 1 thread, the `fastp` rule will be executed with 1 thread.
 
+## Logging
+Another powerful feature of snakemake is the logging, which is is useful for debugging. We can specify the log file for each rule by adding the `log` keyword to the rule. For example, if we want to log the output of the `fastp` rule to a file called `fastp.log`, we can do this like so:
+
+```python
+rule fastp:
+    input:
+        R1 = <R1>,
+        R2 = <R2>
+    output:
+        R1 = <R1>,
+        R2 = <R2>
+    threads: 8
+    log: 
+        stdout = "results/{sample}/logs/fastp_stdout.log",
+        stderr = "results/{sample}/logs/fastp_stderr.log"
+    shell:
+        """
+        fastp \
+        --in1 {input.R1} --in2 {input.R2} \
+        --out1 {output.R1} --out2 {output.R2} \
+        --thread {threads} \
+        > {log.stdout} 2> {log.stderr}
+        """
+```
+
+In the above example, we log the stdout and stderr of the `fastp` rule to the `fastp_stdout.log` and `fastp_stderr.log` files respectively. The `>` and `2>` redirects the stdout and stderr to the specified files. 
 
 
 ## Cluster configuration
