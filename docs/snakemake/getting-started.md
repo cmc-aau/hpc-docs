@@ -12,7 +12,7 @@ mamba create -c conda-forge -c bioconda -n snakemake snakemake
 conda activate snakemake
 ```
 
-> **Note:** Snakemake keeps track of files but also the snakemake version, which ran the workflow. Therefore it is important to run the same version of snakemake when re-running a workflow. If try to run a workflow with a different version of snakemake, it will try to re-run all samples already processed. *Therefore, use the same version of snakemake at all times*.
+> **Note:** Snakemake keeps track of files but also the snakemake version, which ran the workflow. Therefore it is important to use the same version of snakemake when re-running a workflow. If you try to run a workflow with a different version of snakemake, it will try to re-run all samples already processed. *Therefore, use the same version of snakemake at all times*.
 
 
 ## Visual Studio Code
@@ -64,7 +64,16 @@ rule all:
         expand("results/{sample}.txt", sample=config["samples"])
 ```
 
-Alot of things are going on here. Firstly, the `configfile` is loaded. Once it is loaded the `config` variable is available. Often the config file will output directories, database paths, parameters for tools etc.
+Alot of things are going on here. Firstly, the `configfile` is loaded. Once it is loaded, the `config` variable is available. Often the config file will output directories, database paths, parameters for tools etc. A typical config file could look like this:
+
+```yaml
+samples:
+    - A
+    - B
+output_dir: "results"
+tmp_dir: "tmp"
+db_path: "data/db.sqlite"
+```
 
 
 Next, we import all the rules, which contains the steps from getting from the input to the output. 
