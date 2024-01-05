@@ -19,7 +19,7 @@ $ sacctmgr list account students -s | head -n 3
 ```
 
 ## Job usage summary
-To view the status of **past** jobs and their usage accounting information use [`sacct`](https://slurm.schedmd.com/sacct.html). `sacct` will return **everything** accounted for by default which is very inconvenient to view in a terminal window, so below are only the most essential columns shown:
+To view the status of **past** jobs and their usage accounting information use [`sacct`](https://slurm.schedmd.com/archive/slurm-23.02.6/sacct.html). `sacct` will return **everything** accounted for by default which is very inconvenient to view in a terminal window, so below are only the most essential columns shown:
 ```
 $ sacct -o jobid,jobname,start,end,NNodes,NCPUS,ReqMem,CPUTime,AveRSS,MaxRSS --user=$USER --units=G -j 138
 JobID           JobName               Start                 End   NNodes      NCPUS     ReqMem    CPUTime     AveRSS     MaxRSS 
@@ -30,7 +30,7 @@ JobID           JobName               Start                 End   NNodes      NC
 
 ```
 
-There are a huge number of other options to show, see [SLURM docs](https://slurm.schedmd.com/sacct.html#SECTION_Job-Accounting-Fields). If you really want to see everything use `sacct --long > file.txt` and dump it into a file or else it's too much for the terminal.
+There are a huge number of other options to show, see [SLURM docs](https://slurm.schedmd.com/archive/slurm-23.02.6/sacct.html#SECTION_Job-Accounting-Fields). If you really want to see everything use `sacct --long > file.txt` and dump it into a file or else it's too much for the terminal.
 
 ## Usage reports
 Account usage:
