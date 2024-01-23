@@ -1,5 +1,7 @@
 # Conda environments
-[Conda](https://docs.conda.io/projects/conda/en/latest/) is an open-source package management system and environment management system that runs on Windows, macOS, and Linux. Conda quickly installs, runs, and updates packages and their dependencies. Conda easily creates, saves, loads, and switches between environments on your local computer. It was created for Python programs but it can package and distribute software for any language. Conda also doesn't require elevated privileges allowing users to install anything with ease. In comparison to [containers](containers.md), Conda is a dependency manager at the Python package level, while containers also manage operating system dependencies at the base OS image level. Containers and conda environments are often used together to ensure complete reproducibility and portability.
+[Conda](https://docs.conda.io/projects/conda/en/latest/) is an open-source package management system and environment management system that runs on Windows, macOS, and Linux. Conda quickly installs, runs, and updates packages and their dependencies, where a sophisticated dependency solver allows installing multiple tools into the same environment at once without introducing conflicts between required versions of the individual dependencies. This is ideal for scientific projects where reproducibility is key - you can simply create a separate conda environment for each individual project.
+
+Conda was initially created for Python packages but it can package and distribute software for any language. Conda also doesn't require elevated privileges allowing users to install anything with ease. Most tools are already available in the default [Anaconda repository](https://anaconda.cloud/package-categories), but other community-driven channels like [bioconda](https://bioconda.github.io/) allow installing practically anything. In comparison to [containers](containers.md), Conda is a dependency manager at the Python package level, while containers also manage operating system dependencies at the base operating system level, hence containers and conda environments are often used together to ensure complete reproducibility and portability, see for example the [biocontainers.pro](https://biocontainers.pro/) project.
 
 [Cheatsheet here](https://docs.conda.io/projects/conda/en/latest/_downloads/843d9e0198f2a193a3484886fa28163c/conda-cheatsheet.pdf)
 
@@ -16,7 +18,12 @@ dependencies:
  - samtools=1.18
 ```
 
-Then create the environment with `mamba env create -f requirements.yml`. You can also export an **activated** environment and dump the exact versions used into a YAML file with `mamba env export > requirements.yml`. Note that when you export an environment the file will also contain a `prefix` line, which you should remove. `conda` is notoriously slow for resolving dependencies and creating environments, so it's recommended to use [`mamba`](https://mamba.readthedocs.io/en/latest/) instead of `conda` when creating and manipulating environments as it is MUCH faster (written in C++). `conda` and `mamba` otherwise have identical sub-commands and options and can be used interchangibly, but after building environments you don't really need `mamba` anymore.
+Then create the environment with `mamba env create -f requirements.yml`. You can also export an **activated** environment created previously and dump the exact versions used into a YAML file with `mamba env export > requirements.yml`.
+
+???+ "Note"
+      When you export a conda environment to a file the file will also contain a host-specific `prefix` line, which should be removed.
+
+`conda` is notoriously slow for resolving dependencies and creating environments, so it's recommended to use [`mamba`](https://mamba.readthedocs.io/en/latest/) instead of `conda` when creating and manipulating environments as it is MUCH faster (written in C++). `conda` and `mamba` otherwise have identical sub-commands and options and can be used interchangibly. After building environments `mamba` is not strictly needed anymore.
 
 Activate and deactivate environments with
 ```
@@ -57,4 +64,4 @@ dependencies:
 Be aware that specific versions are specified using double `==` with `pip` dependencies.
 
 ## R and installing R packages within conda environments
-Use `r-{package}`, list [here](https://anaconda.org/r/repo?sort=_name&sort_order=asc). Otherwise using [renv](https://rstudio.github.io/renv/articles/renv.html) is **highly recommended** for project reproducibility and portability.
+Use the notation `r-{package}` to install R and required R packages within an environment, see the list of packages [here](https://anaconda.org/r/repo?sort=_name&sort_order=asc). Alternatively using [renv](https://rstudio.github.io/renv/articles/renv.html) is **highly recommended** for project reproducibility and portability if you need to install many packages.
