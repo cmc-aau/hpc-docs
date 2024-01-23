@@ -58,10 +58,11 @@ On Windows and macOS download X2Go Client from the [X2Go website](https://wiki.x
 
 4. Click it to the right and enter your password to login
 
-**Important**: When you are done with your work do NOT just close the window, please choose "log out" from the menu in the virtual desktop unless you leave something running.
+???+ Important
+      When you are done with your work do **NOT** just close the window. Please choose "log out" from the menu in the virtual desktop unless you leave something running.
 
 ## Transferring files
-Both VS Code and MobaXterm support file transfers, but you can also use other GUI apps like [FileZilla](https://filezilla-project.org/download.php) or [WinSCP](https://winscp.net/eng/index.php). When just using a terminal there are several commands like `scp`, `rsync`, `rclone`, or `sftp`, all of which connect through the SSH protocol.
+Both VS Code and MobaXterm support file transfers, but you can also use other GUI apps like [FileZilla](https://filezilla-project.org/download.php) or [WinSCP](https://winscp.net/eng/index.php). When just using a terminal there are several tools like `scp`, `rsync`, `rclone`, or `sftp`, all of which connect through the SSH protocol.
 
 ## External access
 To access the servers while not directly connected to any AAU or [eduroam](https://eduroam.dk/) network there are two options. Either you connect through VPN, which will route all your traffic through AAU, or you can use the SSH gateway through `sshgw.aau.dk` for SSH connections only. If you need virtual desktop access only VPN will work (for now).
@@ -123,5 +124,6 @@ This must be done locally for security reasons, so that the private key never le
 Use Git Bash, which includes SSH keygen, or install a tool like PuTTYgen.
 
 #### Adding Public Keys to the Server
+Copy your public key to the server using `ssh-copy-id -i ~/.ssh/biocloud.pub username@hostname`, or manually add the contents of the public key file into the `~/.ssh/authorized_keys` file on any of the servers (the home folder is shared across them all). SSH requires that your user is the only one able to read the contents before you are allowed to login, so ensure the correct permissions are set using `chmod 700 ~/.ssh && chmod 600 ~/.ssh/authorized_keys`.
 
-Copy your public key to the server using `ssh-copy-id -i ~/.ssh/biocloud.pub username@hostname`. This must be done on each server individually since they don't share home folders. You can use the same key across all servers though.
+You should now be able to login securely without typing a password - have fun!
