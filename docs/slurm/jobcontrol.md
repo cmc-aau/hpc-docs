@@ -9,6 +9,8 @@ JOBID         NAME       USER       TIME    TIME_LEFT CPU MIN_ME ST PARTITION NO
  2380         dRep ab12cd@bio 1-01:36:22  12-22:23:38  80   300G  R   general bio-oscloud02
 ```
 
+To show only your own jobs use `squeue --me`. This is used quite often so `sq` has been made an alias of `squeue --me`.
+
 ??? "Job state codes (ST)"
       | Status	Code | Explaination |
       | --- | --- |
@@ -46,7 +48,7 @@ JOBID         NAME       USER       TIME    TIME_LEFT CPU MIN_ME ST PARTITION NO
 The columns to show can be customized using the `--format` option, but can also be set with the environment variable `SQUEUE_FORMAT` to avoid typing it every time. You can always override this to suit your needs in your `.bashrc` file. The default format is currently:
 
 ```
-SQUEUE_FORMAT="%.6i %.12j %.10u %.10M %.12L %.3C %.6m %.2t %.9P %R"
+SQUEUE_FORMAT="%.12i %.16j %.10u %.10M %.12L %.3C %.6m %.2t %.9P %R"
 ```
 
 See a full list [here](https://slurm.schedmd.com/archive/slurm-23.02.6/squeue.html#OPT_format).
@@ -68,9 +70,12 @@ scontrol requeue <job_id>
 ```
 
 ## Cancel a job
-With `sbatch` you won't be able to just hit CTRL+c to stop what's running like you're used to in a terminal. Instead you must use `scancel`. Get the job ID from `squeue -u $(whoami)`, then use [`scancel`](https://slurm.schedmd.com/archive/slurm-23.02.6/scancel.html) to cancel a running job, for example:
+With `sbatch` you won't be able to just hit CTRL+c to stop what's running like you're used to in a terminal. Instead you must use `scancel`. Get the job ID from `squeue --me`, then use [`scancel`](https://slurm.schedmd.com/archive/slurm-23.02.6/scancel.html) to cancel a running job, for example:
 ```
-$ scancel 24
+$ scancel <job_id>
+
+# cancel ALL your jobs
+$ scancel --me
 ```
 
 If the particular job doesn't stop and doesn't respond, consider using [`skill`](https://slurm.schedmd.com/archive/slurm-23.02.6/skill.html) instead.
@@ -78,36 +83,44 @@ If the particular job doesn't stop and doesn't respond, consider using [`skill`]
 ## Pause or resume a job
 Use [`scontrol`](https://slurm.schedmd.com/archive/slurm-23.02.6/scontrol.html) to control your own jobs, for example suspend a running job:
 ```
-$ scontrol suspend 24
+$ scontrol suspend <job_id>
 ```
 
 Resume again with
 ```
-$ scontrol resume 24
+$ scontrol resume <job_id>
+```
+
+## Show details about a running or queued job
+```
+scontrol show jobid=<jobid>
 ```
 
 ## Modifying job attributes
-Only a few job attributes can be changed after a job is submitted. These attributes include:
+Only a few job attributes can be changed after a job is submitted and **NOT** running yet. These attributes include:
 
  - wall clock limit
  - job name
  - job dependency
+ - partition or QOS
 
 For example:
 ```
-$ scontrol update JobId=$JobID timelimit=<new timelimit>
+$ scontrol update JobId=<jobid> timelimit=<new timelimit>
+$ scontrol update JobId=<jobid> partition=high-mem
 ```
 
-## Job status information
-Use [`sstat`](https://slurm.schedmd.com/archive/slurm-23.02.6/sstat.html) to show the status and live usage accounting information of **running** jobs. For batch scripts you need to add `.batch` to the job ID, for example:
+## Job ressource usage
+### Running jobs
+Use [`sstat`](https://slurm.schedmd.com/archive/slurm-23.02.6/sstat.html) to show the status and live usage accounting information of **only running** jobs. For batch scripts you need to add `.batch` to the job ID, for example:
 ```
-$ sstat 24.batch
+$ sstat <job_id>.batch
 ```
 
 This will print EVERY metric, so it's nice to select only a few most relevant ones, for example:
 
 ```
-$ sstat --jobs24.batch --format=jobid,avecpu,maxrss,ntasks
+$ sstat --jobs <job_id>.batch --format=jobid,avecpu,maxrss,ntasks
 ```
 
 ??? "Useful format variables"
@@ -122,6 +135,19 @@ $ sstat --jobs24.batch --format=jobid,avecpu,maxrss,ntasks
       | ntasks | Number of tasks in a job. |
       
       For all variables see the [SLURM documentation](https://slurm.schedmd.com/archive/slurm-23.02.6/sstat.html#SECTION_Job-Status-Fields)
+
+### Past jobs
+To show ressource usage of past/finished jobs (regardless of exit status), use `sacct` instead
+
+```
+# simple status info
+$ sacct -j <jobid>
+
+# everything including **ALL** ressource usage info
+$ sacct -j <jobid> --long
+```
+
+Add `-p` to for parsable output to a file if needed.
 
 ## Job efficiency metrics
 To view the efficiency of individual jobs use `seff`, for example:

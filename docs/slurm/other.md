@@ -24,11 +24,6 @@ RESV_NAME       STATE           START_TIME             END_TIME     DURATION  NO
 maintenance  INACTIVE  2023-12-18T23:00:00  2023-12-20T01:00:00   1-02:00:00  bio-oscloud[02-09]
 ```
 
-## Show details about a particular job
-```
-$ scontrol show job <jobid>
-```
-
 ## Show details about the whole cluster configuration
 ```
 $ scontrol show config
