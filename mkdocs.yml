@@ -14,9 +14,14 @@ nav:
     - slurm/accounting.md
     - slurm/other.md
   - Software:
-    - software/modules.md
     - software/conda.md
     - software/containers.md
+    - software/modules.md
+  # - Guides:
+  #   - Snakemake:
+  #     - guides/snakemake/intro.md
+  #     - guides/snakemake/tutorial.md
+  #     - guides/snakemake/biocloud.md
   - storage.md
   - events.md
 theme:
