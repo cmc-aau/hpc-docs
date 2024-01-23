@@ -23,7 +23,7 @@ Building container images requires the user to have root/admin privileges. Curre
  - Publish a `Dockerfile` to a GitHub repository and use GitHub actions to build and publish the container to the GitHub container registry
 
 ### Pre-built container images
-Usually it's not needed to build a container yourself unless you want to customize things in detail, since there are plenty of pre-built images already available that work straight of the box. For bioinformatic software the community-driven project [biocontainers.pro](https://biocontainers.pro/) should have anything you need, and if not - you can contribute! If you need a container with multiple tools installed see [multi-package containers](https://biocontainers.pro/multipackage).
+Usually it's not needed to build a container yourself unless you want to customize things in detail, since there are plenty of pre-built images already available that work straight of the box. For bioinformatic software the community-driven project [biocontainers.pro](https://biocontainers.pro/) should have anything you need, and if not - you can contribute! If you need a container with multiple tools installed see [multi-package containers](https://github.com/BioContainers/multi-package-containers).
 
 ### Running a container
 ```

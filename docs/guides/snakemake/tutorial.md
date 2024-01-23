@@ -191,7 +191,7 @@ dependencies:
 Snakemake will then create the environment(s) the first time the workflow is run and automatically load the environment before running each task.
 
 ### Containers
-To use apptainer/singularity containers you just supply the name of the container in a container registry, for example `container: docker://biocontainers/minimap2`. If you need a container with multiple tools at once see [multi-package containers](https://biocontainers.pro/multipackage).
+To use apptainer/singularity containers you just supply the name of the container in a container registry, for example `container: docker://biocontainers/minimap2`. If you need a container with multiple tools at once see [multi-package containers](https://github.com/BioContainers/multi-package-containers).
 
 ### Software modules
 [Software environment modules](../../software/modules.md) are also supported by supplying the module name to `envmodules` in the rule definition. Modules are not as declarative and portable in nature as Conda environments or containers, however, and is therefore not recommended. See additional details [here](https://snakemake.readthedocs.io/en/stable/snakefiles/deployment.html#using-environment-modules).
