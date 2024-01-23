@@ -17,11 +17,11 @@ nav:
     - software/conda.md
     - software/containers.md
     - software/modules.md
-  # - Guides:
-  #   - Snakemake:
-  #     - guides/snakemake/intro.md
-  #     - guides/snakemake/tutorial.md
-  #     - guides/snakemake/biocloud.md
+  - Guides:
+    - Snakemake:
+      - guides/snakemake/intro.md
+      - guides/snakemake/tutorial.md
+      - guides/snakemake/biocloud.md
   - storage.md
   - events.md
 theme:
