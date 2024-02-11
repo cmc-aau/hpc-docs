@@ -1,4 +1,4 @@
-# Snakemake on SLURM clusters
+# Running Snakemake workflows on SLURM clusters
 Please first ensure you understand the basics of [submitting SLURM jobs](../../slurm/request.md) before running Snakemake workflows (or anything else!) on the BioCloud. It's **highly recommended** that you use a profile like the one [provided below](#biocloud-snakemake-profile-template) to properly allow Snakemake to start tasks as individual SLURM jobs and **not** run Snakemake itself in a large ressource allocation (=job). Snakemake itself hardly requires any ressources, 1CPU and 1GB memory is plenty. It's always important when developing Snakemake workflows to make sure that reasonable ressource requirements are defined for the individual rules in the workflow (listed under `resources:` and `threads:`). Then it's only a matter of letting Snakemake be aware that it's being used on a HPC cluster and it will do things properly for you.
 
 ## Dry run for inspection
