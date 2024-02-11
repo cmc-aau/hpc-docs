@@ -59,4 +59,4 @@ bio-oscloud09             gpu     mix    5  64    2.36*   214195   206950  3333 
 See `pestat -h` for more options.
 
 ## Live monitoring
-For live monitoring of the whole cluster, the ressource utilization of individual nodes, number of SLURM jobs running etc, visit the [Grafana dashboard](http://bio-ospikachu04.srv.aau.dk:3000/) (only available on the internal AAU network).
+For live monitoring of the whole cluster, the ressource utilization of individual nodes, number of SLURM jobs running etc, visit the [Grafana dashboard](http://bio-ospikachu04.srv.aau.dk:3000/dashboards) (only available on the internal AAU network).
