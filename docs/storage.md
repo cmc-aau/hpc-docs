@@ -9,8 +9,7 @@ All nodes are connected to a Ceph network storage cluster through a few differen
 | `/raw_data` | Mounted read-only | Raw data (mostly from DNA sequencing) that should never be touched nor deleted |
 | `/incoming` | Read/write (by default) | Incoming raw data that should be moved and organized in `/raw_data` as soon as possible |
 | `/nanopore` | Read/write (by default) | Incoming raw data from nanopore sequencing that should be moved and organized in `/raw_data` as soon as possible. This mount **will be removed** in the future, please use `/incoming` instead. |
-| `/user_data` | Read-only | This is an old location for user data. This mount **will be removed** in the future, please use your home folder instead. |
-| | | |
+
 
 ## Moving large amounts of data around
 If you need to move large amounts of data (or numerous files at once regardless of size) it will happen in an instant regardless of the size if you make sure you are doing it on the same filesystem/mount, for example from `/projects/xxx` to `/projects/yyy`. However, if you need to move things across mount points, for example from `/home/xxx` to `/projects/yyy` please ask an administrator to do it for you, since moving between mount points will happen over the network and cause unneccessary traffic and load on the storage cluster, let alone be very slow. An administrator can move anything instantly anywhere on the storage cluster, but if you need to transfer external files there is no way around it, it will be limited by the network speed.
