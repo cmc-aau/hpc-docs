@@ -71,7 +71,7 @@ default-resources:
   - threads=1
   - mem_mb=512
   - gpu=0
-  - runtime="4h"
+  - runtime="0-08:00:00"
 #max threads per job/rule. Will take precedence over anything else. Adjust this
 #before submitting to SLURM and leave threads settings elsewhere untouched
 max-threads: 32
