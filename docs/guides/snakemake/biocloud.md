@@ -60,7 +60,7 @@ cluster:
     --qos={resources.qos}
     --cpus-per-task={threads}
     --mem={resources.mem_mb}
-    --time={resources.time}
+    --time={resources.runtime}
     --job-name=smk-{rule}-{wildcards}
     --output=logs/{rule}/{rule}-{wildcards}-%j.out
 #if rules don't have resources set, use these default values.
@@ -71,7 +71,7 @@ default-resources:
   - threads=1
   - mem_mb=512
   - gpu=0
-  - time=0-08:00:00
+  - runtime="4h"
 #max threads per job/rule. Will take precedence over anything else. Adjust this
 #before submitting to SLURM and leave threads settings elsewhere untouched
 max-threads: 32
