@@ -94,3 +94,5 @@ cluster-status: extras/slurm-status.sh
 ```
 
 Imagine writing all these settings on the command line every time - just no!
+
+The `extras/slurm-status.sh` script is available from the template repository [here](https://github.com/cmc-aau/snakemake_project_template/blob/main/extras/slurm-status.sh). It's not strictly necessary, so you can also just comment it out.
