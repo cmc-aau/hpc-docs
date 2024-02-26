@@ -20,8 +20,9 @@ When you have inspected the DAG or output from the dry run and you are ready to 
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --ntasks-per-node=1
-#SBATCH --partition=general
 #SBATCH --cpus-per-task=1
+#SBATCH --time=1-00:00:00
+#SBATCH --partition=general
 #SBATCH --mem=1G
 #SBATCH --mail-type=END,FAIL
 #SBATCH --mail-user=abc@bio.aau.dk
@@ -39,7 +40,7 @@ conda activate <snakemake_template>
 snakemake --dag | dot -Tsvg > results/dag.svg
 
 # Main workflow
-snakemake --profile profiles/biocloud
+snakemake --profile biocloud
 
 # Generate a report once finished (optional)
 snakemake --report results/report.html
@@ -48,7 +49,7 @@ snakemake --report results/report.html
 From this job Snakemake will submit individual SLURM jobs on your behalf for each task with the ressources defined for each rule. This can sometimes start hundreds of jobs (of course within your [limits](../../slurm/accounting.md#show-qos-info-and-limitations)) depending on the workflow and data - so please **ensure you have defined a reasonable amount of ressources for each rule** and that the individual tasks utilize them as close to 100% as possible, especially CPUs. Often ressource requirements depend on the exact input data or database being used, so it's also possible to dynamically scale the requirements using simple python lambda functions to calculate appropriate values for each ressource, see [Snakemake docs](https://snakemake.readthedocs.io/en/latest/snakefiles/rules.html#dynamic-resources) for details.
 
 ## BioCloud Snakemake profile template
-When using Snakemake to submit SLURM jobs the command with which to start the workflow can easily become quite long. Using [Snakemake profiles](https://snakemake.readthedocs.io/en/latest/executing/cli.html#profiles) instead is an easy way to avoid this, where any command line options are simply written to a `config.yaml` file instead, which is then read using the `--profile` argument as seen above. You must supply a path to a folder in which the `config.yaml` is placed, not the path to the file itself. A [default profile](https://github.com/cmc-aau/snakemake_project_template/blob/main/profiles/biocloud/config.yaml) for the BioCloud setup is included in the template repository, but is also shown below. You can adjust to suit your needs, however the `cluster` section shouldn't need any adjustment.
+When using Snakemake to submit SLURM jobs the command with which to start the workflow can easily become quite long. Using [Snakemake profiles](https://snakemake.readthedocs.io/en/latest/executing/cli.html#profiles) instead is an easy way to avoid this, where any command line options are simply written to a `config.yaml` file instead, which is then read using the `--profile` argument as seen above. You must supply a path to a folder in which a `config.yaml` is placed, not the path to the file itself. A [default profile](https://github.com/cmc-aau/snakemake_project_template/blob/main/profiles/biocloud/config.yaml) for the BioCloud setup is included in the template repository, but is also shown below. To avoid having to copy it around with every new project you can preferably place it in the default location `~/.config/snakemake/biocloud/config.yaml`. This way you don't have to supply a path to it, you can just run any snakemake workflow with `snakemake --profile biocloud` and Snakemake will find it there. Adjust to suit your needs, however the `cluster` and `default-ressources` sections shouldn't need any adjustment.
 
 ```yaml
 #command with which to submit tasks as SLURM jobs
