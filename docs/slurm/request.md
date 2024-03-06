@@ -59,7 +59,7 @@ A full-scale example SLURM `sbatch` script for a single task could look like thi
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --ntasks-per-node=1
-#SBATCH --partition=general
+#SBATCH --partition=default-op
 #SBATCH --cpus-per-task=10
 #SBATCH --mem=10G
 #SBATCH --time=2-00:00:00
@@ -90,7 +90,7 @@ An example SLURM `sbatch` script for parallel (independent) execution across mul
 #SBATCH --nodes=5
 #SBATCH --ntasks=5
 #SBATCH --ntasks-per-node=1
-#SBATCH --partition=general
+#SBATCH --partition=default-op
 #SBATCH --cpus-per-task=60
 #SBATCH --mem-per-cpu=3G
 #SBATCH --time=2-00:00:00
@@ -151,6 +151,8 @@ Exactly how many ressources your job(s) need(s) is something you have to experim
 
 ### CPUs/threads
 In general the number of CPUs that you book only affects how long the job will take to finish and how many jobs can run concurrently. The only thing to really consider is how many CPUs you want to use for the particular job out of your max limit (see [Usage accounting](https://cmc-aau.github.io/biocloud-docs/slurm/accounting/#show-qos-info-and-limitations) for how to see the current limits). If you use all CPUs for one job, you can't start more jobs until the first one has finished, the choice is yours. But regardless, it's very important to ensure that your jobs actually fully utilize the allocated number of CPUs, so don't start a job with `20` allocated CPUs if you only set max threads for a certain tool to `10`, for example. It also depends very much on the specific software tools you use for the individual steps in a workflow and how they are implemented, so you are not always in full control of the utilization. Furthermore, if you run a workflow with many different steps each using different tools, they will likely not use ressources in the same way, and some may not even support multithreading at all (like R, depending on the packages used) and thus only run in a single single-threaded process, for example. In this case it might be a good idea to either split the job into multiple jobs if they run for a long time, or use workflow tools that support cluster execution, for example [Snakemake](../guides/snakemake/intro.md) where you can define separate ressource requirements for individual steps. This is also the case for memory usage.
+
+Sometimes there is just no way around it, and **if you don't expect you job(s) to be very efficient, please submit to the overprovisioned `default-op` partition**, which is also the default. Overprovisioning simply means that SLURM will allocate more CPU's than available on each machine, so that more than one job will run on each CPU, ensuring that each physical CPU is actually utilized 100%.
 
 The number of CPUs is not a hard limit like the physical amount of memory is, on the other hand, and SLURM will never exceed the maximum physical memory of each compute node. Instead jobs are killed if they exceed the allocated amount of memory for the job (only if no other jobs need the memory), or not be allowed to start in the first place. With CPUs the processes you run simply won't be able to detect any more CPUs than those allocated, hence it's handy to just use `nproc` within scripts to detect the number of available CPUs instead of manually setting a value for each tool.
 

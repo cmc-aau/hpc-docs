@@ -22,7 +22,7 @@ When you have inspected the DAG or output from the dry run and you are ready to 
 #SBATCH --ntasks-per-node=1
 #SBATCH --cpus-per-task=1
 #SBATCH --time=1-00:00:00
-#SBATCH --partition=general
+#SBATCH --partition=default-op
 #SBATCH --mem=1G
 #SBATCH --mail-type=END,FAIL
 #SBATCH --mail-user=abc@bio.aau.dk
