@@ -59,7 +59,7 @@ Pending jobs can be marked in a "hold" state to prevent them from starting
 scontrol hold <job_id>
 ```
 
-To release a queued job from the ‘hold’ state :
+To release a queued job from the ‘hold’ or 'requeued held' states:
 ```
 scontrol release <job_id>
 ```
@@ -109,6 +109,8 @@ For example:
 $ scontrol update JobId=<jobid> timelimit=<new timelimit>
 $ scontrol update JobId=<jobid> partition=high-mem
 ```
+
+If the job is already running adjusting the time limit must be done by an administrator.
 
 ## Job ressource usage
 ### Running jobs

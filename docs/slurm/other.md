@@ -8,6 +8,9 @@ salloc: error: Job submit/allocate failed: Invalid account or account/partition 
 
 This error means you have not been associated with any usage account yet, so you must contact an administrator to add your user to the correct account.
 
+## My job is pending with a "requeued held" status
+This means something went wrong when the job started on a compute node, so the job went back into the queue to avoid draining the node. It will stay in this state forever until manually restarted. Try running a `scontrol release <job_id>` and if that doesn't work contact an administrator.
+
 ## Show busy/free cores for the entire cluster
 Example output (A=allocated, I=idle, O=other, T=total):
 ```
