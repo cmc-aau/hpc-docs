@@ -23,7 +23,7 @@ nav:
       - guides/snakemake/tutorial.md
       - guides/snakemake/biocloud.md
   - storage.md
-  - events.md
+  - maintenance.md
 theme:
   name: material
   palette: 

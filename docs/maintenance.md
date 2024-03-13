@@ -1,7 +1,4 @@
-# Upcoming events
-Here you'll find important events and planned workshops in the near future. You can also join our Teams channel to get more details and announcements, ask questions, and get help with anything. Ask an administrator to get access if you haven't been invited already.
-
-## Quarterly service windows
+# Quarterly maintenance
 There are scheduled quarterly maintenance days throughout the year on tuesdays in weeks 7, 20, 38, 49, where ITS, Netic, and the CLAAUDIA team will perform security upgrades on the OpenStack platform. The OpenStack hypervisors which host the virtual machines will be rebooted, and so will all VM's in the BioCloud. There have already been made maintenance reservations in the SLURM scheduler that ensure no jobs will be able to run these days (and you will therefore see the reason code `(ReqNodeNotAvail, Reserved for maintenance)` if the time limit extends into this reservation), but jobs can still be submitted to the queue. Stay tuned on the Teams channel.
 
 |  | 2024 | 2025 | 2026 | 2027 | 2028 |
