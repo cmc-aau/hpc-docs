@@ -11,8 +11,8 @@ The compute nodes are divided into separate partitions depending on specs to ens
 
 | Partition | Hostname | Threads/Memory | Max. mem per CPU | GPU |
 | :--- | :---: | :---: | :---: | :---: |
-| `default-op` | `bio-oscloud01` |  96t / 512 GB | 1.5 GB | - |
-| `general` | `bio-oscloud[02-06]` |  192t / 1 TB | 5 GB | - |
+| `default-op` | `bio-oscloud[01-02]` |  96-192t / 0.5-1.0 TB | 1.5 GB | - |
+| `general` | `bio-oscloud[03-06]` |  192t / 1 TB | 5 GB | - |
 | `high-mem` | `bio-oscloud[07-08]` | 192-240t / 2 TB | 10 GB | - |
 | `gpu` | `bio-oscloud09` | 64t / 256 GB | - | 2x  nvidia A10 |
 
