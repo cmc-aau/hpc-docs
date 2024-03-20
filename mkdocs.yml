@@ -7,7 +7,7 @@ repo_url: 'https://github.com/cmc-aau/biocloud-docs'
 nav:
   - index.md
   - access.md
-  - Ressource management:
+  - Resource management:
     - slurm/intro.md
     - slurm/request.md
     - slurm/jobcontrol.md

@@ -112,7 +112,7 @@ $ scontrol update JobId=<jobid> partition=high-mem
 
 If the job is already running adjusting the time limit must be done by an administrator.
 
-## Job ressource usage
+## Job resource usage
 ### Running jobs
 Use [`sstat`](https://slurm.schedmd.com/archive/slurm-23.02.6/sstat.html) to show the status and live usage accounting information of **only running** jobs. For batch scripts you need to add `.batch` to the job ID, for example:
 ```
@@ -139,13 +139,13 @@ $ sstat --jobs <job_id>.batch --format=jobid,avecpu,maxrss,ntasks
       For all variables see the [SLURM documentation](https://slurm.schedmd.com/archive/slurm-23.02.6/sstat.html#SECTION_Job-Status-Fields)
 
 ### Past jobs
-To show ressource usage of past/finished jobs (regardless of exit status), use `sacct` instead
+To show resource usage of past/finished jobs (regardless of exit status), use `sacct` instead
 
 ```
 # simple status info
 $ sacct -j <jobid>
 
-# everything including **ALL** ressource usage info
+# everything including **ALL** resource usage info
 $ sacct -j <jobid> --long
 ```
 

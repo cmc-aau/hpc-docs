@@ -7,7 +7,7 @@ The BioCloud compute nodes are divided into separate partitions depending on the
 ![SLURM overview](img/slurm-overview-inverted.png)
 
 ## Getting started
-Start with obtaining shell access to either of the 3 login nodes `bio-ospikachu[01-03].srv.aau.dk` as described in [Getting access](../access.md). To start with it's always nice to get an overview of the cluster, it's partitions, and how many ressources that are currently allocated. This is achieved with the `sinfo` command, example output:
+Start with obtaining shell access to either of the 3 login nodes `bio-ospikachu[01-03].srv.aau.dk` as described in [Getting access](../access.md). To start with it's always nice to get an overview of the cluster, it's partitions, and how many resources that are currently allocated. This is achieved with the `sinfo` command, example output:
 
 ```
 $ sinfo
@@ -41,7 +41,7 @@ $ squeue --me
   3333 as-predictio user07@bio 2-19:42:49   6-04:17:11   5    16G  R       gpu bio-oscloud09
 ```
 
-Or get a more detailed overview per compute node of current ressource allocations and which jobs are running etc with the wrapper script from [slurm_tools](https://github.com/OleHolmNielsen/Slurm_tools) `pestat`:
+Or get a more detailed overview per compute node of current resource allocations and which jobs are running etc with the wrapper script from [slurm_tools](https://github.com/OleHolmNielsen/Slurm_tools) `pestat`:
 ```
 $ pestat
 Hostname            Partition     Node Num_CPU  CPUload  Memsize  Freemem  Joblist
@@ -59,4 +59,4 @@ bio-oscloud09             gpu     mix    5  64    2.36*   214195   206950  3333 
 See `pestat -h` for more options.
 
 ## Live monitoring
-For live monitoring of the whole cluster, the ressource utilization of individual nodes, number of SLURM jobs running etc, visit the [Grafana dashboard](http://bio-ospikachu04.srv.aau.dk:3000/dashboards) (only available on the internal AAU network).
+For live monitoring of the whole cluster, the resource utilization of individual nodes, number of SLURM jobs running etc, visit the [Grafana dashboard](http://bio-ospikachu04.srv.aau.dk:3000/dashboards) (only available on the internal AAU network).

@@ -1,5 +1,5 @@
 # Usage accounting
-All users belong to an account (usually their PI) and all usage is tracked per user, but limitations can be set by administrators at a few different levels: at the cluster, partition, account, user, or QOS level. User associations with accounts rarely change, so in order to be able to temporarily request additional ressources or obtain higher priority for certain projects, users can submit to different SLURM "Quality of Service"s (QOS). By default all users submit jobs to the `normal` QOS. To submit to a different QOS to obtain a higher priority first discuss with your supervisor/PI, and then contact an administrator to get permission.
+All users belong to an account (usually their PI) and all usage is tracked per user, but limitations can be set by administrators at a few different levels: at the cluster, partition, account, user, or QOS level. User associations with accounts rarely change, so in order to be able to temporarily request additional resources or obtain higher priority for certain projects, users can submit to different SLURM "Quality of Service"s (QOS). By default all users submit jobs to the `normal` QOS. To submit to a different QOS to obtain a higher priority first discuss with your supervisor/PI, and then contact an administrator to get permission.
 
 ## Show QOS info and limitations
 ```
@@ -12,7 +12,7 @@ $ sacctmgr show qos format=name,priority,grptres,mintres,maxtres,maxtrespu,maxjo
 ```
 
 ## Undergraduate students
-Undergraduate students (upto but NOT including master projects) share ressources within the `students` account and only their combined usage is limited. View current limitations with for example:
+Undergraduate students (upto but NOT including master projects) share resources within the `students` account and only their combined usage is limited. View current limitations with for example:
 
 ```
 $ sacctmgr list account students -s | head -n 3
@@ -31,6 +31,9 @@ JobID           JobName               Start                 End   NNodes      NC
 ```
 
 There are a huge number of other options to show, see [SLURM docs](https://slurm.schedmd.com/archive/slurm-23.02.6/sacct.html#SECTION_Job-Accounting-Fields). If you really want to see everything use `sacct --long > file.txt` and dump it into a file or else it's too much for the terminal.
+
+## Job efficiency summary
+It is **essential** that everyone ensures jobs utilize the requested resources 
 
 ## Usage reports
 Account usage:
