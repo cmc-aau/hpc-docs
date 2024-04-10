@@ -9,7 +9,7 @@ If you need to run GUI apps like CLC, Arb, RStudio, etc, you need to use `axomam
 It's rarely enough with just a terminal because you more often than not need to edit some scripts in order to do anything, so below are some instructions on how to connect using a few popular code editors with built-in SSH support, but also [just a terminal](#just-a-terminal).
 
 ### Visual Studio Code
-[Visual Studio Code](https://code.visualstudio.com/) (VS Code) is a popular free cross-platform code editor with a myriad of [extensions](https://marketplace.visualstudio.com/VSCode) available for anything and everything including syntax highlighting for any programming language, integrated git support, [GitHub copilot](https://github.com/features/copilot) for AI autocompletion of code, and the list goes on. If you want one editor for everything, there isn't currently anything better out there.
+[Visual Studio Code](https://code.visualstudio.com/) (VS Code) is a popular free cross-platform code editor with a myriad of [extensions](https://marketplace.visualstudio.com/VSCode) available for anything and everything including syntax highlighting for any programming language, integrated git support, [GitHub copilot](https://github.com/features/copilot) for AI autocompletion of code, and the list goes on. If you want one editor for everything, there isn't currently anything better out there. You can use the editor to develop code and browse around etc, but you are **NOT ALLOWED** to run anything on a SLURM login node. If you need an interactive VS Code session and run things, please follow [this guide](../guides/sshdslurm/) to run VS Code inside a SLURM job instead.
 
 #### Installation (Windows, macOS, or Linux)
 Download and install using the instructions on the official [website](https://code.visualstudio.com/).
@@ -20,6 +20,7 @@ Download and install using the instructions on the official [website](https://co
 3. Add a host by either:
     - clicking on the "+" icon and enter your AAU email followed by `@` and then the server's hostname, for example: `abc@bio.aau.dk@bio-ospikachu01.srv.aau.dk`
     - Add all servers at once using the [SSH config template](#ssh-config-file) provided below by clicking the gear icon "Open SSH Config File" and paste its contents (optional).
+![Edit SSH config](img/sshconfigvscode.png)
 4. Connect and log in with your SSH password.
 5. Once connected open a project or workspace folder (or create one while doing so) by clicking File -> Open Folder (CTRL+k CTRL+o, CMD instead of CTRL if on macOS)
 
@@ -102,7 +103,6 @@ Host *.srv.aau.dk
   IdentityFile ~/.ssh/keys/bioservers
 #  ProxyJump sshgw.aau.dk
 
-# only needed for auto-completion of hostnames
 Host axomamma.srv.aau.dk
 Host bio-ospikachu01.srv.aau.dk
 Host bio-ospikachu02.srv.aau.dk

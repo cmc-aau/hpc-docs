@@ -22,6 +22,7 @@ nav:
       - guides/snakemake/intro.md
       - guides/snakemake/tutorial.md
       - guides/snakemake/biocloud.md
+    - guides/sshdslurm.md
   - storage.md
   - maintenance.md
 theme:
