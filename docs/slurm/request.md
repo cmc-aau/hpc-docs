@@ -1,16 +1,20 @@
 # Requesting resources and job submission
-There are several ways to request resources and run jobs at different complexity levels through SLURM, but here are the most essential ways for interactive (foreground) and non-interactive (background) use. Generally you need to be acquainted with 3 SLURM job submission commands depending on your needs. These are [`srun`](https://slurm.schedmd.com/archive/slurm-23.02.6/srun.html), [`salloc`](https://slurm.schedmd.com/archive/slurm-23.02.6/salloc.html), and [`sbatch`](https://slurm.schedmd.com/archive/slurm-23.02.6/sbatch.html). They all share the same options to define trackable resource constraints ("TRES" in SLURM parlor, fx number of CPUs, memory, GPU, etc), time limits, email for job status notifications, and many other things, but their use-cases differ.
+Once you are [logged in](../access.md) to one of the login nodes through SSH, there are several ways to request resources and run jobs at different complexity levels through SLURM, but here are the most essential ways for interactive (foreground) and non-interactive (background) use. Generally you need to be acquainted with 3 SLURM job submission commands depending on your needs. These are [`srun`](https://slurm.schedmd.com/archive/slurm-23.02.6/srun.html), [`salloc`](https://slurm.schedmd.com/archive/slurm-23.02.6/salloc.html), and [`sbatch`](https://slurm.schedmd.com/archive/slurm-23.02.6/sbatch.html). They all share the exact same [options](#most-essential-options) to define trackable resource constraints ("TRES" in SLURM parlor, fx number of CPUs, memory, GPU, etc), time limits, email for job status notifications, and many other things, but are made for different use-cases, which will be described below.
 
 ## Interactive jobs
-An interactive shell is useful for testing and development purposes where you need resources only for a short time, or to experiment with scripts and workflows on minimal example data before submitting larger jobs using [`sbatch`](#non-interactive-jobs) that will run for much longer in the background instead.
+An interactive shell is useful for testing and development purposes where you need resources only for a short time, or to experiment with scripts and workflows on minimal example data before submitting larger jobs using [`sbatch`](#non-interactive-jobs) that will run for much longer in the background instead. It's also the only way to run [graphical apps](#graphical-apps-gui).
 
-To immediately request and allocate resources (once available) and start an interactive shell session directly on the allocated compute node(s) through SLURM, just type [`salloc`](https://slurm.schedmd.com/archive/slurm-23.02.6/salloc.html):
+???+ Important
+      When using an interactive shell it's important to keep in mind that the allocated resources remain reserved only for you until you `exit` the shell session. So don't leave it hanging idle for too long if you know you are not going to actively use it, otherwise other users might have needed the resources in the meantime. For the same reasons, it's **not allowed** to use `salloc` or `srun` within an emulated terminal with `screen` or `tmux`, because resources will remain reserved even though nothing is running after commands/scripts have finished. It's much better to use [`sbatch`](#non-interactive-jobs) instead. As a last resort if you really insist on an interactive session you can append for example `; exit` to the last command you execute to ensure that the job allocation is automatically terminated when the command exits (regardless of exit status). Or just use `sbatch`!! :)
+
+### Using the `salloc` command
+To immediately request and allocate resources (once available) and start an **interactive shell** session directly on the allocated compute node(s) through SLURM, just type [`salloc`](https://slurm.schedmd.com/archive/slurm-23.02.6/salloc.html):
 
 ```
 $ salloc
 ```
 
-Here SLURM will find a compute node with the default amount of resources available (which is 1CPU, 512MB memory, and a 1-hour time limit) and start the session on the allocated compute node(s) within the requested resource constraints. If you need more resources you need to explicitly ask for it, for example:
+Here SLURM will find a compute node with the default amount of resources available (which is 1CPU, 512MB memory, and a 1-hour time limit at the time of writing) and start the session on the allocated compute node(s) within the requested resource constraints. If you need more resources you need to explicitly ask for it, for example:
 
 ```
 $ salloc --cpus-per-task 2 --mem 4G --time 0-3:00:00
@@ -18,19 +22,25 @@ $ salloc --cpus-per-task 2 --mem 4G --time 0-3:00:00
 
 Resources will then remain allocated until the shell is exited with `CTRL+d`, typing `exit`, or closing the window. If it takes more than a few seconds to allocate resources, your job might be queued due to a variety of reasons. If so check the [`REASON` codes](jobcontrol.md#get-job-status-info) for the job with `squeue` from another session.
 
-???+ Important
-      When using an interactive shell it's important to keep in mind that the allocated resources remain reserved only for you until you `exit` the shell session. So don't leave it hanging idle for too long if you know you are not going to actively use it, otherwise other users might have needed the resources in the meantime. For the same reasons, it's **not allowed** to use `salloc` or `srun` within an emulated terminal with `screen` or `tmux`, because resources will remain reserved even though nothing is running after commands/scripts have finished. It's much better to use [`sbatch`](#non-interactive-jobs) instead. As a last resort if you really insist on an interactive session you can append for example `; exit` to the last command you execute to ensure that the job allocation is automatically terminated when the command exits (regardless of exit status). Or just use `sbatch`!! :)
-
-To execute a command/script in the foreground through SLURM use [`srun`](https://slurm.schedmd.com/archive/slurm-23.02.6/srun.html) to run a SLURM task directly on an allocated compute node instead of first starting an interactive shell. Any required software modules or conda environments must be loaded first before issuing the command, for example:
+### Using the `srun` command
+If you just need to run a single command/script in the foreground it's better to use [`srun`](https://slurm.schedmd.com/archive/slurm-23.02.6/srun.html), which will run things directly on a compute node instead of first starting an interactive shell. As opposed to `salloc` the job is terminated **immediately** once the command/script finishes. Any required software modules or conda environments must be loaded first before issuing the command, for example:
 
 ```
 $ module load minimap2
-$ srun --ntasks 1 --cpus-per-task 8 --mem 16G --time 1-00:00:00 /path/to/script/or/command
+$ srun --cpus-per-task 8 --mem 16G --time 1-00:00:00 minimap2 <options>
 ```
 
-Resources are then freed immediately for other jobs once the command/script exits. The terminal will be blocked for the entire duration, hence for larger jobs it's ideal to submit a job through [`sbatch`](#non-interactive-jobs) instead, which will run in the background.
+The terminal will be blocked for the entire duration, hence for larger jobs it's ideal to submit a job through [`sbatch`](#non-interactive-jobs) instead, which will run in the background.
 
 [`srun`](https://slurm.schedmd.com/archive/slurm-23.02.6/srun.html) is also used if multiple tasks (separate processes) must be run within the same resource allocation (job) already obtained through [`salloc`](https://slurm.schedmd.com/archive/slurm-23.02.6/salloc.html) or [`sbatch`](#non-interactive-jobs), see [example](#multi-node-multi-task-example) below. SLURM tasks can then span multiple compute nodes at once to distribute highly parallel work at any scale.
+
+### Graphical apps (GUI)
+In order to run graphical programs simply append the [`--x11` option](https://slurm.schedmd.com/archive/slurm-23.02.6/srun.html#OPT_x11) to `salloc` or `srun` and run the program. The graphical app will then show up in a window on your own computer, while running inside a SLURM job on the cluster:
+```
+$ srun --cpus-per-task 2 --mem 4G --time 0-3:00:00 --x11 /path/to/gui/app
+```
+
+It's important to mention that in order for this to work properly, you must first ensure that you have connected to the particular login node using either the `ssh -X` option or that you have set the `ForwardX11 yes` option in your SSH config file, [see example here](../../access/#ssh-config-file).
 
 ???- "Connectivity and interactive jobs"
       Keep in mind that with interactive jobs briefly losing connection to the login-node can result in the job being killed. This is to avoid that resources would otherwise remain blocked due to unresponsive shell sessions. If you still see the job in the `squeue` overview, however, use [`sattach`](https://slurm.schedmd.com/archive/slurm-23.02.6/sattach.html) to reattach to a running interactive job, just remember to append `.interactive` to the job ID, fx `38.interactive`.
@@ -104,14 +114,14 @@ set -eu
 module load minimap2
 
 # Must use srun when doing distributed work across multiple nodes
-srun --ntasks 1 minimap2 -t 192 database.fastq input1.fastq > out.file1
-srun --ntasks 1 minimap2 -t 192 database.fastq input2.fastq > out.file2
-srun --ntasks 1 minimap2 -t 192 database.fastq input3.fastq > out.file3
-srun --ntasks 1 minimap2 -t 192 database.fastq input4.fastq > out.file4
-srun --ntasks 1 minimap2 -t 192 database.fastq input5.fastq > out.file5
+srun --ntasks 1 minimap2 -t 60 database.fastq input1.fastq > out.file1
+srun --ntasks 1 minimap2 -t 60 database.fastq input2.fastq > out.file2
+srun --ntasks 1 minimap2 -t 60 database.fastq input3.fastq > out.file3
+srun --ntasks 1 minimap2 -t 60 database.fastq input4.fastq > out.file4
+srun --ntasks 1 minimap2 -t 60 database.fastq input5.fastq > out.file5
 ```
 
-For more examples of parallel jobs and array jobs see for example [this page](https://kb.swarthmore.edu/display/ACADTECH/Running+an+array+or+batch+job+on+Strelka) for now.
+For more examples of parallel jobs and array jobs, for now see for example [this page](https://kb.swarthmore.edu/display/ACADTECH/Running+an+array+or+batch+job+on+Strelka).
 
 ???+ Important
       The `bash -l` in the top "shebang" line is required for the compute nodes to be able to load software modules and conda environments correctly.
@@ -143,6 +153,7 @@ There are plenty of options with the SLURM job submission commands, but below ar
 | `--time`                                     | `0-01:00:00` | Defines the maximum time limit for job execution before it will be killed automatically. Format `DD-HH:MM:SS`. Maximum allowed value is that of the partition used. [Details here](https://slurm.schedmd.com/archive/slurm-23.02.6/sbatch.html#OPT_time) |
 | `--mail-type`                                | `NONE` | Configures email notifications for certain job events. One or more comma-separated values of: `NONE`, `ALL`, `BEGIN`, `END`, `FAIL`, `REQUEUE`, `ARRAY_TASKS`. [Details here](https://slurm.schedmd.com/archive/slurm-23.02.6/sbatch.html#OPT_mail-type) |
 | `--mail-user`                                | Local user | Specifies the email address where job notifications are sent. |
+| `--x11`                                      | `all` | Enable forwarding of graphical applications from the job to your computer. It's required that you have either connected using the `ssh -X` option or you have set the `ForwardX11 yes` option in your [SSH config file](../../access/#ssh-config-file). For `salloc` or `srun` only. [Details here](https://slurm.schedmd.com/archive/slurm-23.02.6/srun.html#OPT_x11). |
 
 Most options are self-explanatory. But for our setup and common use-cases you almost always want to set `--nodes` to 1, meaning your job will only run on a single compute node at a time. For multithreaded applications (most are nowadays) you mostly only need to set `ntasks` to `1` because threads are spawned from a single process (=task in SLURM parlor), and thus increase `--cpus-per-task` instead.
 

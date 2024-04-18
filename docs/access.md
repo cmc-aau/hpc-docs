@@ -81,12 +81,15 @@ To avoid typing hostnames and user names constantly here's a template SSH config
 
 #### SSH config file template
 ```plaintext
-# nice-to-have global options that apply to all servers
-# prevent disconnects on network glitches and wifi reconnects
+# nice-to-have global options that apply to all servers,
+# prevents disconnects on network glitches and wifi reconnects,
+# allows forwarding GUI apps to client
 Host *
   ServerAliveInterval 60
   ServerAliveCountMax 2
   ExitOnForwardFailure yes
+  ForwardX11 yes
+  ForwardX11Trusted yes
 
 # this is only used for external access
 Host sshgw.aau.dk
