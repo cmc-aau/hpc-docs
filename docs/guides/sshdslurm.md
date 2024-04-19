@@ -26,7 +26,7 @@ set -eu
 PORT=$(python3 -c 'import socket; s=socket.socket(); s.bind(("", 0)); print(s.getsockname()[1]); s.close()')
 scontrol update JobId="$SLURM_JOB_ID" Comment="$PORT"
 
-# check whether SSH host key exists (used for sshd connection authentication, NOT for user authentication)
+# check whether SSH host key exists (used for sshd host authentication, NOT for user authentication)
 ssh_host_key="ssh_host_ed25519_key"
 if [[ ! -s "${HOME}/.ssh/${ssh_host_key}" ]]
 then
