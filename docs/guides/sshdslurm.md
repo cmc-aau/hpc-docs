@@ -56,8 +56,12 @@ In this example, the hostname of the login node `bio-ospikachu02.srv.aau.dk` mus
 
 ![Connect through bridge host](img/sshdbridgeconnect.png)
 
-Click "Connect in New (or current) Window" and once it connects you can now start working! Whatever you do in VS Code now will run remotely inside a SLURM job on one of the compute nodes.
+Finally, click the "Connect in New (or current) Window" icon next to the name. If all goes well you should see the name of the login node (as it's named in your SSH config) in the bottom left corner:
+
+![Connect through bridge host](img/sshdbridgevscodeconnected.png)
+
+Now you can start working! Whatever you do in VS Code now will run remotely inside a SLURM job on one of the compute nodes with a connection through the login node. Magic.
 
 ## Notes
  - You will not be able to connect if you use an [SSH jump host](../../access/#using-an-ssh-jump-host). [Connect through VPN](../../access/#vpn) instead if you are not at AAU.
- - If you want to be able to run multiple interactive jobs at once, you must use a different name for each job and create separate entries in the SSH config for each job.
+ - You can connect to the same job simultaneously as many times as you want, however if you have separate resource requiements, you must submit individual jobs and use a different name for each job, and also create separate entries in the SSH config for each job.
