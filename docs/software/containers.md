@@ -37,7 +37,16 @@ $ apptainer run ubuntu_22.04.sif
 $ apptainer shell ubuntu_22.04.sif
 ```
 
-For additional guidance use the Apptainer usage guide [here](https://apptainer.org/docs/user/main/index.html).
+You almost always also need to bind/mount a folder from the host machine to the container, so that it's available inside the container for input/output to the particular tool you need to use. With Singularity/Apptainer the `/tmp` folder, the current folder, and your home folder are always mounted by default. To mount additional folders use `-B`, for example:
+```
+# mount with the same path inside the container as on the host
+apptainer run -B /databases ubuntu_22.04.sif
+
+# mount at a different path inside the container
+apptainer run -B /databases:/some/other/path/databases ubuntu_22.04.sif
+```
+
+For additional guidance see the [Apptainer usage guide](https://apptainer.org/docs/user/main/index.html).
 
 ## Docker containers
-Docker is not supported directly for non-admin users due to security and compatibility issues with our user authentication mechanism, but you can instead just run them through apptainer.
+Docker itself is not supported directly for non-admin users due to security and compatibility issues with our user authentication mechanism, but you can instead just run them through apptainer by prepending `docker://` to the container path, see [this page](https://apptainer.org/docs/user/main/docker_and_oci.html).
