@@ -47,9 +47,15 @@ On your local computer, you need to set up a bridge connection through a login n
 
 Then add the following line somewhere:
 
+**Windows**
 ```
 Host bio-ospikachu02-sshdbridge
-    User abc@bio.aau.dk
+    ProxyCommand ssh bio-ospikachu02.srv.aau.dk bash -c \"nc \$(squeue --me --name=sshdbridge --states=R -h -O NodeList,Comment)\"NodeList,Comment)"
+```
+
+**Linux/MacOS**
+```
+Host bio-ospikachu02-sshdbridge
     ProxyCommand ssh bio-ospikachu02.srv.aau.dk "nc \$(squeue --me --name=sshdbridge --states=R -h -O NodeList,Comment)"
 ```
 
@@ -65,4 +71,4 @@ Now you can start working! Whatever you do in VS Code now will run remotely insi
 
 ## Notes
  - You will not be able to connect if you use an [SSH jump host](../../access/#using-an-ssh-jump-host). [Connect through VPN](../../access/#vpn) instead if you are not at AAU.
- - You can connect to the same job simultaneously as many times as you want, however if you have separate resource requiements, you must submit individual jobs and use a different name for each job, and also create separate entries in the SSH config for each job.
+ - You can connect to the same job simultaneously as many times as you want, however if you have separate resource requirements, you must submit individual jobs and use a different name for each job, and also create separate entries in the SSH config for each job.

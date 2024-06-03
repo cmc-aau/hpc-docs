@@ -100,7 +100,7 @@ Host sshgw.aau.dk
 
 # use the same user name (and optional SSH key) for all bioservers
 # uncomment the ProxyJump line for external access without VPN
-Host *.srv.aau.dk
+Host *.srv.aau.dk bio-os*
   User abc@bio.aau.dk
   Port 22
   IdentityFile ~/.ssh/keys/bioservers
