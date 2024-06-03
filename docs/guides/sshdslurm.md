@@ -37,7 +37,7 @@ fi
 
 # start sshd server on the available port
 echo "Starting sshd on port $PORT"
-/usr/sbin/sshd -D -p "${PORT}" -f /dev/null -h "${HOME}/.ssh/ssh_host_ed25519_key"
+/usr/sbin/sshd -D -p "${PORT}" -h "${HOME}/.ssh/ssh_host_ed25519_key"
 ```
 
 ## Adjust local SSH config
@@ -49,6 +49,7 @@ Then add the following line somewhere:
 
 ```
 Host bio-ospikachu02-sshdbridge
+    User abc@bio.aau.dk
     ProxyCommand ssh bio-ospikachu02.srv.aau.dk "nc \$(squeue --me --name=sshdbridge --states=R -h -O NodeList,Comment)"
 ```
 
