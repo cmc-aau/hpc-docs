@@ -13,6 +13,7 @@ nav:
     - slurm/jobcontrol.md
     - slurm/accounting.md
     - slurm/other.md
+    - slurm/tldr.md
   - Software:
     - software/conda.md
     - software/containers.md

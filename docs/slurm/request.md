@@ -66,9 +66,6 @@ A full-scale example SLURM `sbatch` script for a single task could look like thi
 #!/usr/bin/bash -l
 #SBATCH --job-name=minimap2test
 #SBATCH --output=job_%j_%x.out
-#SBATCH --nodes=1
-#SBATCH --ntasks=1
-#SBATCH --ntasks-per-node=1
 #SBATCH --partition=default-op
 #SBATCH --cpus-per-task=10
 #SBATCH --mem=10G
@@ -82,7 +79,8 @@ set -eu
 # load software modules or environments
 module load minimap2
 
-# Get number of CPUs from SLURM allocation.
+# Get number of CPUs from the SLURM allocation (SLURM will sometimes 
+# give you more than what you have requested to optimize efficiency).
 # This only works with single-node jobs
 max_threads="$(nproc)"
 
