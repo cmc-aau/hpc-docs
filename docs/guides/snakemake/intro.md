@@ -60,7 +60,7 @@ conda activate snakemake
 ???- "Note: The Snakemake version matters"
       Snakemake keeps track of files but also the Snakemake version used to run the workflow. Therefore it is important to use the same version of snakemake when re-running a workflow. If you try to run a workflow with a different version of snakemake, it will re-run all samples already processed. Therefore be explicit about the version installed and ensure that it's written down somewhere, fx in the project `README` file or a conda `environment.yml` file.
 
-If you use [Visual Studio Code](../../../access.md#visual-studio-code), it can be handy to install the `snakemake` extension to enable syntax highlighting, linting, and autocompletion when developing workflows.
+If you use [Visual Studio Code](../../access/ssh.md#visual-studio-code), it can be handy to install the `snakemake` extension to enable syntax highlighting, linting, and autocompletion when developing workflows.
 
 ## Workflow catalogs
 Before you go ahead and create a new workflow from scratch, it's a good idea to have a look in the public [Snakemake workflow catalog](https://snakemake.github.io/snakemake-workflow-catalog/), because someone might have already made something similar you could use instead. Also have a look at [WorkflowHub](https://workflowhub.eu/) for workflows made with Snakemake, but also other workflow tools.

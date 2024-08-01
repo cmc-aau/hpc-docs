@@ -1,8 +1,8 @@
 # Running Snakemake workflows on SLURM clusters
-Please first ensure you understand the basics of [submitting SLURM jobs](../../slurm/request.md) before running Snakemake workflows (or anything else!) on the BioCloud. It's **highly recommended** that you use a profile like the one [provided below](#biocloud-snakemake-profile-template) to properly allow Snakemake to start tasks as individual SLURM jobs and **not** run Snakemake itself in a large resource allocation (=job). Snakemake itself hardly requires any resources, 1CPU and 1GB memory is plenty. It's always important when developing Snakemake workflows to make sure that reasonable resource requirements are defined for the individual rules in the workflow (listed under `resources:` and `threads:`). Then it's only a matter of letting Snakemake be aware that it's being used on a HPC cluster and it will do things properly for you.
+Please first ensure you understand the basics of [submitting SLURM jobs](../../slurm/jobsubmission.md) before running Snakemake workflows (or anything else!) on the BioCloud. It's **highly recommended** that you use a profile like the one [provided below](#biocloud-snakemake-profile-template) to properly allow Snakemake to start tasks as individual SLURM jobs and **not** run Snakemake itself in a large resource allocation (=job). Snakemake itself hardly requires any resources, 1CPU and 1GB memory is plenty. It's always important when developing Snakemake workflows to make sure that reasonable resource requirements are defined for the individual rules in the workflow (listed under `resources:` and `threads:`). Then it's only a matter of letting Snakemake be aware that it's being used on a HPC cluster and it will do things properly for you.
 
 ## Dry run for inspection
-Before running the workflow, the [DAG visualization](tutorial.md#the-directed-acyclic-graph-dag) mentioned on the previous page is a very useful way to quickly get an overview of exactly which tasks will be run and the dependencies between them. It can become quite large though, so it can also be useful to perform a "dry run", where Snakemake will output all of the tasks to be run without actually running anything. This can be done in a small [interactive job](../../slurm/request.md#interactive-jobs) and the output piped to a file with fx:
+Before running the workflow, the [DAG visualization](tutorial.md#the-directed-acyclic-graph-dag) mentioned on the previous page is a very useful way to quickly get an overview of exactly which tasks will be run and the dependencies between them. It can become quite large though, so it can also be useful to perform a "dry run", where Snakemake will output all of the tasks to be run without actually running anything. This can be done in a small [interactive job](../../slurm/jobsubmission.md#interactive-jobs) and the output piped to a file with fx:
 
 ```
 srun --ntasks 1 --cpus-per-task 1 --mem 1G snakemake -n > workflow_dryrun.txt
@@ -11,7 +11,7 @@ srun --ntasks 1 --cpus-per-task 1 --mem 1G snakemake -n > workflow_dryrun.txt
 If you have used the recommended folder structure mentioned earlier, Snakemake will automatically detect and use the `workflow/Snakefile`, but you may have more than one, in which case you must also supply `-s <path to Snakefile>`. 
 
 ## Submit the workflow
-When you have inspected the DAG or output from the dry run and you are ready to submit the full-scale workflow, you can do this in a [non-interactive SLURM job](../../slurm/request.md#non-interactive-jobs) using a batch script like this one:
+When you have inspected the DAG or output from the dry run and you are ready to submit the full-scale workflow, you can do this in a [non-interactive SLURM job](../../slurm/jobsubmission.md#non-interactive-jobs) using a batch script like this one:
 
 ```shell
 #!/usr/bin/bash -l

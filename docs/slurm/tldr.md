@@ -1,8 +1,8 @@
 # TLDR
-Here's a quick "too long, didn't read" guide for those who are too scared to read all the details and just want to get started quickly.
+Here's a quick "too long, didn't read" guide for those who are too scared to read all the details and just want to get started quickly. There is nothing here you don't need to know!
 
 ## How to submit a SLURM job
-Start with [logging in](../access.md) to one of the login nodes through SSH.
+Start with [logging in](../access/ssh.md) to one of the login nodes through SSH.
 
 ### Interactive
 If you just need an interactive shell to experiment with some quick commands use `salloc`, for example:
@@ -18,7 +18,7 @@ This will start a shell on a compute node within a SLURM allocation (here 2 CPUs
 ### Non-interactive
 For larger jobs that will run for several hours or days, you need to submit SLURM batch jobs using `sbatch`:
 
- - Write a shell script (using `nano` or whatever editor you want) named for example `submit.sh` which contains the command(s) you need to run, and let SLURM know how many resources your job needs by filling in the `#SBATCH` comments ([more options here](request.md#most-essential-options)) at the top, for example:
+ - Write a shell script (using `nano` or whatever editor you want) named for example `submit.sh` which contains the command(s) you need to run, and let SLURM know how many resources your job needs by filling in the `#SBATCH` comments ([more options here](jobsubmission.md#most-essential-options)) at the top, for example:
 
 ```bash
 #!/usr/bin/bash -l
@@ -45,7 +45,7 @@ max_threads="$(nproc)"
 # run one or more commands as part a full pipeline script or call scripts from elsewhere
 minimap2 -t "$max_threads" database.fastq input.fastq > out.file
 ```
-This will request 10 CPUs and 10GB memory for a maximum of 2 days on one of the compute nodes within the `default-op` compute node partition (see [hardware overview](../index.md#slurm-partitions)). If you need to use a GPU details are [here](request.md#requesting-one-or-more-gpus).
+This will request 10 CPUs and 10GB memory for a maximum of 2 days on one of the compute nodes within the `default-op` compute node partition (see [hardware overview](../index.md#slurm-partitions)). If you need to use a GPU details are [here](jobsubmission.md#requesting-one-or-more-gpus).
 
  - Submit the job to the queue by typing the command `sbatch submit.sh`
  - Check the job status using `squeue --me` (or the convenient shorter alias `sq`). The job will start once a compute node has enough available resources
@@ -57,7 +57,7 @@ The job allocation is **entirely yours**, which means you cannot affect other pe
 
 !!! warning "Always inspect and optimize efficiency for next time!"
 
-    When the job completes or fails, **!!!ALWAYS!!!** inspect the CPU and memory usage of the job in either the notification email or using [these commands](accounting.md#job-efficiency-summary) and adjust the next job accordingly!
+    When the job completes or fails, **!!!ALWAYS!!!** inspect the CPU and memory usage of the job in either the notification email received or using [these commands](accounting.md#job-efficiency-summary) and adjust the next job accordingly! This is essential to avoid wasting resources which other people could have used.
 
 ## Choosing the right compute node partition
-If the CPU and memory efficiency/usage of a job was >75%, you are allowed to submit to other partitions (`general`, or `high-mem` if you need lots of memory, see [hardware overview](../index.md#slurm-partitions)) than the `default-op` partition, which can potentially get things done quicker - a win for everyone. But if not, you will waste resources which could have been used by others. The `default-op` partition has less memory available per CPU, however the physical CPUs are shared across jobs to help keep them as busy as possible at all times. The allocated amount of memory will always be yours and yours alone, on the other hand. Many processes will not use all CPUs available for the full duration. This depends heavily on the particular software/tools in use and how they are implemented, as well as the actual input data. Sometimes there is just nothing you can do, but often there is. More details [here](request.md#how-many-resources-should-i-request-for-my-jobs). 
+If the CPU and memory efficiency/usage of a job was >75%, you are allowed to submit to other partitions (`general`, or `high-mem` if you need lots of memory, see [hardware overview](partitions.md)) than the `default-op` partition, which can potentially get things done quicker - a win for everyone. But if not, you will waste resources which could have been used by others. The `default-op` partition has less memory available per CPU, however the physical CPUs are shared across jobs to help keep them as busy as possible at all times. The allocated amount of memory will always be yours and yours alone, on the other hand. Many processes will not use all CPUs available for the full duration. This depends heavily on the particular software/tools in use and how they are implemented, as well as the actual input data. Sometimes there is just nothing you can do, but often there is. More details [here](jobsubmission.md#how-many-resources-should-i-request-for-my-jobs). 

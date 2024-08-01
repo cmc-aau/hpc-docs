@@ -6,26 +6,39 @@ repo_name: 'cmc-aau/biocloud-docs'
 repo_url: 'https://github.com/cmc-aau/biocloud-docs'
 nav:
   - index.md
-  - access.md
+  - Access:
+    - access/ssh.md
+    - access/webportal.md
   - Resource management:
     - slurm/intro.md
-    - slurm/request.md
+    - slurm/jobsubmission.md
+    - slurm/partitions.md
+    - slurm/efficiency.md
     - slurm/jobcontrol.md
     - slurm/accounting.md
     - slurm/other.md
-    - slurm/tldr.md
   - Software:
     - software/conda.md
     - software/containers.md
     - software/modules.md
+    #- software/preinstalled.md
   - Guides:
+    - Interactive Web portal (OpenOndemand):
+      - guides/webportal/files.md
+      - guides/webportal/jobqueue.md
+      #- guides/webportal/jobcomposer.md
+      - guides/webportal/shell.md
+      - Interactive apps:
+        - guides/webportal/apps/virtualdesktop.md
+        - guides/webportal/apps/jupyter.md
+        - guides/webportal/apps/rstudio.md
+        - guides/webportal/apps/coder.md
     - Snakemake:
       - guides/snakemake/intro.md
       - guides/snakemake/tutorial.md
       - guides/snakemake/biocloud.md
     - guides/sshdslurm.md
   - storage.md
-  - maintenance.md
 theme:
   name: material
   palette: 

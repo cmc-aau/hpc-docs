@@ -65,3 +65,14 @@ Be aware that specific versions are specified using double `==` with `pip` depen
 
 ## R and installing R packages within conda environments
 Use the notation `r-{package}` to install R and required R packages within an environment, see the list of packages [here](https://anaconda.org/r/repo?sort=_name&sort_order=asc). Alternatively using [renv](https://rstudio.github.io/renv/articles/renv.html) is **highly recommended** for project reproducibility and portability if you need to install many packages.
+
+## VS Code and conda environments
+To ensure VS Code uses for example R and Python installations in conda environments, you can make a file `.vscode/settings.json` in the project folder and write for example:
+```shell
+{
+  "r.rterm.linux": "${userHome}/.conda/envs/myproject/bin/R",
+  "python.defaultInterpreterPath": "${userHome}/.conda/envs/myproject/bin/python"
+}
+```
+
+Read more details [here](https://code.visualstudio.com/docs/python/environments).

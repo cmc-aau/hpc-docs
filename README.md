@@ -8,7 +8,7 @@ This is a public repository and website, so don't publish anything sensitive!
 ## Testing locally
 Everything is markdown so `mkdocs` is not strictly needed locally unless you want to inspect the outcome of the changes before pushing to GitHub. If so you can use `mkdocs` and `mkdocs-material` in a few different ways:
  
- - Use the development container in VSCode
+ - Use the development container in VS Code
 Install the "Dev Containers" extension and reopen the folder in a container (F1 -> Dev Containers: Reopen in Container).
 
  - Use pipenv
@@ -16,7 +16,7 @@ Install `pipenv` from `pip` or `apt`, then run `pipenv install` to install the r
 
  - Install `mkdocs` and `mkdocs-material` locally using `pip` or `conda` or any other way you want.
 
-Run `mkdocs serve` or `pipenv run mkdocs serve` if using `pipenv`. This will serve the site locally, any changes are updated live in the local browser. To show both editor and website side-by-side within VSCode hit F1 -> Simple browser: Show -> http://127.0.0.1:8000.
+Run `mkdocs serve` or `pipenv run mkdocs serve` if using `pipenv`. This will serve the site locally, any changes are updated live in the local browser. To show both editor and website side-by-side within VS Code hit F1 -> Simple browser: Show -> http://127.0.0.1:8000.
 
 ## To-do
 - github how to add SSH key
