@@ -50,7 +50,7 @@ Then add the following line somewhere:
 **Windows**
 ```
 Host bio-ospikachu02-sshdbridge
-    ProxyCommand ssh bio-ospikachu02.srv.aau.dk bash -c \"nc \$(squeue --me --name=sshdbridge --states=R -h -O NodeList,Comment)\"NodeList,Comment)"
+    ProxyCommand ssh bio-ospikachu02.srv.aau.dk bash -c \"nc \$(squeue --me --name=sshdbridge --states=R -h -O NodeList,Comment)\"
 ```
 
 **Linux/MacOS**
