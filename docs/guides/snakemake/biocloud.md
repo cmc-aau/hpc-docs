@@ -1,5 +1,5 @@
 # Running Snakemake workflows on SLURM clusters
-Please first ensure you understand the basics of [submitting SLURM jobs](../../slurm/jobsubmission.md) before running Snakemake workflows (or anything else!) on the BioCloud. It's **highly recommended** that you use a profile like the one [provided below](#biocloud-snakemake-profile-template) to properly allow Snakemake to start tasks as individual SLURM jobs and **not** run Snakemake itself in a large resource allocation (=job). Snakemake itself hardly requires any resources, 1CPU and 1GB memory is plenty. It's always important when developing Snakemake workflows to make sure that reasonable resource requirements are defined for the individual rules in the workflow (listed under `resources:` and `threads:`). Then it's only a matter of letting Snakemake be aware that it's being used on a HPC cluster and it will do things properly for you.
+Please first ensure you understand the basics of [submitting SLURM jobs](../../slurm/jobsubmission.md) before running Snakemake workflows (or anything else!) on the BioCloud. It's **highly recommended** that you use a profile like the one [provided below](#biocloud-snakemake-profile) to properly allow Snakemake to start tasks as individual SLURM jobs and **not** run Snakemake itself in a large resource allocation (=job). Snakemake itself hardly requires any resources, 1CPU and 1GB memory is plenty. It's always important when developing Snakemake workflows to make sure that reasonable resource requirements are defined for the individual rules in the workflow (listed under `resources:` and `threads:`). Then it's only a matter of letting Snakemake be aware that it's being used on a HPC cluster and it will do things properly for you.
 
 ## Dry run for inspection
 Before running the workflow, the [DAG visualization](tutorial.md#the-directed-acyclic-graph-dag) mentioned on the previous page is a very useful way to quickly get an overview of exactly which tasks will be run and the dependencies between them. It can become quite large though, so it can also be useful to perform a "dry run", where Snakemake will output all of the tasks to be run without actually running anything. This can be done in a small [interactive job](../../slurm/jobsubmission.md#interactive-jobs) and the output piped to a file with fx:
@@ -48,8 +48,8 @@ snakemake --report results/report.html
 
 From this job Snakemake will submit individual SLURM jobs on your behalf for each task with the resources defined for each rule. This can sometimes start hundreds of jobs (of course within your [limits](../../slurm/accounting.md#show-qos-info-and-limitations)) depending on the workflow and data - so please **ensure you have defined a reasonable amount of resources for each rule** and that the individual tasks utilize them as close to 100% as possible, especially CPUs. Often resource requirements depend on the exact input data or database being used, so it's also possible to dynamically scale the requirements using simple python lambda functions to calculate appropriate values for each resource, see [Snakemake docs](https://snakemake.readthedocs.io/en/latest/snakefiles/rules.html#dynamic-resources) for details.
 
-## BioCloud Snakemake profile template
-When using Snakemake to submit SLURM jobs the command with which to start the workflow can easily become quite long. Using [Snakemake profiles](https://snakemake.readthedocs.io/en/latest/executing/cli.html#profiles) instead is an easy way to avoid this, where any command line options are simply written to a `config.yaml` file instead, which is then read using the `--profile` argument as seen above. You must supply a path to a folder in which a `config.yaml` is placed, not the path to the file itself. A [default profile](https://github.com/cmc-aau/snakemake_project_template/blob/main/profiles/biocloud/config.yaml) for the BioCloud setup is included in the template repository, but is also shown below. To avoid having to copy it around with every new project you can preferably place it in the default location `~/.config/snakemake/biocloud/config.yaml`. This way you don't have to supply a path to it, you can just run any snakemake workflow with `snakemake --profile biocloud` and Snakemake will find it there. Adjust to suit your needs, however the `cluster` and `default-resources` sections shouldn't need any adjustment.
+## BioCloud Snakemake profile
+When using Snakemake to submit SLURM jobs the command with which to start the workflow can easily become quite long (as many as 20+ arguments). Using [Snakemake profiles](https://snakemake.readthedocs.io/en/latest/executing/cli.html#profiles) instead is an easy way to avoid this, where any command line options are simply written to a `config.yaml` file instead, which is then read by Snakemake using the `--profile` argument. On the BioCloud login and compute nodes there is already an optimized default profile pre-installed for all users in `/etc/xdg/snakemake/biocloud/config.yaml`, which will be automatically found by snakemake by name if you just type `snakemake --profile biocloud`. If you need to adjust this profile to suit your needs, you must copy it and place it in either the project folder from where snakemake will be run, or in the user standard location `~/.config/snakemake/biocloud/config.yaml` to avoid copying it around several times for each project. You must supply a name or a path to a folder in which a `config.yaml` is placed, not the path to the file itself. The default profile, which is optimized for our particular setup, is also shown below.
 
 ```yaml
 #command with which to submit tasks as SLURM jobs
@@ -72,13 +72,12 @@ default-resources:
   - threads=1
   - mem_mb=512
   - gpu=0
-  - runtime="0-08:00:00"
+  - runtime="0-01:00:00"
 #max threads per job/rule. Will take precedence over anything else. Adjust this
 #before submitting to SLURM and leave threads settings elsewhere untouched
 max-threads: 32
 use-conda: True
 use-singularity: False
-conda-frontend: mamba
 printshellcmds: False
 jobs: 50
 local-cores: 1
@@ -91,9 +90,9 @@ scheduler: greedy
 max-status-checks-per-second: 5
 cluster-cancel: scancel
 #script to get job status for snakemake, unfortunately neccessary
-cluster-status: extras/slurm-status.sh
+cluster-status: slurm-status.sh
 ```
 
 Imagine writing all these settings on the command line every time - just no!
 
-The `extras/slurm-status.sh` script is available from the template repository [here](https://github.com/cmc-aau/snakemake_project_template/blob/main/extras/slurm-status.sh). It's not strictly necessary, so you can also just comment it out.
+The `extras/slurm-status.sh` script on the last line is available from the template repository [here](https://github.com/cmc-aau/snakemake_project_template/blob/main/extras/slurm-status.sh) or at `/etc/xdg/snakemake/biocloud/slurm-status.sh`. It's not strictly necessary, only if you need to cancel the workflow before it's finished, so you can also just comment it out.
