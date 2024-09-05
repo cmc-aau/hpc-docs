@@ -121,7 +121,7 @@ srun --ntasks 1 minimap2 -t 60 database.fastq input4.fastq > out.file4
 srun --ntasks 1 minimap2 -t 60 database.fastq input5.fastq > out.file5
 ```
 
-For more examples of parallel jobs and array jobs, for now see for example [this page](https://kb.swarthmore.edu/display/ACADTECH/Running+an+array+or+batch+job+on+Strelka).
+For more examples of parallel jobs and array jobs, for now see for example [this page](https://swatkb.atlassian.net/wiki/spaces/ACADTECH/pages/200900610/Running+Array+or+Batch+Jobs).
 
 ???+ Important
       The `bash -l` in the top "shebang" line is required for the compute nodes to be able to load software modules and conda environments correctly.
