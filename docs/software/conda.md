@@ -18,12 +18,10 @@ dependencies:
  - samtools=1.18
 ```
 
-Then create the environment with `mamba env create -f requirements.yml`. You can also export an **activated** environment created previously and dump the exact versions used into a YAML file with `mamba env export > requirements.yml`.
+Then create the environment with `conda env create -f requirements.yml`. You can also export an **activated** environment created previously and dump the exact versions used into a YAML file with `conda env export > requirements.yml`.
 
 ???+ "Note"
-      When you export a conda environment to a file the file will also contain a host-specific `prefix` line, which should be removed.
-
-`conda` is notoriously slow for resolving dependencies and creating environments, so it's recommended to use [`mamba`](https://mamba.readthedocs.io/en/latest/) instead of `conda` when creating and manipulating environments as it is MUCH faster (written in C++). `conda` and `mamba` otherwise have identical sub-commands and options and can be used interchangibly. After building environments `mamba` is not strictly needed anymore.
+      When you export a conda environment to a file the file may also contain a host-specific `prefix` line, which should be removed.
 
 Activate and deactivate environments with
 ```

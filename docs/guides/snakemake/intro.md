@@ -46,14 +46,14 @@ project/
 At first it might seem like a lot of files and folders, but workflows can grow quickly, so it's nice with a proper structure from the beginning. You can of course also put everything in a separate subfolder if developing a workflow is not the main goal of the project.
 
 ## Installation
-To setup Snakemake use the [`environment.yaml`](https://github.com/cmc-aau/snakemake_project_template/blob/main/environment.yml) file provided in the template repository to create a [conda environment from a file](../../software/conda.md#creating-and-activating-an-environment) for the project with `mamba env create -f environment.yml`. It's always best practice to note software dependencies down somewhere in a file, but alternatively you can also load the prebuilt [software module](../../software/modules.md) using:
+To setup Snakemake use the [`environment.yaml`](https://github.com/cmc-aau/snakemake_project_template/blob/main/environment.yml) file provided in the template repository to create a [conda environment from a file](../../software/conda.md#creating-and-activating-an-environment) for the project with `conda env create -f environment.yml`. It's always best practice to note software dependencies down somewhere in a file, but alternatively you can also load the prebuilt [software module](../../software/modules.md) using:
 ```bash
 module load snakemake/7.18.2-foss-2020b
 ```
 
 or create and activate a conda environment for the project on the command line:
 ```
-mamba create -c conda-forge -c bioconda -n snakemake snakemake==7.18.2
+conda create -c conda-forge -c bioconda -n snakemake snakemake==7.18.2
 conda activate snakemake
 ```
 
