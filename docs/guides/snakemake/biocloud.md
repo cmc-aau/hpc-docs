@@ -76,7 +76,7 @@ default-resources:
 #max threads per job/rule. Will take precedence over anything else. Adjust this
 #before submitting to SLURM and leave threads settings elsewhere untouched
 max-threads: 32
-use-conda: True
+use-conda: False
 use-singularity: False
 printshellcmds: False
 jobs: 50
