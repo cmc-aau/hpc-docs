@@ -87,18 +87,14 @@ Host bio-ospikachu03.srv.aau.dk
 ```
 
 ### SSH Public Key Authentication
-[SSH public key authentication](https://www.ssh.com/academy/ssh/public-key-authentication) offers a more secure way to connect to a server, and is also more convenient, since you don't have to type in your password every single time you log in or transfer a file. An SSH private key is essentially just a very long password that is used to authenticate with a server holding the cryptographically linked public key for your user (think of it as the lock for the private key). Any SSH client that you choose to use will connect through the SSH program on your computer under the hood, so this will also apply to all of them.
+[SSH public key authentication](https://www.ssh.com/academy/ssh/public-key-authentication) offers a more secure way to connect to a server, and is also more convenient, since you don't have to type in your password every single time you log in or transfer a file. An SSH private key is essentially just a very long password that is used to authenticate with a server holding the cryptographically linked public key for your user (think of it as the lock for the private key). You can even add an additional layer of security by encrypting the private key itself using a password when generating the pair. Any SSH client that you choose to use will connect through the SSH program on your computer under the hood, so public key authentication will also apply to them if set up like below.
 
 #### Generating SSH Key Pairs
-This must be done locally for security reasons, so that the private key never leaves your computer. If you use a password manager (please do) like 1Password or bitwarden you can usually both generate and safely store and use SSH keys directly from the vault without it lying around in a file. It's important that the key is not generated using the default (usually) RSA type algorithm, because it's outdated and can be brute-forced easily with modern hardware, so please use the for example the `ed25519` algorithm instead.
+This must be done locally for security reasons, so that the private key never leaves your computer. If you use a password manager (please do) like 1Password or bitwarden you can usually both generate and safely store and use SSH keys directly from the vault without it lying around in a file. It's important that the key is not generated using the default (usually) RSA type algorithm, because it's outdated and can be brute-forced easily with modern hardware, so please use for example the `ed25519` algorithm instead.
 
-##### On Linux or macOS:
-1. Open your terminal.
-2. Generate an SSH key pair with the following command: `ssh-keygen -t ed25519`.
-3. Follow the prompts, and save the two keyfiles somewhere (usually in the hidden folder `~/.ssh/biocloud`).
-
-##### On Windows:
-Use Git Bash, which includes SSH keygen, or install a tool like PuTTYgen.
+1. Open your terminal (on Windows called command prompt, hit `win+r` and type `cmd`)
+2. Generate an SSH key pair by running the command: `ssh-keygen -t ed25519`
+3. Follow the prompts, and save the two keyfiles somewhere (the convention is to place it somewhere in the hidden folder `~/.ssh/` in your home folder)
 
 #### Adding Public Keys to the Server
 Copy your public key to the server using `ssh-copy-id -i ~/.ssh/biocloud.pub username@hostname`, or manually add the contents of the public key file into the `~/.ssh/authorized_keys` file on any of the servers (the home folder is shared across them all). SSH requires that your user is the only one able to read the contents before you are allowed to login, so ensure the correct permissions are set using `chmod 700 ~/.ssh && chmod 600 ~/.ssh/authorized_keys`.
