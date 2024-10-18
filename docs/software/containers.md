@@ -48,5 +48,8 @@ apptainer run -B /databases:/some/other/path/databases ubuntu_22.04.sif
 
 For additional guidance see the [Apptainer usage guide](https://apptainer.org/docs/user/main/index.html).
 
+#### GPU support
+Use the `--nvccli` flag, not `--nv`.
+
 ## Docker containers
 Docker itself is not supported directly for non-admin users due to security and compatibility issues with our user authentication mechanism, but you can instead just run them through apptainer by prepending `docker://` to the container path, see [this page](https://apptainer.org/docs/user/main/docker_and_oci.html).
