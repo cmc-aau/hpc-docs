@@ -75,11 +75,11 @@ A simple example SLURM `sbatch` script for a single task could look like this:
 #SBATCH --mail-type=END,FAIL
 #SBATCH --mail-user=abc@bio.aau.dk
 
-# Exit on first error and if any variables are unset
-set -eu
+# Exit script on the first error
+set -euo pipefail
 
-# load software modules or environments
-module load minimap2
+# load conda environment or software modules
+conda activate minimap2
 
 # Get number of CPUs from the SLURM allocation (SLURM will sometimes 
 # give you more than what you have requested to optimize efficiency).
@@ -107,11 +107,11 @@ An example SLURM `sbatch` script for parallel (independent) execution across mul
 #SBATCH --mail-type=END,FAIL
 #SBATCH --mail-user=abc@bio.aau.dk
 
-# Exit on first error and if any variables are unset
-set -eu
+# Exit script on the first error
+set -euo pipefail
 
-# load software modules or environments
-module load minimap2
+# load conda environment or software modules
+conda activate minimap2
 
 # Must use srun when doing distributed work across multiple nodes
 srun --ntasks 1 minimap2 -t 60 database.fastq input1.fastq > out.file1
