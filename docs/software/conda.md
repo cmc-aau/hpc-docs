@@ -5,8 +5,22 @@ Conda was initially created for Python packages but it can package and distribut
 
 [Cheatsheet here](https://docs.conda.io/projects/conda/en/latest/_downloads/843d9e0198f2a193a3484886fa28163c/conda-cheatsheet.pdf)
 
-## Creating and activating an environment
-The best practice is to note everything down in a YAML file before you forget things and keep it in the root of the project folder, for example:
+## Creating an environment
+To install software through conda, it must always be done in an environment. To create an environment and install some software in it, run for example:
+
+```
+# create+activate+install
+conda env create -n myproject
+conda activate myproject
+conda install -c bioconda somepkg1=1.0 somepkg2=2.0
+
+# or in one command
+conda create -n myproject -c bioconda somepkg1 somepkg2
+```
+
+Make sure to add the required [conda channels](https://docs.anaconda.com/psm-cloud/channels/) using `-c <channel>` from which to install the software. Usually the `bioconda` and `conda-forge` channels are all you need.
+
+The best practice is to always note down all packages including versions used in projects before you forget things to ensure reproducibility. You can always export an **activated** environment created previously and dump the exact versions used into a YAML file with `conda env export > requirements.yml`. The file could for example look like this:
 
 **requirements.yml**
 ```
@@ -18,29 +32,20 @@ dependencies:
  - samtools=1.18
 ```
 
-Then create the environment with `conda env create -f requirements.yml`. You can also export an **activated** environment created previously and dump the exact versions used into a YAML file with `conda env export > requirements.yml`.
-
-# Create empty env
-# DO NOT INSTALL CONDA YOURSELF
+To create an environment from the file in the future simply run `conda env create -f requirements.yml`.
 
 ???+ "Note"
-      When you export a conda environment to a file the file may also contain a host-specific `prefix` line, which should be removed.
+      When you export a conda environment to a file the file may also contain a host-specific `prefix` line, which should be removed if you or someone else need to run it elsewhere.
 
-Activate and deactivate environments with
+To use the software installed in the environment remember to activate the environment first using
 ```
-$ conda activate myproject
-$ conda deactivate
+conda activate myproject
 ```
 
 List available environments with
 ```
 conda env list
 ```
-
-https://conda.github.io/conda-lock/
-
-
-DISABLE STRICT CHANNELS
 
 ## Installing packages using pip within conda environments
 Software that can only be installed with pip have to be installed in a Conda environment by using pip inside the environment. While issues can arise, per the [Conda guide for using pip in a Conda environment](https://www.anaconda.com/blog/using-pip-in-a-conda-environment), there are some best practices to follow to reduce their likelihood:
