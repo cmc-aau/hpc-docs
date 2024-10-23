@@ -6,7 +6,7 @@ Conda was initially created for Python packages but it can package and distribut
 [Cheatsheet here](https://docs.conda.io/projects/conda/en/latest/_downloads/843d9e0198f2a193a3484886fa28163c/conda-cheatsheet.pdf)
 
 ## Creating an environment
-To install software through conda, it must always be done in an environment. To create an environment and install some software in it, run for example:
+To install software through conda, it must always be done in an environment. Conda itself is already installed and configured on BioCloud, so you don't need to install it first. To create an environment and install some software in it, run for example:
 
 ```
 # create+activate+install
