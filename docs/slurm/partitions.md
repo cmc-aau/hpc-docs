@@ -27,7 +27,7 @@ The `general` partition is for high efficiency jobs only, since the CPU's are no
 (Soon one of the nodes will get some extra SSD scratch space.)
 
 ## The `high-mem` partition
-The `high-mem` partition is only for high efficiency jobs that also require lots of memory. Like the `general` partition, the CPU's are dedicated to each individual job. Therefore you must ensure that they are also fully utilized at all times, preferably 75-100%, otherwise please use the `default-op` partition instead if the memory (per CPU) is sufficient.
+The `high-mem` partition is only for high efficiency jobs that also require lots of memory. Please do not submit anything here that doesn't require at least 5GB per CPU, otherwise please use the `general` partition. Like the `general` partition, the CPU's are dedicated to each individual job. Therefore you must ensure that they are also fully utilized at all times, preferably 75-100%, otherwise please use the `default-op` partition instead if the memory (per CPU) is sufficient.
 
 **Max memory per CPU: 10GB**
 
