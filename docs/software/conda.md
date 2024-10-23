@@ -20,6 +20,9 @@ dependencies:
 
 Then create the environment with `conda env create -f requirements.yml`. You can also export an **activated** environment created previously and dump the exact versions used into a YAML file with `conda env export > requirements.yml`.
 
+# Create empty env
+# DO NOT INSTALL CONDA YOURSELF
+
 ???+ "Note"
       When you export a conda environment to a file the file may also contain a host-specific `prefix` line, which should be removed.
 
@@ -33,6 +36,11 @@ List available environments with
 ```
 conda env list
 ```
+
+https://conda.github.io/conda-lock/
+
+
+DISABLE STRICT CHANNELS
 
 ## Installing packages using pip within conda environments
 Software that can only be installed with pip have to be installed in a Conda environment by using pip inside the environment. While issues can arise, per the [Conda guide for using pip in a Conda environment](https://www.anaconda.com/blog/using-pip-in-a-conda-environment), there are some best practices to follow to reduce their likelihood:
