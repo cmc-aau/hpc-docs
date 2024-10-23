@@ -1,15 +1,29 @@
 # Storage
-All nodes are connected to a Ceph network storage cluster through a few different mount points for different purposes, listed below. Data is stored with 3x replication to protect against data loss or corruption due to hardware and disk failures. The data is **NOT** backed up anywhere, however, which means it's **NOT** protected against human errors. If you delete data, it's gone and cannot be restored! Some mount points are therefore mounted read-only, but your own data is your responsibility alone. So be careful, also when sharing data with other users when doing shared projects etc.
+All nodes are connected to a Ceph network storage cluster through a few different mount points for different purposes, listed below. Data is stored with 3x replication to protect against data loss or corruption due to hardware and disk failures. The data is **NOT backed up** anywhere, however, which means it's not protected against human errors. If you delete data, it's gone and cannot be restored! Some mount points are therefore mounted read-only, but your own data is your responsibility alone. So be careful, also when sharing data with other users when doing shared projects etc.
+
+## Network storage mount points
 
 | Mount point | Permissions | Contents |
 | --- | --- | --- |
-| `/home` | Read/write on your own home folder only, the rest is read-only (by default) | All data for individual projects and generally most things should go here |
-| `/projects` | Read/write on everything (by default) | All data for shared projects should go here |
-| `/databases` | Mounted read-only | Various databases required for bioinformatic tools |
-| `/raw_data` | Mounted read-only | Raw data (mostly from DNA sequencing) that should never be touched nor deleted |
-| `/incoming` | Read/write (by default) | Incoming raw data that should be moved and organized in `/raw_data` as soon as possible |
-| `/nanopore` | Read/write (by default) | Incoming raw data from nanopore sequencing that should be moved and organized in `/raw_data` as soon as possible. This mount **will be removed** in the future, please use `/incoming` instead. |
+| `/home` | Read/write on your own home folder only | All data for individual projects and generally most things should go here |
+| `/projects` | Read/write | All data for shared projects should go here |
+| `/databases` | Read-only | Various databases required for bioinformatic tools |
+| `/raw_data` | Read-only | Raw data (mostly from DNA sequencing) that should never be touched nor deleted |
+| `/incoming` | Read/write | Incoming raw data that should be moved and organized in `/raw_data` as soon as possible |
+| `/nanopore` | Read/write | Incoming raw data from nanopore sequencing that should be moved and organized in `/raw_data` as soon as possible. This mount **will be removed** in the near future, please use `/incoming` instead. |
 
+## Local scratch space
+For jobs requiring heavy I/O where large amounts of data or thousands of temporary files need to be written, it's important to avoid using the network storage (if possible) and instead write to a local harddrive instead, which both avoids overloading the network and the storage cluster itself, but is also much faster. When deciding whether you need local scratch space, both the size of the data as well the number of files are important, however the ladder is by far the most important because it has the biggest impact on the performance of the storage cluster overall, [more info below](#avoid-small-files-at-all-costs).
+
+Scratch space is not available on all compute nodes (listed under [hardware partition](slurm/partitions.md)), so if you need scratch space you must ensure that you submit jobs to those specific nodes using the `--nodelist` option.
+
+Scratch space is always mounted at `/scratch`. All data owned by your user anywhere under `/scratch` on a particular compute node is **automatically deleted** after the last SLURM job run by your user has finished. Therefore ensure to move files elsewhere as the last step of the job, otherwise it will be lost. When using scratch space please create a separate folder there to work in, preferably just named by your username, so that other users' jobs that may also use the `/scratch` folder are not impacted by your work.
+
+## Storage policy
+Our network storage is **NOT** a long-term storage solution. **EVERYTHING IS TEMPORARY, SO CLEAN UP AFTER YOURSELF IMMEDIATELY AFTER EACH JOB!!** You will likely forget about it very quickly after you've done your work, so make it a habit to cleanup shortly after every job. Once studies are published, delete all the data and ensure that for example raw DNA sequencing data is uploaded to public archives and the corresponding code to produce results in the studies is available somewhere, preferably in a GitHub repository.
+
+## Max file size
+1TB currently, subject to change, [details here](https://docs.ceph.com/en/latest/cephfs/administration/#maximum-file-sizes-and-performance).
 
 ## Moving large amounts of data around
 If you need to move large amounts of data (or numerous files at once regardless of size) it will happen in an instant regardless of the size if you make sure you are doing it on the same filesystem/mount, for example from `/projects/xxx` to `/projects/yyy`. However, if you need to move things across mount points, for example from `/home/xxx` to `/projects/yyy` please ask an administrator to do it for you, since moving between mount points will happen over the network and cause unneccessary traffic and load on the storage cluster, let alone be very slow. An administrator can move anything instantly anywhere on the storage cluster, but if you need to transfer external files there is no way around it, it will be limited by the network speed.
