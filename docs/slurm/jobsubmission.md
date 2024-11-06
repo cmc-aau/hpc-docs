@@ -1,6 +1,8 @@
 # Job submission
 Once you are [logged in](../access/ssh.md) to one of the login nodes through SSH, there are several ways to request resources and run jobs at different complexity levels through SLURM, but here are the most essential ways for interactive (foreground) and non-interactive (background) use. Generally you need to be acquainted with 3 SLURM job submission commands depending on your needs. These are [`srun`](https://slurm.schedmd.com/archive/slurm-23.02.6/srun.html), [`salloc`](https://slurm.schedmd.com/archive/slurm-23.02.6/salloc.html), and [`sbatch`](https://slurm.schedmd.com/archive/slurm-23.02.6/sbatch.html). They all share the exact same [options](#most-essential-options) to define trackable resource constraints ("TRES" in SLURM parlor, fx number of CPUs, memory, GPU, etc), time limits, email for job status notifications, and many other things, but are made for different use-cases, which will be described below.
 
+It's important to submit your job to the most appropriate [hardware partition](partitions.md) to ensure an efficient cluster for everyone, so after reading this page please also read the next page carefully.
+
 ## Interactive jobs
 An interactive shell is useful for testing and development purposes where you need resources only for a short time, or to experiment with scripts and workflows on minimal example data before submitting larger jobs using [`sbatch`](#non-interactive-jobs) that will run for much longer in the background instead.
 

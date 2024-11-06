@@ -1,7 +1,8 @@
 # Usage accounting
 All users belong to an account (usually their PI) and all usage is tracked per user, but limitations can be set by administrators at a few different levels: at the cluster, partition, account, user, or QOS level. User associations with accounts rarely change, so in order to be able to temporarily request additional resources or obtain higher priority for certain projects, users can submit to different SLURM "Quality of Service"s (QOS). By default all users submit jobs to the `normal` QOS. To submit to a different QOS to obtain a higher priority first discuss with your supervisor/PI, and then contact an administrator to get permission.
 
-## Show QOS info and limitations
+## QOS info and limitations
+See all available QOS and their limitations:
 ```
 $ sacctmgr show qos format=name,priority,grptres,mintres,maxtres,maxtrespu,maxjobspu,maxtrespa,maxjobspa
       Name   Priority       GrpTRES       MinTRES       MaxTRES     MaxTRESPU MaxJobsPU     MaxTRESPA MaxJobsPA 
@@ -11,11 +12,22 @@ $ sacctmgr show qos format=name,priority,grptres,mintres,maxtres,maxtrespu,maxjo
                                  
 ```
 
+See all account associations for your user and the QOS's you are allowed to use:
+```
+$ sacctmgr list association user=$USER format=account%10s,user%20s,qos%20s
+   Account                 User                  QOS 
+---------- -------------------- -------------------- 
+      root       ksa@bio.aau.dk      highprio,normal
+```
+
 ### Undergraduate students
-Undergraduate students (upto but NOT including master projects) share resources within the `students` account and only their combined usage is limited. View current limitations with for example:
+Undergraduate students (up to but NOT including master projects) share resources within the `students` account and only their combined usage is limited. View current limitations with for example:
 
 ```
-$ sacctmgr list account students -s | head -n 3
+$ sacctmgr list account students -s format="account,priority,MaxCPUs,grpcpus,qos" | head -n 3
+   Account   Priority  MaxCPUs  GrpCPUs                  QOS 
+---------- ---------- -------- -------- -------------------- 
+  students                          384               normal
 ```
 
 ## Job resource usage summary
@@ -57,6 +69,19 @@ JobID           JobName               Start                 End   NNodes      NC
 ```
 
 There are a huge number of other options to show, see [SLURM docs](https://slurm.schedmd.com/archive/slurm-23.02.6/sacct.html#SECTION_Job-Accounting-Fields). If you really want to see everything use `sacct --long > file.txt` and dump it into a file or else it's too much for the terminal.
+
+## Reservation usage
+Show reservation usage in CPU hours and percent of the reservation total used
+```
+$ sreport reservation utilization -t hourper
+--------------------------------------------------------------------------------
+Reservation Utilization 2024-11-04T00:00:00 - 2024-11-04T23:59:59
+Usage reported in TRES Hours/Percentage of Total
+--------------------------------------------------------------------------------
+  Cluster      Name               Start                 End      TRES Name                     Allocated                          Idle 
+--------- --------- ------------------- ------------------- -------------- ----------------------------- ----------------------------- 
+ biocloud  amplicon 2024-11-04T08:00:00 2024-11-05T15:18:55            cpu                  1154(19.20%)                  4858(80.80%) 
+```
 
 ## Job efficiency summary
 ### Individual jobs

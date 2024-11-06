@@ -9,7 +9,7 @@ JOBID         NAME       USER       TIME    TIME_LEFT CPU MIN_ME ST PARTITION NO
  2380         dRep ab12cd@bio 1-01:36:22  12-22:23:38  80   300G  R   general bio-oscloud02
 ```
 
-To show only your own jobs use `squeue --me`. This is used quite often so `sq` has been made an alias of `squeue --me`.
+To show only your own jobs use `squeue --me`. This is used quite often so `sq` has been made an alias of `squeue --me`. You can for example also append `--partition`, `--nodelist`, `--reservation`, and more to only show the queue for those select partitions, nodes, or reservation.
 
 ??? "Job state codes (ST)"
       | Status	Code | Explaination |

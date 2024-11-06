@@ -19,12 +19,23 @@ CPUS(A/I/O/T)
 620/596/240/1456
 ```
 
-## Show reserved compute nodes
-Reservations will also be used for scheduled maintenance, so that SLURM simply won't jobs to start if they have a `time` limit set that spans into the reservation.
+## Show current reservations
+Reservations will also be used for scheduled maintenance, so that SLURM simply won't allow any jobs to start if they have a `time` limit set that spans into the reservation.
 ```
 $ sinfo -T
 RESV_NAME       STATE           START_TIME             END_TIME     DURATION  NODELIST
 maintenance  INACTIVE  2023-12-18T23:00:00  2023-12-20T01:00:00   1-02:00:00  bio-oscloud[02-09]
+```
+
+For more details about one or all reservations use
+```
+$ scontrol show reservations
+ReservationName=amplicon StartTime=2024-11-04T08:00:00 EndTime=2024-11-18T08:00:00 Duration=14-00:00:00
+   Nodes=bio-oscloud03 NodeCnt=1 CoreCnt=192 Features=(null) PartitionName=general Flags=
+     NodeName=bio-oscloud03 CoreIDs=0-191
+   TRES=cpu=192
+   Users=abc@bio.aau.dk Groups=(null) Accounts=(null) Licenses=(null) State=ACTIVE BurstBuffer=(null) Watts=n/a
+   MaxStartDelay=(null)
 ```
 
 ## Show details about the whole cluster configuration
