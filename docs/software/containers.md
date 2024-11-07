@@ -16,11 +16,20 @@
  - Ability to run workflows that require MPI and GPU support
 
 ### Building container images
-Building container images requires the user to have root/admin privileges. Currently there is no build environment on BioCloud, but alternatives for building containers are:
+Building your own containers using native `apptainer build` or `docker build` commands are not possible on BioCloud due to the specific user authentication and security configuration used. Instead you can build containers using either [cotainr](https://cotainr.readthedocs.io/en/stable/user_guide) or [enroot](https://github.com/nvidia/enroot). Other alternative ways for building containers are:
 
  - Using your own system (laptop/workstation) where you have root/elevated privileges to install Singularity or Docker and build containers, then transfer the container image file(s) to the BioCloud or publish it to a public container registry
  - Use a free cloud container build service like [https://cloud.sylabs.io](https://cloud.sylabs.io) or [https://hub.docker.com/](https://hub.docker.com/)
  - Publish a `Dockerfile` to a GitHub repository and use GitHub actions to build and publish the container to the GitHub container registry
+
+#### Bundling conda environments in a container
+cotainr is perhaps the easiest way to [bundle conda environments inside an apptainer container](https://cotainr.readthedocs.io/en/stable/user_guide/conda_env.html) by simply giving a path to an environment yaml file (see the [conda page](conda.md#creating-an-environment)) and choosing a base image from for example [docker hub](https://hub.docker.com/):
+
+```
+cotainr build --base-image docker://ubuntu:22.04 --conda-env condaenv.yml myproject.sif
+```
+
+This will produce a single file anyone can use anywhere, regardless of platform and local differences in setup, etc.
 
 ### Pre-built container images
 Usually it's not needed to build a container yourself unless you want to customize things in detail, since there are plenty of pre-built images already available that work straight of the box. For bioinformatic software the community-driven project [biocontainers.pro](https://biocontainers.pro/) should have anything you need, and if not - you can contribute! If you need a container with multiple tools installed see [multi-package containers](https://github.com/BioContainers/multi-package-containers).
@@ -46,10 +55,10 @@ apptainer run -B /databases ubuntu_22.04.sif
 apptainer run -B /databases:/some/other/path/databases ubuntu_22.04.sif
 ```
 
-For additional guidance see the [Apptainer usage guide](https://apptainer.org/docs/user/main/index.html).
-
-#### GPU support
-Use the `--nvccli` flag, not `--nv`.
+For additional guidance see the [Apptainer usage guide](https://apptainer.org/docs/user/main/index.html). If you need to use a GPU with apptainer use the `--nvccli` flag, not `--nv`.
 
 ## Docker containers
 Docker itself is not supported directly for non-admin users due to security and compatibility issues with our user authentication mechanism, but you can instead just run them through apptainer by prepending `docker://` to the container path, see [this page](https://apptainer.org/docs/user/main/docker_and_oci.html).
+
+## pyxis SLURM plugin
+The NVIDIA [pyxis](https://github.com/NVIDIA/pyxis?tab=readme-ov-file#usage) SLURM spank plugin are also installed and configured, allowing individual SLURM jobs to run inside a container easily by simply using the `--container-image` option to the `srun`, `sbatch`, and `salloc` commands, see [examples here](https://github.com/NVIDIA/pyxis?tab=readme-ov-file#examples).
