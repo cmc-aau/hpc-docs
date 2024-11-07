@@ -1,7 +1,6 @@
 # Optimizing CPU efficiency
-
 ## How many resources should I request for my job(s)?
-Exactly how many resources your job(s) need(s) is something you have to experiment with and learn over time based on past experience. It's important to do a bit of experimentation before submitting large jobs to obtain a qualified guess since the utilization of all the allocated resources across the cluster is ultimately based on people's own assessments alone. Below are some tips regarding CPU and memory, but in the end please always **only request what you need**, and no more. This is essential to optimize the resource utilization and efficiency of the entire cluster.
+Exactly how many resources (CPUs, memory, time, GPUs) your job(s) need(s) is something you have to experiment with and learn over time based on past experience. It's important to do a bit of experimentation before submitting large jobs to obtain a qualified guess since the utilization of all the allocated resources across the cluster is ultimately based on people's own assessments alone. Below are some tips regarding CPU and memory, but in the end please always **only request what you need**, and no more. This is essential to optimize the resource utilization and efficiency of the entire cluster, leaving no CPUs idle when everything is fully allocated.
 
 !!! warning "Always inspect and optimize efficiency for next time!"
 
