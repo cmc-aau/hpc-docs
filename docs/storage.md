@@ -61,6 +61,21 @@ $ getfattr -n ceph.dir.rbytes /projects 2> /dev/null | grep "^ceph.dir.rbytes=" 
 397.54 TB
 ```
 
+??? "Additional Ceph attributes"
+      | Attribute | Explaination |
+      | --- | --- |
+      | ceph.dir.entries | |
+      | ceph.dir.files | Number of files in folder (non-recursive) |
+      | ceph.dir.subdirs | Number of subdirs (non-recursive) |
+      | ceph.dir.rentries | |
+      | ceph.dir.rfiles | Number of files in folder (recursive) |
+      | ceph.dir.rsubdirs | Number of folders in folder (recursive) |
+      | ceph.dir.rbytes | Size of folder (recursive) |
+      | ceph.dir.rctime | |
+
+      There are no explanations on these anywhere in the Ceph documentation or elsewhere, I've simply found them in the Ceph source code!
+
+
 ## Shared folders
 If you need to give other users write access to a file/folder that you own, you need to set the group ownership of the folder to the `bio_server_users@bio.aau.dk` group and set the [setGID](https://www.geeksforgeeks.org/setuid-setgid-and-sticky-bits-in-linux-file-permissions/) bit on folders (to ensure child files/folders will inherit the ownership of a parent folder), see the example below. This will give **everyone** with access to the BioCloud servers full control of the files. If you only want a specific group of people to have write access, there is only one way to do that, which is to contact the university IT services to create an email address group for the specific users, and then follow the same steps below, but instead use the new email of that group.
 
