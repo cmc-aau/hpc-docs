@@ -27,9 +27,6 @@ Each job will have a separate and entirely private mount point for temporary dat
 
 If you would need more space for temporary data on compute nodes that have no extra local scratch space, or you need even more temporary space than there's available on local scratch space, it's possible to place it on the Ceph network storage as well. However, if you choose to do so, please see the [best practices](#avoid-small-files-at-all-costs) below. It can simply be done by for example setting the environment variable `TMPDIR` early in the batch script by adding a line, fx `export TMPDIR=${HOME}/tmp`. Ensure no conflicts can occur within the folder(s) if you run multiple jobs on multiple different compute nodes at once.
 
-## Storage quota
-There is currently no storage quota set, but you can see the storage used of your home folder by running `storagequota`, which is also run on login.
-
 ## Storage policy
 **Your data - your responsibility!**
 
@@ -48,33 +45,17 @@ If you need to move large amounts of data (or numerous files at once regardless 
 When listing directories, it's common to use `ls -l` to list things vertically, however this will also request various other information like permissions, file size, owner, group, access time etc. This will burden the metadata servers, especially if used in loops in scripts on many files, so if you don't need all this extra information and just want to list the contents vertically instead of horizontally, just use `ls -1` instead and make that a habit. Likewise, don't use `stat` on many files if not neccessary.
 
 ### Obtaining the total size of folders
-To obtain the total disk space used of all files inside a folder it's common to use the `du -sh /some/folder` command. Doing this at a large folder is quite similar to a performing a [DDoS attack](https://en.wikipedia.org/wiki/Denial-of-service_attack) on the Ceph storage cluster, so please never use `du` on folders, only on individual files. It will likely never finish anyways if the folder contains many files. The best way to obtain the size of a folder is to instead obtain the information in the form of storage quota attributes directly from the Ceph metadata servers using the `getfattr` command as demonstrated below, which is both instant and will not cause any stress on the cluster:
+To obtain the total disk space used of all files inside a folder it's common to use the `du -sh /some/folder` command. Doing this at a large folder is quite similar to a performing a [DDoS attack](https://en.wikipedia.org/wiki/Denial-of-service_attack) on the Ceph storage cluster, so please never use `du` on folders, only on individual files. It will likely never finish anyways if the folder contains many files. The best way to obtain the size of a folder is to instead obtain the information in the form of storage quota attributes directly from the Ceph metadata servers using the `storagequota` command as demonstrated below, which is both instant and will not cause any stress on the cluster:
 
 ```
-$ getfattr -n ceph.dir.rbytes /projects                                                                                                       
-getfattr: Removing leading '/' from absolute path names
-# file: projects
-ceph.dir.rbytes="437104830729004"
+# home folder
+$ storagequota
+Storage quota used for '/home/bio.aau.dk/abc': 3.46TB / 9.09TB (38.06%)
 
-## Calculate in TB instead of bytes
-$ getfattr -n ceph.dir.rbytes /projects 2> /dev/null | grep "^ceph.dir.rbytes=" | sed 's/[^0-9]*//g' | awk '{printf "%.2f TB\n", $1 / 1024^4}'
-397.54 TB
+# specific folder
+$ storagequota /projects
+Storage quota used for '/projects': 397.54TB
 ```
-
-??? "Additional Ceph attributes"
-      | Attribute | Explaination |
-      | --- | --- |
-      | ceph.dir.entries | |
-      | ceph.dir.files | Number of files in folder (non-recursive) |
-      | ceph.dir.subdirs | Number of subdirs (non-recursive) |
-      | ceph.dir.rentries | |
-      | ceph.dir.rfiles | Number of files in folder (recursive) |
-      | ceph.dir.rsubdirs | Number of folders in folder (recursive) |
-      | ceph.dir.rbytes | Size of folder (recursive) |
-      | ceph.dir.rctime | |
-
-      There are no explanations on these anywhere in the Ceph documentation or elsewhere, I've simply found them in the Ceph source code!
-
 
 ## Shared folders
 If you need to give other users write access to a file/folder that you own, you need to set the group ownership of the folder to the `bio_server_users@bio.aau.dk` group and set the [setGID](https://www.geeksforgeeks.org/setuid-setgid-and-sticky-bits-in-linux-file-permissions/) bit on folders (to ensure child files/folders will inherit the ownership of a parent folder), see the example below. This will give **everyone** with access to the BioCloud servers full control of the files. If you only want a specific group of people to have write access, there is only one way to do that, which is to contact the university IT services to create an email address group for the specific users, and then follow the same steps below, but instead use the new email of that group.
