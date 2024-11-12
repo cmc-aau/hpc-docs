@@ -84,7 +84,7 @@ ceph.dir.rfiles="219203126"
       | ceph.dir.rfiles | Number of files in folder (recursive) |
       | ceph.dir.rsubdirs | Number of folders in folder (recursive) |
       | ceph.dir.rbytes | Size of folder (recursive) |
-      | ceph.dir.rctime | |
+      | ceph.dir.rctime | Recently changed time (non-recursive) |
 
       There are no descriptions on these in the Ceph documentation or anywhere else, I've simply found them in the Ceph source code! This is all there is.
 
