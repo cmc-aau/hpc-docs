@@ -45,7 +45,7 @@ If you need to move large amounts of data (or numerous files at once regardless 
 When listing directories, it's common to use `ls -l` to list things vertically, however this will also request various other information like permissions, file size, owner, group, access time etc. This will burden the metadata servers, especially if used in loops in scripts on many files, so if you don't need all this extra information and just want to list the contents vertically instead of horizontally, just use `ls -1` instead and make that a habit. Likewise, don't use `stat` on many files if not neccessary.
 
 ### Obtaining the total size of folders
-To obtain the total disk space used of all files inside a folder it's common to use the `du -sh /some/folder` command. Doing this at a large folder is quite similar to a performing a [DDoS attack](https://en.wikipedia.org/wiki/Denial-of-service_attack) on the Ceph storage cluster, so please never use `du` on folders, only on individual files. It will likely never finish anyways if the folder contains many files. The best way to obtain the size of a folder is to instead obtain the information in the form of storage quota attributes directly from the Ceph metadata servers using the `storagequota` command as demonstrated below, which is both instant and will not cause any stress on the cluster:
+To obtain the total disk space used of all files inside a folder it's common to use the `du -sh /some/folder` command. Doing this at a large folder is quite similar to performing a [DDoS attack](https://en.wikipedia.org/wiki/Denial-of-service_attack) on the Ceph storage cluster, so please never use `du` on folders, only on individual files. It will likely never finish anyways if the folder contains many files. The best way to obtain the size of a folder is to instead obtain the information in the form of storage quota attributes directly from the Ceph metadata servers using the custom `storagequota` command as demonstrated below, which is both instant and will not cause any stress on the cluster:
 
 ```
 # home folder
@@ -55,7 +55,39 @@ Storage quota used for '/home/bio.aau.dk/abc': 3.46TB / 9.09TB (38.06%)
 # specific folder
 $ storagequota /projects
 Storage quota used for '/projects': 397.54TB
+
+# multiple folders, sorted by size
+storagequota /projects/* | sort -rt ':' -k2 -n | head -n 5
+Storage quota used for '/projects/microflora_danica':   	208.40TB
+Storage quota used for '/projects/MiDAS':   	125.75TB
+Storage quota used for '/projects/NNF_AD_2023':   	30.66TB
+Storage quota used for '/projects/glomicave':   	8.84TB
+Storage quota used for '/projects/dark_science':   	7.19TB
 ```
+
+The `storagequota` command is simply a convenient wrapper script around the `getfattr` command, which retrieves attributes of files and folders directly from the Ceph MDS servers. It only retrieves the size of the folder, but there are also a few other attributes that may be of interest, for example the number of files, see examples below.
+
+```
+$ getfattr -n ceph.dir.rfiles /projects 
+getfattr: Removing leading '/' from absolute path names
+# file: projects
+ceph.dir.rfiles="219203126"
+```
+
+??? "Additional Ceph attributes"
+      | Attribute | Explaination |
+      | --- | --- |
+      | ceph.dir.entries | |
+      | ceph.dir.files | Number of files in folder (non-recursive) |
+      | ceph.dir.subdirs | Number of subdirs (non-recursive) |
+      | ceph.dir.rentries | |
+      | ceph.dir.rfiles | Number of files in folder (recursive) |
+      | ceph.dir.rsubdirs | Number of folders in folder (recursive) |
+      | ceph.dir.rbytes | Size of folder (recursive) |
+      | ceph.dir.rctime | |
+
+      There are no descriptions on these in the Ceph documentation or anywhere else, I've simply found them in the Ceph source code! This is all there is.
+
 
 ## Shared folders
 If you need to give other users write access to a file/folder that you own, you need to set the group ownership of the folder to the `bio_server_users@bio.aau.dk` group and set the [setGID](https://www.geeksforgeeks.org/setuid-setgid-and-sticky-bits-in-linux-file-permissions/) bit on folders (to ensure child files/folders will inherit the ownership of a parent folder), see the example below. This will give **everyone** with access to the BioCloud servers full control of the files. If you only want a specific group of people to have write access, there is only one way to do that, which is to contact the university IT services to create an email address group for the specific users, and then follow the same steps below, but instead use the new email of that group.
