@@ -90,9 +90,9 @@ scheduler: greedy
 max-status-checks-per-second: 5
 cluster-cancel: scancel
 #script to get job status for snakemake, unfortunately neccessary
-cluster-status: slurm-status.sh
+cluster-status: /etc/xdg/snakemake/biocloud/slurm-status.sh
 ```
 
 Imagine writing all these settings on the command line every time - just no!
 
-The `extras/slurm-status.sh` script on the last line is available from the template repository [here](https://github.com/cmc-aau/snakemake_project_template/blob/main/extras/slurm-status.sh) or at `/etc/xdg/snakemake/biocloud/slurm-status.sh`. It's not strictly necessary, only if you need to cancel the workflow before it's finished, so you can also just comment it out.
+The `slurm-status.sh` script on the last line is available from the template repository [here](https://github.com/cmc-aau/snakemake_project_template/blob/main/extras/slurm-status.sh) or at `/etc/xdg/snakemake/biocloud/slurm-status.sh`.
