@@ -27,7 +27,7 @@ Undergraduate students (up to but NOT including master projects) share resources
 $ sacctmgr list account students -s format="account,priority,MaxCPUs,grpcpus,qos" | head -n 3
    Account   Priority  MaxCPUs  GrpCPUs                  QOS 
 ---------- ---------- -------- -------- -------------------- 
-  students                          384               normal
+  students                          192               normal
 ```
 
 ## Job resource usage summary
