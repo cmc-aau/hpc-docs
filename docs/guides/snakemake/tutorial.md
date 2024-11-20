@@ -71,7 +71,9 @@ rule concatenate_fastq:
   output:
     temp(os.path.join(config['tmp_dir'], "samples", "{sample}_concat.fastq.gz"))
   resources:
-    mem_mb = 512
+    # calculate required memory based on input file size
+    # assuming it scales linearly, ensures a minimum of 512MB
+    mem_mb=lambda wc, input: max(3 * input.size_mb, 512)
   threads: 1
   log:
     os.path.join(config["log_dir"], "concatenate_fastq", "{sample}.log"),
@@ -88,9 +90,9 @@ rule map2db:
   output:
     os.path.join(config['output_dir'], "{sample}.sam")
   resources:
-    #depending on the tool memory usage usually scales with threads 
-    #and/or input/database file size. Can calculate dynamically
-    mem_mb = 10240
+    # calculate required memory based on input file size
+    # assuming it scales linearly, ensures a minimum of 10GB
+    mem_mb=lambda wc, input: max(3 * input.size_mb, 10240)
   threads: config['max_threads']
   params:
     db_path = config['db_path']
