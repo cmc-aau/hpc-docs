@@ -114,7 +114,7 @@ rule map2db:
         -F 4 \
         -F 256 \
         -F 2048 \
-        --threads {threads} \
+        --threads $(nproc) \
         -o {output}
     """
 
