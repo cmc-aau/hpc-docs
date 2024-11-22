@@ -40,7 +40,7 @@ Usually it's not needed to build a container yourself unless you want to customi
 $ apptainer pull ubuntu_22.04.sif docker://ubuntu:22.04
 
 # run a container with default options
-$ apptainer run ubuntu_22.04.sif
+$ apptainer run ubuntu_22.04.sif yourcommand --someoption somefile
 
 # start an interactive shell within a container
 $ apptainer shell ubuntu_22.04.sif
@@ -49,10 +49,10 @@ $ apptainer shell ubuntu_22.04.sif
 You almost always also need to bind/mount a folder from the host machine to the container, so that it's available inside the container for input/output to the particular tool you need to use. With Singularity/Apptainer the `/tmp` folder, the current folder, and your home folder are always mounted by default. To mount additional folders use `-B`, for example:
 ```
 # mount with the same path inside the container as on the host
-apptainer run -B /databases ubuntu_22.04.sif
+apptainer run -B /databases ubuntu_22.04.sif yourcommand --someoption somefile
 
 # mount at a different path inside the container
-apptainer run -B /databases:/some/other/path/databases ubuntu_22.04.sif
+apptainer run -B /databases:/some/other/path/databases ubuntu_22.04.sif yourcommand --someoption somefile
 ```
 
 For additional guidance see the [Apptainer usage guide](https://apptainer.org/docs/user/main/index.html). If you need to use a GPU with apptainer use the `--nvccli` flag, not `--nv`.
