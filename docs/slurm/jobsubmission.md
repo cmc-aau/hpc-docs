@@ -70,7 +70,7 @@ A simple example SLURM `sbatch` script for a single task could look like this:
 #!/usr/bin/bash -l
 #SBATCH --job-name=minimap2test
 #SBATCH --output=job_%j_%x.out
-#SBATCH --partition=default
+#SBATCH --partition=shared
 #SBATCH --cpus-per-task=10
 #SBATCH --mem=10G
 #SBATCH --time=2-00:00:00
@@ -102,7 +102,7 @@ An example SLURM `sbatch` script for parallel (independent) execution across mul
 #SBATCH --nodes=5
 #SBATCH --ntasks=5
 #SBATCH --ntasks-per-node=1
-#SBATCH --partition=default
+#SBATCH --partition=shared
 #SBATCH --cpus-per-task=60
 #SBATCH --mem-per-cpu=3G
 #SBATCH --time=2-00:00:00
@@ -150,7 +150,7 @@ There are plenty of options with the SLURM job submission commands, but below ar
 | `--nodelist`                                 |  | Specifies a comma-separated list of specific compute nodes to be allocated for the job. |
 | `--exclusive`                                |  | Flag. If set will request exclusive access to a full compute node, meaning no other jobs will be allowed to run on the node. In this case you might as well also use all available memory by setting `--mem=0`, unless there are suspended jobs on the particular node. [Details here](https://slurm.schedmd.com/archive/slurm-23.02.6/sbatch.html#OPT_exclusive). |
 | `--gres`                                     |  | List of "generic consumable resources" to use, for example a GPU. [Details here](https://slurm.schedmd.com/archive/slurm-23.02.6/sbatch.html#OPT_gres). |
-| `--partition`                                | `general` | The SLURM partition to which the job is submitted. Default is to use the `general` partition. |
+| `--partition`                                | `general` | The SLURM partition to which the job is submitted. Default is to use the `shared` partition. |
 | `--reservation`                                | | Allocate resources for the job from the named reservation(s). Can be a comma-separated list of more than one. [Details here](https://slurm.schedmd.com/archive/slurm-23.02.6/sbatch.html#OPT_reservation) |
 | `--chdir`                                    |  | Set the working directory of the batch script before it's executed. Setting this using environment variables is not supported. |
 | `--time`                                     | `0-01:00:00` | Defines the maximum time limit for job execution before it will be killed automatically. Format `DD-HH:MM:SS`. Maximum allowed value is that of the partition used. [Details here](https://slurm.schedmd.com/archive/slurm-23.02.6/sbatch.html#OPT_time) |

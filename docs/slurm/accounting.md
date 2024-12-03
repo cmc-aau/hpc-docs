@@ -137,7 +137,7 @@ Perhaps a more useful way to use `sacct` is through the [reportseff](https://git
 ```
 $ reportseff -u $(whoami) --format partition,jobid,state,jobname,alloccpus,elapsed,cputime,CPUEff,MemEff,TimeEff -S r,pd,s --since d=4
   Partition     JobID        State                       JobName                    AllocCPUS     Elapsed        CPUTime      CPUEff   MemEff   TimeEff 
-  default    306282     COMPLETED                     midasok                        2         00:13:07       00:26:14      4.1%    15.4%     10.9%  
+  shared    306282     COMPLETED                     midasok                        2         00:13:07       00:26:14      4.1%    15.4%     10.9%  
    general      306290     COMPLETED           smk-map2db-sample=barcode46             16         00:01:38       00:26:08     90.6%    18.7%     2.7%   
    general      306291     COMPLETED           smk-map2db-sample=barcode47             16         00:02:14       00:35:44     92.8%    18.4%     3.7%   
    general      306292     COMPLETED           smk-map2db-sample=barcode58             16         00:02:32       00:40:32     80.3%    19.0%     4.2%   

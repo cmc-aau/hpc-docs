@@ -15,7 +15,7 @@ When you normally connect to a remote server, you use an SSH client to connect t
 #SBATCH --output=/dev/null
 #SBATCH --job-name=sshdbridge
 #SBATCH --time=0-3:00:00
-#SBATCH --partition=default
+#SBATCH --partition=shared
 #SBATCH --cpus-per-task=4
 #SBATCH --mem=6G
 
