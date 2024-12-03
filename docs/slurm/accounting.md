@@ -1,5 +1,33 @@
-# Usage accounting
-All users belong to an account (usually their PI) and all usage is tracked per user, but limitations can be set by administrators at a few different levels: at the cluster, partition, account, user, or QOS level. User associations with accounts rarely change, so in order to be able to temporarily request additional resources or obtain higher priority for certain projects, users can submit to different SLURM "Quality of Service"s (QOS). By default all users submit jobs to the `normal` QOS. To submit to a different QOS to obtain a higher priority first discuss with your supervisor/PI, and then contact an administrator to get permission.
+# Usage accounting and priority
+All users belong to an account (usually their PI) where all usage is tracked on a per-user basis, but limitations and priorities can be set at a few different levels: at the cluster, partition, account, user, or QOS level. User associations with accounts rarely change, so in order to be able to temporarily request additional resources or obtain higher priority for certain projects, users can submit to different SLURM "Quality of Service"s (QOS). By default all users can only submit jobs to the `normal` QOS with equal usage limits and base priority. Periodically users may submit to the `highprio` QOS, which has extra resources and higher priority, however this must first be discussed among the owners of the hardware (PI's), and then you must contact an administrator to grant your user permission to submit jobs to it.
+
+## Job priority
+When a job is submitted a priority value is calculated based on several factors, where a higher number indicates a higher priority in the queue. This does not impact running jobs, and the effect of prioritization is only noticable when the cluster is operating near peak capacity, or when the individual hardware partitions are nearly fully allocated. Otherwise jobs will usually start immediately as long as there are resources available and you haven't reached the max. CPU's per user limit.
+
+Different weights are given to different priority factors, where the most significant ones are the account factor (which is simply the number of CPU's each account (PI) has contributed with to the cluster), the user's recent resource usage (higher usage results in a lower priority), and the QOS, as described above. All factors are normalized to a value between 0-1, then weighted by an adjustable scalar, which may be adjusted occasionally depending on the overall cluster usage. Users can also be nice to other users and reduce the priority of their own jobs by setting a "nice" value using `--nice` when submitting for example less time-critical jobs. Job priorities are then calculated according to the following formula:
+
+```
+Job_priority =
+	(PriorityWeightQOS) * (QOS_factor)
+	(PriorityWeightAssoc) * (assoc_factor) +
+	(PriorityWeightAge) * (age_factor) +
+	(PriorityWeightFairshare) * (fair-share_factor) +
+	(PriorityWeightJobSize) * (job_size_factor) -
+	- nice_factor
+```
+
+To obtain up-to-date weights use `sprio -w`:
+```
+$ sprio -w
+          JOBID PARTITION   PRIORITY       SITE        AGE      ASSOC  FAIRSHARE    JOBSIZE        QOS
+        Weights                               1          5         10          5          5         20
+```
+
+The fair-share factor is calculated according to the [fair-tree algorithm](https://slurm.schedmd.com/archive/slurm-23.02.6/fair_tree.html) and has a usage decay half-life of 2 weeks, but is completely reset at the first day of each month. To see your current fair-share factor run `sshare -U`.
+
+The age factor will max out to `1.0` when 3 days of queue time has been accrued for any job.
+
+For more details about job prioritization see the [SLURM documentation](https://slurm.schedmd.com/archive/slurm-23.02.6/priority_multifactor.html) and this [presentation](https://slurm.schedmd.com/SLUG19/Priority_and_Fair_Trees.pdf).
 
 ## QOS info and limitations
 See all available QOS and their limitations:
@@ -7,8 +35,8 @@ See all available QOS and their limitations:
 $ sacctmgr show qos format=name,priority,grptres,mintres,maxtres,maxtrespu,maxjobspu,maxtrespa,maxjobspa
       Name   Priority       GrpTRES       MinTRES       MaxTRES     MaxTRESPU MaxJobsPU     MaxTRESPA MaxJobsPA 
 ---------- ---------- ------------- ------------- ------------- ------------- --------- ------------- --------- 
-    normal          0                cpu=1,mem=1G                     cpu=576                                   
-  highprio          1                cpu=1,mem=1G                    cpu=1024                                   
+    normal          1                cpu=1,mem=512M                    cpu=192                                   
+  highprio          10                cpu=1,mem=512M                   cpu=512                                   
                                  
 ```
 
@@ -109,7 +137,7 @@ Perhaps a more useful way to use `sacct` is through the [reportseff](https://git
 ```
 $ reportseff -u $(whoami) --format partition,jobid,state,jobname,alloccpus,elapsed,cputime,CPUEff,MemEff,TimeEff -S r,pd,s --since d=4
   Partition     JobID        State                       JobName                    AllocCPUS     Elapsed        CPUTime      CPUEff   MemEff   TimeEff 
-  default-op    306282     COMPLETED                     midasok                        2         00:13:07       00:26:14      4.1%    15.4%     10.9%  
+  default    306282     COMPLETED                     midasok                        2         00:13:07       00:26:14      4.1%    15.4%     10.9%  
    general      306290     COMPLETED           smk-map2db-sample=barcode46             16         00:01:38       00:26:08     90.6%    18.7%     2.7%   
    general      306291     COMPLETED           smk-map2db-sample=barcode47             16         00:02:14       00:35:44     92.8%    18.4%     3.7%   
    general      306292     COMPLETED           smk-map2db-sample=barcode58             16         00:02:32       00:40:32     80.3%    19.0%     4.2%   

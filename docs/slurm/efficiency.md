@@ -9,8 +9,8 @@ Exactly how many resources (CPUs, memory, time, GPUs) your job(s) need(s) is som
 ### CPUs/threads
 In general the number of CPUs that you book only affects how long the job will take to finish and how many jobs can run concurrently. The only thing to really consider is how many CPUs you want to use for the particular job out of your max limit (see [Usage accounting](https://cmc-aau.github.io/biocloud-docs/slurm/accounting/#show-qos-info-and-limitations) for how to see the current limits). If you use all CPUs for one job, you can't start more jobs until the first one has finished, the choice is yours. But regardless, it's very important to ensure that your jobs actually fully utilize the allocated number of CPUs, so don't start a job with `20` allocated CPUs if you only set max threads for a certain tool to `10`, for example. It also depends very much on the specific software tools you use for the individual steps in a workflow and how they are implemented, so you are not always in full control of the utilization. Furthermore, if you run a workflow with many different steps each using different tools, they will likely not use resources in the same way, and some may not even support multithreading at all (like R, depending on the packages used) and thus only run in a single single-threaded process, for example. In this case it might be a good idea to either split the job into multiple jobs if they run for a long time, or use workflow tools that support cluster execution, for example [Snakemake](../guides/snakemake/intro.md) where you can define separate resource requirements for individual steps. This is also the case for memory usage.
 
-#### Overprovisioning
-Sometimes there is just no way around it, and **if you don't expect your job(s) to be very efficient, please submit to the overprovisioned `default-op` partition**, which is also the default. Overprovisioning simply means that SLURM will allocate more CPU's than available on each machine, so that more than one job will run on each CPU, ensuring that each physical CPU is actually utilized 100% and thus more people are happy!
+#### Over-subscription
+Sometimes there is just no way around it, and **if you don't expect your job(s) to be very efficient, please submit to the overprovisioned `default` partition**, which is also the default. Over-subscription simply means that SLURM will allocate more CPU's than available on each machine, so that more than one job will run on each CPU, ensuring that each physical CPU is actually utilized 100% and thus more people are happy!
 
 #### Use `nproc` everywhere
 The number of CPUs is not a hard limit like the physical amount of memory is, on the other hand, and SLURM will never exceed the maximum physical memory of each compute node. Instead jobs are killed if they exceed the allocated amount of memory for the job (only if no other jobs need the memory), or not be allowed to start in the first place. With CPUs the processes you run simply won't be able to detect any more CPUs than those allocated, hence it's handy to just use `nproc` within scripts to detect the number of available CPUs instead of manually setting a value for each tool. Furthermore, if you request more memory per CPU that the max allowed for the particular partition (refer to [hardware partitions](partitions.md)), SLURM will automatically allocate more CPU's for the job, and hence, again, it's a good idea to detect the number of CPU's dynamically using `nproc` everywhere.
@@ -26,3 +26,34 @@ Our compute nodes have plenty of memory, but some tools require lots of memory. 
 If you know that you are almost going to fully saturate the memory on a compute node (depending on partition), you might as well also request more CPUs up to the total of a single compute node, since your job will likely allocate a full compute node alone, and CPU's can end up idle, while you could have finished the job faster. If needed you can also submit directly to the individual compute nodes specifically using the `nodelist` option (and potentially also `--exclusive`), refer to [hardware partitions](partitions.md) for hostnames and compute node specs.
 
 Also keep in mind that the effective amount of memory available to SLURM jobs is less than what the physical machines have available because they are virtual machines running on a hypervisor OS that also needs some memory. A 1 TB machine roughly has 950 GB available and the 2 TB ones have 1.9 TB. See `sinfo -N -l` for details of each node.
+
+## Interactive jobs
+![interactive jobs are inefficient](img/eff_interactive.png)
+
+## Large and complex workflows
+!!understand what you are running!!
+
+![complex workflow](img/eff_workflow.png)
+
+![complex workflow - steps as individual jobs](img/eff_stepsasjobs.png)
+
+
+### Job dependencies
+Individual resource requested
+
+**launchscript.sh**
+```
+#!/usr/bin/env bash -l
+set -euo pipefail
+
+# Submit the first job step and capture its job ID
+step1_jobid=$(sbatch step1_script.sbatch | awk '{print $4}')
+
+# Submit the second job with dependency on the step1, ensuring it runs only if step1 finished successfully
+step2_jobid=$(sbatch --dependency=afterok:$step1_jobid step2_script.sbatch | awk '{print $4}')
+
+# Submit the third/last job with dependency on step2, ensuring it runs only if step2 finished successfully
+sbatch --dependency=afterok:$step2_jobid step3_script.sbatch
+```
+
+Submit using `bash launchscript.sh`, not using `sbatch`.

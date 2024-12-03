@@ -2,7 +2,7 @@
 When using the [Visual Studio Code IDE](https://code.visualstudio.com/) to work remotely, you would normally install the [Remote - SSH](https://code.visualstudio.com/docs/remote/ssh) on your local computer and connect to the particular machine over an SSH connection to work there instead. This is useful when you for example need to work closer to raw data to avoid moving large data around, or when you simply need more juice for demanding tasks. In order to use VS Code remotely on a SLURM cluster, however, you can't normally connect directly to a compute node, and connecting directly to login nodes to run things there is **strictly forbidden**. This small guide will show you how you can connect your VS Code session directly to a SLURM job running on a compute node instead.
 
 ???+ Important
-      Please note that this should be considered an [interactive job](../slurm/jobsubmission.md#interactive-jobs) and the SLURM job should therefore be submitted to a partition that has [over-provisioning](../slurm/efficiency.md#overprovisioning) set up, where CPU's are shared, because you will likely spend time typing instead of actually keeping the allocated CPU's busy at all times, which is a waste of resources.
+      Please note that this should be considered an [interactive job](../slurm/jobsubmission.md#interactive-jobs) and the SLURM job should therefore be submitted to a partition that has [over-provisioning](../slurm/efficiency.md#over-subscription) set up, where CPU's are shared, because you will likely spend time typing instead of actually keeping the allocated CPU's busy at all times, which is a waste of resources.
 
 ## How does it work?
 When you normally connect to a remote server, you use an SSH client to connect to the SSH daemon `sshd`, which is a service running in the background on the server. You then simply talk to this daemon using the SSH protocol to execute commands on the server. The trick here is then to start a separate `sshd` process that runs within a SLURM job, which you then connect to instead through a bridge connection to the job through one of the login nodes.
@@ -15,7 +15,7 @@ When you normally connect to a remote server, you use an SSH client to connect t
 #SBATCH --output=/dev/null
 #SBATCH --job-name=sshdbridge
 #SBATCH --time=0-3:00:00
-#SBATCH --partition=default-op
+#SBATCH --partition=default
 #SBATCH --cpus-per-task=4
 #SBATCH --mem=6G
 

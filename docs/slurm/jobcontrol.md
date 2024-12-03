@@ -96,6 +96,11 @@ $ scontrol resume <job_id>
 scontrol show jobid=<jobid>
 ```
 
+If needed, you can also obtain the batch script used to submit a job:
+```
+scontrol write batch_script <jobid>
+```
+
 ## Modifying job attributes
 Only a few job attributes can be changed after a job is submitted and **NOT** running yet. These attributes include:
 
@@ -103,6 +108,7 @@ Only a few job attributes can be changed after a job is submitted and **NOT** ru
  - job name
  - job dependency
  - partition or QOS
+ - nice value
 
 For example:
 ```
@@ -110,4 +116,4 @@ $ scontrol update JobId=<jobid> timelimit=<new timelimit>
 $ scontrol update JobId=<jobid> partition=high-mem
 ```
 
-If the job is already running adjusting the time limit must be done by an administrator.
+If the job is already running, adjusting the time limit must be done by an administrator.

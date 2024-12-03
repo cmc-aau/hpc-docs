@@ -70,7 +70,7 @@ A simple example SLURM `sbatch` script for a single task could look like this:
 #!/usr/bin/bash -l
 #SBATCH --job-name=minimap2test
 #SBATCH --output=job_%j_%x.out
-#SBATCH --partition=default-op
+#SBATCH --partition=default
 #SBATCH --cpus-per-task=10
 #SBATCH --mem=10G
 #SBATCH --time=2-00:00:00
@@ -102,7 +102,7 @@ An example SLURM `sbatch` script for parallel (independent) execution across mul
 #SBATCH --nodes=5
 #SBATCH --ntasks=5
 #SBATCH --ntasks-per-node=1
-#SBATCH --partition=default-op
+#SBATCH --partition=default
 #SBATCH --cpus-per-task=60
 #SBATCH --mem-per-cpu=3G
 #SBATCH --time=2-00:00:00
