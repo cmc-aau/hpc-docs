@@ -25,7 +25,7 @@ $ sprio -w
 
 The priority of pending jobs can be obtained using `sprio`, but is also shown when running `squeue`.
 
-The fair-share factor is calculated according to the [fair-tree algorithm](https://slurm.schedmd.com/archive/slurm-23.02.6/fair_tree.html) and has a usage decay half-life of 2 weeks, but is completely reset at the first day of each month. To see your current fair-share factor run `sshare -U`.
+The fair-share factor is calculated according to the [fair-tree algorithm](https://slurm.schedmd.com/archive/slurm-23.02.6/fair_tree.html) and has a usage decay half-life of 2 weeks, but is completely reset at the first day of each month. To see the current fair-share factor for your user run `sshare -U`, and for all accounts `sshare -l`.
 
 ???+ tip "The fair-share factor and CPU efficiency"
       The value of the fair-share factor is calculated based on CPU usage in units of **allocation seconds** and not CPU seconds, which is normally the unit used for CPU usage reported by the `sreport` and `sacct` commands. Therefore, this also means that the CPU efficiency of past jobs directly impacts how much actual work can be performed by the allocated CPUs for each user within each account before their fair share of resources is consumed for the period.
