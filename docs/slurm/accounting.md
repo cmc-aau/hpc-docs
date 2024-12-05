@@ -1,10 +1,10 @@
 # Usage accounting and priority
-All users belong to an account (usually their PI) where all usage is tracked on a per-user basis, but limitations and priorities can be set at a few different levels: at the cluster, partition, account, user, or QOS level. User associations with accounts rarely change, so in order to be able to temporarily request additional resources or obtain higher priority for certain projects, users can submit to different SLURM "Quality of Service"s (QOS). By default, all users can only submit jobs to the `normal` QOS with equal resource limits and base priority for everyone. Periodically users may submit to the `highprio` QOS instead, which has extra resources and higher priority, however this must first be discussed among the owners of the hardware (PI's), and then you must contact an administrator to grant your user permission to submit jobs to it.
+All users belong to an account (usually their PI) where all usage is tracked on a per-user basis, but limitations and priorities can be set at a few different levels: at the cluster, partition, account, user, or QOS level. User associations with accounts rarely change, so in order to be able to temporarily request additional resources or obtain higher priority for certain projects, users can submit to different SLURM "Quality of Service"s (QOS). By default, all users can only submit jobs to the `normal` QOS with equal resource limits and base priority for everyone. Periodically users may submit to the `highprio` QOS instead, which has extra resources and higher priority (and therefore the usage is also billed 2x), however this must first be discussed among the owners of the hardware (PI's), and then you must contact an administrator to grant your user permission to submit jobs to it.
 
 ## Job priority
-When a job is submitted a priority value is calculated based on several factors, where a higher number indicates a higher priority in the queue. This does not impact running jobs, and the effect of prioritization is only noticable when the cluster is operating near peak capacity, or when the individual hardware partitions are nearly fully allocated. Otherwise jobs will usually start immediately as long as there are resources available and you haven't reached the max. CPU's per user limit.
+When a job is submitted a priority value is calculated based on several factors, where a higher number indicates a higher priority in the queue. This does not impact running jobs, and the effect of prioritization is only noticable when the cluster is operating near peak capacity, or when the hardware partition to which the job has been submitted is nearly fully allocated. Otherwise jobs will usually start immediately as long as there are resources available and you haven't reached the maximum CPU's per user limit, if any.
 
-Different weights are given to different priority factors, where the most significant ones are the account factor (which is simply the number of CPU's each account (PI) has contributed with to the cluster), the user's recent resource usage (higher usage results in a lower priority), and the QOS, as described above. All factors are normalized to a value between 0-1, then weighted by an adjustable scalar, which may be adjusted occasionally depending on the overall cluster usage. Users can also be nice to other users and reduce the priority of their own jobs by setting a "nice" value using `--nice` when submitting for example less time-critical jobs. Job priorities are then calculated according to the following formula:
+Different weights are given to different priority factors, where the most significant ones are the account fair-share factor (which is simply the number of CPU's each account (PI) has contributed with to the cluster), the user's recent resource usage (higher usage results in a lower priority), and the QOS, as described above. All factors are normalized to a value between 0-1, then weighted by an adjustable scalar, which may be adjusted occasionally depending on the overall cluster usage. Users can also be nice to other users and reduce the priority of their own jobs by setting a "nice" value using `--nice` when submitting for example less time-critical jobs. Job priorities are then calculated according to the following formula:
 
 ```
 Job_priority =
@@ -19,11 +19,16 @@ Job_priority =
 To obtain up-to-date weights use `sprio -w`:
 ```
 $ sprio -w
-          JOBID PARTITION   PRIORITY       SITE        AGE      ASSOC  FAIRSHARE    JOBSIZE        QOS
-        Weights                               1          5         10          5          5         20
+          JOBID PARTITION   PRIORITY       SITE        AGE  FAIRSHARE    JOBSIZE        QOS
+        Weights                               1          5         10          3         10
 ```
 
+The priority of pending jobs can be obtained using `sprio`, but is also shown when running `squeue`.
+
 The fair-share factor is calculated according to the [fair-tree algorithm](https://slurm.schedmd.com/archive/slurm-23.02.6/fair_tree.html) and has a usage decay half-life of 2 weeks, but is completely reset at the first day of each month. To see your current fair-share factor run `sshare -U`.
+
+???+ tip "The fair-share factor and CPU efficiency"
+      The value of the fair-share factor is calculated based on CPU usage in units of **allocation seconds** and not CPU seconds, which is normally the unit used for CPU usage reporting by the `sreport` and `sacct` commands. Therefore, this also means that the CPU efficiency of past jobs indirectly affects the priority of future jobs, and has a direct impact on how much actual work can be performed by the allocated CPUs for each user within each account before their fair share of resources is consumed for the period.
 
 The age factor will max out to `1.0` when 3 days of queue time has been accrued for any job.
 
