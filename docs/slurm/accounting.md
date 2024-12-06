@@ -30,7 +30,7 @@ The fair-share factor is calculated according to the [fair-tree algorithm](https
 ???+ tip "The fair-share factor and CPU efficiency"
       The value of the fair-share factor is calculated based on CPU usage in units of **allocation seconds** and not CPU seconds, which is normally the unit used for CPU usage reported by the `sreport` and `sacct` commands. Therefore, this also means that the CPU efficiency of past jobs directly impacts how much actual work can be performed by the allocated CPUs for each user within each account before their fair share of resources is consumed for the period.
 
-The age factor will max out to `1.0` when 3 days of queue time has been accrued for any job.
+The age and job size factors are important to avoid the situation where large jobs can get stuck in the queue for a long time because smaller jobs will always fit in everywhere much more easily. The age factor will max out to `1.0` when 3 days of queue time has been accrued for any job. The job size factor is directly proportional to both the requested amount of resources as well as the lime limit.
 
 For more details about job prioritization see the [SLURM documentation](https://slurm.schedmd.com/archive/slurm-23.02.6/priority_multifactor.html) and this [presentation](https://slurm.schedmd.com/SLUG19/Priority_and_Fair_Trees.pdf).
 
