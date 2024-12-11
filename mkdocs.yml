@@ -14,8 +14,8 @@ nav:
     - slurm/jobsubmission.md
     - slurm/partitions.md
     - slurm/efficiency.md
-    - slurm/jobcontrol.md
     - slurm/accounting.md
+    - slurm/jobcontrol.md
     - slurm/other.md
   - Software:
     - software/conda.md

@@ -2,14 +2,13 @@
 All users belong to an account (usually their PI) where all usage is tracked on a per-user basis, but limitations and priorities can be set at a few different levels: at the cluster, partition, account, user, or QOS level. User associations with accounts rarely change, so in order to be able to temporarily request additional resources or obtain higher priority for certain projects, users can submit to different SLURM "Quality of Service"s (QOS). By default, all users can only submit jobs to the `normal` QOS with equal resource limits and base priority for everyone. Periodically users may submit to the `highprio` QOS instead, which has extra resources and higher priority (and therefore the usage is also billed 2x), however this must first be discussed among the owners of the hardware (PI's), and then you must contact an administrator to grant your user permission to submit jobs to it.
 
 ## Job priority
-When a job is submitted a priority value is calculated based on several factors, where a higher number indicates a higher priority in the queue. This does not impact running jobs, and the effect of prioritization is only noticable when the cluster is operating near peak capacity, or when the hardware partition to which the job has been submitted is nearly fully allocated. Otherwise jobs will usually start immediately as long as there are resources available and you haven't reached the maximum CPU's per user limit, if any.
+When a job is submitted a priority value is calculated based on several factors, where a higher number indicates a higher priority in the queue. This does not impact running jobs, and the effect of prioritization is only noticable when the cluster is operating near peak capacity, or when the hardware partition to which the job has been submitted is nearly fully allocated. Otherwise jobs will usually start immediately as long as there are resources available and you haven't reached the maximum CPU's per user limit.
 
-Different weights are given to different priority factors, where the most significant ones are the account fair-share factor (which is simply the number of CPU's each account (PI) has contributed with to the cluster), the user's recent resource usage (higher usage results in a lower priority), and the QOS, as described above. All factors are normalized to a value between 0-1, then weighted by an adjustable scalar, which may be adjusted occasionally depending on the overall cluster usage. Users can also be nice to other users and reduce the priority of their own jobs by setting a "nice" value using `--nice` when submitting for example less time-critical jobs. Job priorities are then calculated according to the following formula:
+Different weights are given to the individual priority factors, where the most significant ones are the account fair-share factor (described in more detail below) and the QOS, as mentioned above. All factors are normalized to a value between 0-1, then weighted by an adjustable scalar, which may be adjusted occasionally depending on the overall cluster usage. Users can also be nice to other users and reduce the priority of their own jobs by setting a "nice" value using `--nice` when submitting for example less time-critical jobs. Job priorities are then calculated according to the following formula:
 
 ```
 Job_priority =
 	(PriorityWeightQOS) * (QOS_factor)
-	(PriorityWeightAssoc) * (assoc_factor) +
 	(PriorityWeightAge) * (age_factor) +
 	(PriorityWeightFairshare) * (fair-share_factor) +
 	(PriorityWeightJobSize) * (job_size_factor) -
@@ -23,26 +22,62 @@ $ sprio -w
         Weights                               1          5         10          3         10
 ```
 
-The priority of pending jobs can be obtained using `sprio`, but is also shown when running `squeue`.
+The priority of pending jobs can be obtained using `sprio`, but is also shown in the job queue when running `squeue`.
 
-The fair-share factor is calculated according to the [fair-tree algorithm](https://slurm.schedmd.com/archive/slurm-23.02.6/fair_tree.html) and has a usage decay half-life of 2 weeks, but is completely reset at the first day of each month. To see the current fair-share factor for your user run `sshare -U`, and for all accounts `sshare -l`.
+The age and job size factors are important to avoid the situation where large jobs can get stuck in the queue for a long time because smaller jobs will always fit in everywhere much more easily. The age factor will max out to `1.0` when 3 days of queue time has been accrued for any job. The job size factor is directly proportional to both the requested amount of resources as well as the time limit.
+
+### The fair-share factor
+As the name implies, the fair-share factor is used to ensure that users within each account have their fair share of computing resources made available to them over time. Because the individual research groups have contributed with different amounts of hardware to the cluster, the overall share of computing resources made available to them should match accordingly. Secondly, the resource usage of individual users within each account is important to consider as well, so that users who may have vastly overused their shares within each account should not have the highest priority. The goal of the fair-share factor is to balance the usage of all users by adjusting job priorities, so that it's possible for everyone to use their fair share of computing resources over time. The fair-share factor is calculated according to the [fair-tree algorithm](https://slurm.schedmd.com/archive/slurm-23.02.6/fair_tree.html), which is an integrated part of the SLURM scheduler. It has been configured with a usage decay half-life of 1 week, and the usage is completely reset at the first day of each month.
+
+To see the current fair-share factor for your user and the amount of shares available for each account, you can run `sshare`:
+
+```
+$ sshare
+Account                    User  RawShares  NormShares    RawUsage  EffectvUsage  FairShare 
+-------------------- ---------- ---------- ----------- ----------- ------------- ---------- 
+root                                          0.000000   611505779      1.000000            
+ root                abc@bio.a+          1    0.000549      471482      0.000771   0.036649 
+ ao                                     25    0.013736           0      0.000000            
+ jln                                   256    0.140659   110806504      0.181204            
+ kln                                    25    0.013736    66477364      0.108712            
+ kt                                     25    0.013736     6432056      0.010518            
+ ma                                    608    0.334066   270531074      0.442397            
+ md                                    243    0.133516    49291395      0.080607            
+ mms                                    96    0.052747    35128287      0.057446            
+ mto                                    25    0.013736           0      0.000000            
+ ndj                                    25    0.013736      666427      0.001090            
+ phn                                   365    0.200549    42044352      0.068756            
+ pk                                     25    0.013736           2      0.000000            
+ rw                                     25    0.013736    29130316      0.047637            
+ sss                                    25    0.013736           0      0.000000            
+ students                               25    0.013736      264480      0.000433            
+ ts                                     25    0.013736      262027      0.000428            
+```
+
+  - `RawShares`: the amount of "shares" assigned to each account (in our setup simply the number of CPUs each account has contributed with)
+  - `NormShares`: the fraction of shares given to each account normalized to the total shares available across all accounts, e.g. a value of 0.33 means an account has been assigned 33% of all the resources available in the cluster.
+  - `RawUsage`: usage of all jobs charged to the account or user. The value will decay over time depending on the usage decay half-life configured. The `RawUsage` for an account is the sum of the `RawUsage` for each user within the account, thus indicative of which users have contributed the most to the account’s overall score.
+  - `EffectvUsage`: `RawUsage` divided by the **total** `RawUsage` for the cluster, hence the column always sums to `1.0`. `EffectvUsage` is therefore the percentage of the total cluster usage the account has actually used. In the example above, the `ma` account has used `44.23%` of the cluster since the last usage reset.
+  - `FairShare`: The fair-share score calculated using the following formula `FS = 2^(-EffectvUsage/NormShares)`. The `FairShare` score can be interpreted by the following intervals: 
+    - 1.0: **Unused**. The account has not run any jobs recently.
+    - 0.5 - 1.0: **Underutilization**. The account is underutilizing their granted share. For example a value of 0.75 means the account has underutilized their share 1:2
+    - 0.5: **Average utilization**. The account on average is using exactly as much as their granted share.
+    - 0.0 - 0.5: **Over-utilization**. The account is overusing their granted share. For example a value of 0.75 means the account has recently overutilized their share 2:1
+    - 0: No share left. The account is vastly overusing their granted share and users will get the lowest possible priority.
 
 ???+ tip "The fair-share factor and CPU efficiency"
-      The value of the fair-share factor is calculated based on CPU usage in units of **allocation seconds** and not CPU seconds, which is normally the unit used for CPU usage reported by the `sreport` and `sacct` commands. Therefore, this also means that the CPU efficiency of past jobs directly impacts how much actual work can be performed by the allocated CPUs for each user within each account before their fair share of resources is consumed for the period.
-
-The age and job size factors are important to avoid the situation where large jobs can get stuck in the queue for a long time because smaller jobs will always fit in everywhere much more easily. The age factor will max out to `1.0` when 3 days of queue time has been accrued for any job. The job size factor is directly proportional to both the requested amount of resources as well as the lime limit.
+      The value of the fair-share factor is calculated based on CPU usage in units of **allocation seconds** and **not** CPU seconds, which is normally the unit used for CPU usage reported by the `sreport` and `sacct` commands. Therefore, this also means that the CPU efficiency of past jobs directly impacts how much actual work can be done by the allocated CPUs for each user within each account before their fair share of resources is consumed for the period.
 
 For more details about job prioritization see the [SLURM documentation](https://slurm.schedmd.com/archive/slurm-23.02.6/priority_multifactor.html) and this [presentation](https://slurm.schedmd.com/SLUG19/Priority_and_Fair_Trees.pdf).
 
 ## QOS info and limitations
 See all available QOS and their limitations:
 ```
-$ sacctmgr show qos format=name,priority,grptres,mintres,maxtres,maxtrespu,maxjobspu,maxtrespa,maxjobspa
-      Name   Priority       GrpTRES       MinTRES       MaxTRES     MaxTRESPU MaxJobsPU     MaxTRESPA MaxJobsPA 
----------- ---------- ------------- ------------- ------------- ------------- --------- ------------- --------- 
-    normal          1                cpu=1,mem=512M                    cpu=192                                   
-  highprio          10                cpu=1,mem=512M                   cpu=512                                   
-                                 
+$ sacctmgr show qos format="name,priority,usagefactor,mintres%20,maxtrespu,maxjobspu"
+      Name   Priority UsageFactor              MinTRES     MaxTRESPU MaxJobsPU 
+---------- ---------- ----------- -------------------- ------------- --------- 
+    normal          1    1.000000       cpu=1,mem=512M       cpu=192       500 
+  highprio         10    2.000000       cpu=1,mem=512M       cpu=512      2000 
 ```
 
 See all account associations for your user and the QOS's you are allowed to use:
@@ -50,7 +85,7 @@ See all account associations for your user and the QOS's you are allowed to use:
 $ sacctmgr list association user=$USER format=account%10s,user%20s,qos%20s
    Account                 User                  QOS 
 ---------- -------------------- -------------------- 
-      root       ksa@bio.aau.dk      highprio,normal
+      root       abc@bio.aau.dk      highprio,normal
 ```
 
 ### Undergraduate students

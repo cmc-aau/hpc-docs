@@ -14,28 +14,28 @@ Before submitting a job you must carefully choose the correct hardware partition
 !!! warning "Always detect available CPUs dynamically in scripts and workflows, never hard-code it!"
     It's very important to note that all partitions have a **max memory per CPU** configured, which may result in the scheduler allocating more CPU's for the job than requested until this ratio is satisfied. This is to ensure that no CPU's end up idle when a compute node is fully allocated in terms of memory, when it could have been at work finishing jobs faster instead. Therefore **NEVER** hardcode the number of threads/cores to use for individual software tools, instead make it a habit to detect it dynamically using fx `$(nproc)` in scripts and workflows.
 
-## The `shared` partition
-The `shared` partition is the shared partition and is overprovisoned with a factor of 3, meaning each CPU can run up to 3 jobs at once. This is ideal for low to medium (<75%) efficiency, low to medium memory, and interactive jobs, as well as I/O jobs, that don't fully utilize the allocated CPU's 100% at all times. It's **highly recommended** to use this partition for most CPU intensive jobs unless you need lots of memory, or have taken extra care [optimizing the CPU efficiency](efficiency.md) of the job(s), in which case you can use the `general` or `high-mem` partitions instead and finish the jobs faster. Due to over-subscription it's actually possible to allocate a total of 1632 CPUs for jobs on this partition, however with less memory. The job time limit for this partition is 7 days.
+## Partitions
+### The `shared` partition
+The `shared` partition is the shared partition and is overprovisoned with a factor of 3, meaning each CPU can run up to 3 jobs at once. This is ideal for low to medium (<75%) efficiency, low to medium memory, and interactive jobs, as well as I/O jobs, that don't fully utilize the allocated CPU's 100% at all times. It's **highly recommended** to use this partition for most CPU intensive jobs unless you need lots of memory, or have taken extra care [optimizing the CPU efficiency](efficiency.md) of the job(s), in which case you can use the `general` or `high-mem` partitions instead and finish the jobs faster. Due to over-subscription it's actually possible to allocate a total of 1056 CPUs for jobs on this partition, however with less memory. The job time limit for this partition is 7 days.
 
 **Max memory per CPU: 1.5GB**
 
 | Hostname | vCPUs | Memory | Scratch space |
 | :--- | :---: | :---: | :---: |
 | `bio-oscloud01` | 96 | 0.5 TB | - |
-| `bio-oscloud02` | 192 | 1 TB | - |
 | `axomamma` | 256 | 1 TB | 3.5 TB |
 
-## The `general` partition
+### The `general` partition
 The `general` partition is for high efficiency jobs only, since the CPU's are not shared among multiple jobs, but dedicated to each individual job. Therefore you must ensure that they are also fully utilized at all times, preferably 75-100%, otherwise please use the `shared` partition instead if the memory (per CPU) is sufficient. The job time limit for this partition is 14 days.
 
 **Max memory per CPU: 5GB**
 
 | Hostname | vCPUs | Memory | Scratch space |
 | :--- | :---: | :---: | :---: |
-| `bio-oscloud[03-05]` | 192 | 1 TB | - |
+| `bio-oscloud[02-05]` | 192 | 1 TB | - |
 | `bio-oscloud06` | 192 | 1 TB | 18TB |
 
-## The `high-mem` partition
+### The `high-mem` partition
 The `high-mem` partition is only for high efficiency jobs that also require lots of memory. Please do not submit anything here that doesn't require at least 5GB per CPU, otherwise please use the `general` partition. Like the `general` partition, the CPU's are dedicated to each individual job. Therefore you must ensure that they are also fully utilized at all times, preferably 75-100%, otherwise please use the `shared` partition instead if the memory (per CPU) is sufficient. The job time limit for this partition is 28 days.
 
 **Max memory per CPU: 10GB**
@@ -45,7 +45,7 @@ The `high-mem` partition is only for high efficiency jobs that also require lots
 | `bio-oscloud07` | 240 | 2 TB | - |
 | `bio-oscloud08` | 192 | 2 TB | - |
 
-## The `gpu` partition
+### The `gpu` partition
 This partition is ONLY for jobs that require a GPU. Please do not submit jobs to this partition if you don't need a GPU. There is otherwise no max memory per CPU or over-provisioning configured for this partition. The job time limit for this partition is 14 days.
 
 | Hostname | vCPUs | Memory | Scratch space | GPU |

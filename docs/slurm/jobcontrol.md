@@ -1,12 +1,37 @@
 # Job control and useful commands
 Below are some nice to know commands for controlling and checking up on jobs, current and past.
 
+## Overall cluster status
+This will normally show some colored bars for each partition, which unfortunately doesn't render here.
+```
+Cluster allocation summary per partition or individual nodes (-n).
+(Numbers are reported in free/allocated/total(OS factor)).
+
+Partition    |                CPUs                 |           Memory (GB)           |       GPUs        |
+========================================================================================================
+shared       | 1436 196                 /1632 (3x) | 2091 268                 /2359  |           
+general      |  395 373                 /768       | 2970 731                 /3701  |           
+high-mem     |  233 199                 /432       | 1803 1936                /3739  |           
+gpu          |   24 40                  /64        |   29 180                 /209   |    1 1         /2    
+--------------------------------------------------------------------------------------------------------
+Total:       | 2088 808                 /2896      | 6894 3115                /10009 |    1 1         /2    
+
+Jobs running/pending/total:
+  26 / 1 / 27
+
+Use sinfo or squeue to obtain more details.
+
+```
+
 ## Get job status info
 Use [`squeue`](https://slurm.schedmd.com/archive/slurm-23.02.6/squeue.html), for example:
 ```
 $ squeue
-JOBID         NAME       USER       TIME    TIME_LEFT CPU MIN_ME ST PARTITION NODELIST(REASON)
- 2380         dRep ab12cd@bio 1-01:36:22  12-22:23:38  80   300G  R   general bio-oscloud02
+squeue
+      JOBID             NAME       USER ACCOUNT        TIME   TIME_LEFT CPU MIN_ME ST PRIO  PARTITION NODELIST(REASON)
+    1275175    RStudioServer user01@bio     acc1       0:00  3-00:00:00  32     5G PD    4    general (QOSMaxCpuPerUserLimit)
+    1275180       sshdbridge user02@bio     acc2       7:14     7:52:46   8    40G  R    6    general bio-oscloud03
+    1275170   VirtualDesktop user03@bio     acc2      35:54     5:24:06   2    10G  R    6    general bio-oscloud05
 ```
 
 To show only your own jobs use `squeue --me`. This is used quite often so `sq` has been made an alias of `squeue --me`. You can for example also append `--partition`, `--nodelist`, `--reservation`, and more to only show the queue for those select partitions, nodes, or reservation.
