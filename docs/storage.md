@@ -1,6 +1,8 @@
 # Storage
 All nodes are connected to a Ceph network storage cluster through a few different mount points for different purposes, listed below. Data is stored with 3x replication to protect against data loss or corruption due to hardware and disk failures. The data is **NOT backed up** anywhere, however, which means it's not protected against human errors. If you delete data, it's gone and cannot be restored! Some mount points are therefore mounted read-only, but your own data is your responsibility alone. So be careful, also when sharing data with other users when doing shared projects etc.
 
+Data on the Ceph network storage cluster is lightly compressed at rest, so manually compressing files is not needed, however it can be beneficial in many ways to reduce the number of files.
+
 ## Network storage mount points
 
 | Mount point | Permissions | Contents |
