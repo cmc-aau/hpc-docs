@@ -18,8 +18,8 @@ Job_priority =
 To obtain up-to-date weights use `sprio -w`:
 ```
 $ sprio -w
-          JOBID PARTITION   PRIORITY       SITE        AGE  FAIRSHARE    JOBSIZE        QOS
-        Weights                               1          5         10          3         10
+  JOBID PARTITION   PRIORITY       SITE        AGE  FAIRSHARE    JOBSIZE        QOS
+Weights                               1         20         60         20        100
 ```
 
 The priority of pending jobs can be obtained using `sprio`, but is also shown in the job queue when running `squeue`.
