@@ -4,7 +4,7 @@ All users belong to an account (usually their PI) where all usage is tracked on 
 ## Job priority
 When a job is submitted a priority value is calculated based on several factors, where a higher number indicates a higher priority in the queue. This does not impact running jobs, and the effect of prioritization is only noticable when the cluster is operating near peak capacity, or when the hardware partition to which the job has been submitted is nearly fully allocated. Otherwise jobs will usually start immediately as long as there are resources available and you haven't reached the maximum CPU's per user limit.
 
-Different weights are given to the individual priority factors, where the most significant ones are the account fair-share factor (described in more detail below) and the QOS, as mentioned above. All factors are normalized to a value between 0-1, then weighted by an adjustable scalar, which may be adjusted occasionally depending on the overall cluster usage. Users can also be nice to other users and reduce the priority of their own jobs by setting a "nice" value using `--nice` when submitting for example less time-critical jobs. Job priorities are then calculated according to the following formula:
+Different weights are given to the individual priority factors, where the most significant ones are the account fair-share factor (described in more detail below) and the QOS, as described above. All factors are normalized to a value between 0-1, then weighted by an adjustable scalar, which may be adjusted occasionally depending on the overall cluster usage. Users can also be nice to other users and reduce the priority of their own jobs by setting a "nice" value using `--nice` when submitting for example less time-critical jobs. Job priorities are then calculated according to the following formula:
 
 ```
 Job_priority =
@@ -15,19 +15,24 @@ Job_priority =
 	- nice_factor
 ```
 
-To obtain up-to-date weights use `sprio -w`:
+To obtain the current configured weights use `sprio -w`:
 ```
 $ sprio -w
   JOBID PARTITION   PRIORITY       SITE        AGE  FAIRSHARE    JOBSIZE        QOS
-Weights                               1         20         60         20        100
+Weights                               1        200        600       1808       1000
 ```
 
-The priority of pending jobs can be obtained using `sprio`, but is also shown in the job queue when running `squeue`.
+The priority of pending jobs will be shown in the job queue when running `squeue`. To see the exact contributions of each factor to the priority of a job use `sprio -j <jobid>`:
+```
+$ sprio -j 1282256
+  JOBID PARTITION   PRIORITY       SITE        AGE  FAIRSHARE    JOBSIZE        QOS
+1282256 general          586          0        129        619        138          0
+```
 
-The age and job size factors are important to avoid the situation where large jobs can get stuck in the queue for a long time because smaller jobs will always fit in everywhere much more easily. The age factor will max out to `1.0` when 3 days of queue time has been accrued for any job. The job size factor is directly proportional to both the requested amount of resources as well as the time limit.
+The job **age** and **size** factors are important to avoid the situation where large jobs can get stuck in the queue for a long time because smaller jobs will always fit in everywhere much more easily. The age factor will max out to `1.0` when 3 days of queue time has been accrued for any job. The job size factor is directly proportional to the number of CPUs requested, regardless of the time limit, and is normalized to the total number of CPUs in the cluster. Therefore the weight of it will always be configured to be equal to the total number of (physical) CPUs available in the cluster.
 
 ### The fair-share factor
-As the name implies, the fair-share factor is used to ensure that users within each account have their fair share of computing resources made available to them over time. Because the individual research groups have contributed with different amounts of hardware to the cluster, the overall share of computing resources made available to them should match accordingly. Secondly, the resource usage of individual users within each account is important to consider as well, so that users who may have vastly overused their shares within each account should not have the highest priority. The goal of the fair-share factor is to balance the usage of all users by adjusting job priorities, so that it's possible for everyone to use their fair share of computing resources over time. The fair-share factor is calculated according to the [fair-tree algorithm](https://slurm.schedmd.com/archive/slurm-23.02.6/fair_tree.html), which is an integrated part of the SLURM scheduler. It has been configured with a usage decay half-life of 1 week, and the usage is completely reset at the first day of each month.
+As the name implies, the fair-share factor is used to ensure that users within each account have their fair share of computing resources made available to them over time. Because the individual research groups have contributed with different amounts of hardware to the cluster, the overall share of computing resources made available to them should match accordingly. Secondly, the resource usage of individual users within each account is important to consider as well, so that users who may recently have vastly overused their shares within each account will not have the highest priority. The goal of the fair-share factor is to balance the usage of all users by adjusting job priorities, so that it's possible for everyone to use their fair share of computing resources over time. The fair-share factor is calculated according to the [fair-tree algorithm](https://slurm.schedmd.com/archive/slurm-23.02.6/fair_tree.html), which is an integrated part of the SLURM scheduler. It has been configured with a usage decay half-life of 2 weeks, and the usage is completely reset at the first day of each month.
 
 To see the current fair-share factor for your user and the amount of shares available for each account, you can run `sshare`:
 
@@ -35,31 +40,32 @@ To see the current fair-share factor for your user and the amount of shares avai
 $ sshare
 Account                    User  RawShares  NormShares    RawUsage  EffectvUsage  FairShare 
 -------------------- ---------- ---------- ----------- ----------- ------------- ---------- 
-root                                          0.000000   611505779      1.000000            
- root                abc@bio.a+          1    0.000549      471482      0.000771   0.036649 
- ao                                     25    0.013736           0      0.000000            
- jln                                   256    0.140659   110806504      0.181204            
- kln                                    25    0.013736    66477364      0.108712            
- kt                                     25    0.013736     6432056      0.010518            
- ma                                    608    0.334066   270531074      0.442397            
- md                                    243    0.133516    49291395      0.080607            
- mms                                    96    0.052747    35128287      0.057446            
- mto                                    25    0.013736           0      0.000000            
- ndj                                    25    0.013736      666427      0.001090            
- phn                                   365    0.200549    42044352      0.068756            
- pk                                     25    0.013736           2      0.000000            
- rw                                     25    0.013736    29130316      0.047637            
- sss                                    25    0.013736           0      0.000000            
- students                               25    0.013736      264480      0.000433            
- ts                                     25    0.013736      262027      0.000428            
+root                                          0.000000   699456285      1.000000            
+ root                abc@bio.a+          1    0.000548     1136501      0.001625   0.115183 
+ ao                                     16    0.008762           0      0.000000            
+ jln                                   272    0.148959   148170579      0.211843            
+ kln                                    16    0.008762    48720153      0.069656            
+ kt                                     48    0.026287    60884827      0.087049            
+ ma                                    624    0.341731   185384914      0.265043            
+ md                                    259    0.141840    60612473      0.086659            
+ ml                                     16    0.008762     2789545      0.003974            
+ mms                                    48    0.026287    92148476      0.131738            
+ mto                                    16    0.008762           0      0.000000            
+ ndj                                    16    0.008762     5181213      0.007408            
+ phn                                   381    0.208653    62047356      0.088711            
+ pk                                     16    0.008762           1      0.000000            
+ rw                                     16    0.008762    18346721      0.026231            
+ sss                                    48    0.026287    13392398      0.019147            
+ students                               16    0.008762      499066      0.000714            
+ ts                                     16    0.008762      142053      0.000203            
 ```
 
   - `RawShares`: the amount of "shares" assigned to each account (in our setup simply the number of CPUs each account has contributed with)
   - `NormShares`: the fraction of shares given to each account normalized to the total shares available across all accounts, e.g. a value of 0.33 means an account has been assigned 33% of all the resources available in the cluster.
   - `RawUsage`: usage of all jobs charged to the account or user. The value will decay over time depending on the usage decay half-life configured. The `RawUsage` for an account is the sum of the `RawUsage` for each user within the account, thus indicative of which users have contributed the most to the account’s overall score.
-  - `EffectvUsage`: `RawUsage` divided by the **total** `RawUsage` for the cluster, hence the column always sums to `1.0`. `EffectvUsage` is therefore the percentage of the total cluster usage the account has actually used. In the example above, the `ma` account has used `44.23%` of the cluster since the last usage reset.
+  - `EffectvUsage`: `RawUsage` divided by the **total** `RawUsage` for the cluster, hence the column always sums to `1.0`. `EffectvUsage` is therefore the percentage of the total cluster usage the account has actually used (in relation to the total usage, NOT the total capacity). In the example above, the `ma` account has used `44.23%` of the total cluster usage since the last usage reset.
   - `FairShare`: The fair-share score calculated using the following formula `FS = 2^(-EffectvUsage/NormShares)`. The `FairShare` score can be interpreted by the following intervals: 
-    - 1.0: **Unused**. The account has not run any jobs recently.
+    - 1.0: **Unused**. The account has not run any jobs since the last usage reset.
     - 0.5 - 1.0: **Underutilization**. The account is underutilizing their granted share. For example a value of 0.75 means the account has underutilized their share 1:2
     - 0.5: **Average utilization**. The account on average is using exactly as much as their granted share.
     - 0.0 - 0.5: **Over-utilization**. The account is overusing their granted share. For example a value of 0.75 means the account has recently overutilized their share 2:1
