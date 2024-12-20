@@ -129,7 +129,7 @@ scontrol write batch_script <jobid>
 ## Modifying job attributes
 Only a few job attributes can be changed after a job is submitted and **NOT** running yet. These attributes include:
 
- - wall clock limit
+ - time limit
  - job name
  - job dependency
  - partition or QOS

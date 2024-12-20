@@ -34,7 +34,10 @@ $ srun --cpus-per-task 8 --mem 16G --time 1-00:00:00 minimap2 <options>
 
 The terminal will be blocked for the entire duration, hence for larger jobs it's ideal to submit a job through [`sbatch`](#non-interactive-jobs) instead, which will run in the background.
 
-[`srun`](https://slurm.schedmd.com/archive/slurm-23.02.6/srun.html) is also used if multiple tasks (separate processes) must be run within the same resource allocation (job) already obtained through [`salloc`](https://slurm.schedmd.com/archive/slurm-23.02.6/salloc.html) or [`sbatch`](#non-interactive-jobs), see [example](#multi-node-multi-task-example) below. SLURM tasks can then span multiple compute nodes at once to distribute highly parallel work at any scale.
+[`srun`](https://slurm.schedmd.com/archive/slurm-23.02.6/srun.html) is also used to run multiple tasks/steps (parallel processes) within an already obtained resource allocation (job), see [example](#multi-node-multi-task-example) below. SLURM tasks can then span multiple compute nodes at once to distribute highly parallel work at any scale.
+
+???+ tip "Checking up on running jobs using `srun`"
+      As the `srun` command can be used to run commands within any job allocation your user has been granted, it comes in handy to inspect already running jobs. This is possible by obtaining an interactive shell within the job allocation using `srun --jobid <jobid> --time=00:10:00 --pty /bin/bash`, and then run for example `htop`, `top`, or `nvidia-smi` to inspect CPU and memory usage, and verify that it behaves as expected and is fully utilizing all CPUs allocated etc. Note that only a single interactive terminal can be active within the same job allocation at any one time.
 
 ### Graphical apps (GUI)
 In order to run graphical programs simply append the [`--x11` option](https://slurm.schedmd.com/archive/slurm-23.02.6/srun.html#OPT_x11) to `salloc` or `srun` and run the program. The graphical app will then show up in a window on your own computer, while running inside a SLURM job on the cluster:

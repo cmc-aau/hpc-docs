@@ -86,12 +86,16 @@ $ sacctmgr show qos format="name,priority,usagefactor,mintres%20,maxtrespu,maxjo
   highprio          1    2.000000       cpu=1,mem=512M       cpu=512      2000 
 ```
 
-See all account associations for your user and the QOS's you are allowed to use:
+See details about account associations, allowed QOS's, and more, for your user:
 ```
-$ sacctmgr list association user=$USER format=account%10s,user%20s,qos%20s
-   Account                 User                  QOS 
----------- -------------------- -------------------- 
-      root       abc@bio.aau.dk      highprio,normal
+# your user
+$ sacctmgr show user withassoc where name=$USER
+      User   Def Acct     Admin    Cluster    Account  Partition     Share   Priority MaxJobs MaxNodes  MaxCPUs MaxSubmit     MaxWall  MaxCPUMins                  QOS   Def QOS
+---------- ---------- --------- ---------- ---------- ---------- --------- ---------- ------- -------- -------- --------- ----------- ----------- -------------------- ---------
+abc@bio.a+       root      None   biocloud       root                    1          1                                                                  highprio,normal    normal
+
+# all users
+$ sacctmgr show user withassoc | less
 ```
 
 ### Undergraduate students
