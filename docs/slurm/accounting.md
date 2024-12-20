@@ -22,7 +22,7 @@ $ sprio -w
 Weights                               1        200        600       1808       1000
 ```
 
-The priority of pending jobs will be shown in the job queue when running `squeue`. To see the exact contributions of each factor to the priority of a job use `sprio -j <jobid>`:
+The priority of pending jobs will be shown in the job queue when running `squeue`. To see the exact contributions of each factor to the priority of a pending job use `sprio -j <jobid>`:
 ```
 $ sprio -j 1282256
   JOBID PARTITION   PRIORITY       SITE        AGE  FAIRSHARE    JOBSIZE        QOS
