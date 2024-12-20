@@ -82,8 +82,8 @@ See all available QOS and their limitations:
 $ sacctmgr show qos format="name,priority,usagefactor,mintres%20,maxtrespu,maxjobspu"
       Name   Priority UsageFactor              MinTRES     MaxTRESPU MaxJobsPU 
 ---------- ---------- ----------- -------------------- ------------- --------- 
-    normal          1    1.000000       cpu=1,mem=512M       cpu=192       500 
-  highprio         10    2.000000       cpu=1,mem=512M       cpu=512      2000 
+    normal          0    1.000000       cpu=1,mem=512M       cpu=192       500 
+  highprio          1    2.000000       cpu=1,mem=512M       cpu=512      2000 
 ```
 
 See all account associations for your user and the QOS's you are allowed to use:
