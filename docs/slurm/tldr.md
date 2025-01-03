@@ -24,7 +24,7 @@ For larger jobs that will run for several hours or days, you need to submit SLUR
 #!/usr/bin/bash -l
 #SBATCH --job-name=minimap2test
 #SBATCH --output=job_%j_%x.out
-#SBATCH --partition=default
+#SBATCH --partition=shared
 #SBATCH --cpus-per-task=10
 #SBATCH --mem=10G
 #SBATCH --time=2-00:00:00
@@ -45,7 +45,7 @@ max_threads="$(nproc)"
 # run one or more commands as part a full pipeline script or call scripts from elsewhere
 minimap2 -t "$max_threads" database.fastq input.fastq > out.file
 ```
-This will request 10 CPUs and 10GB memory for a maximum of 2 days on one of the compute nodes within the `default` compute node partition (see [hardware overview](../index.md#slurm-partitions)). If you need to use a GPU details are [here](jobsubmission.md#requesting-one-or-more-gpus).
+This will request 10 CPUs and 10GB memory for a maximum of 2 days on one of the compute nodes within the `shared` compute node partition (see [hardware overview](../index.md#slurm-partitions)). If you need to use a GPU details are [here](jobsubmission.md#requesting-one-or-more-gpus).
 
  - Submit the job to the queue by typing the command `sbatch submit.sh`
  - Check the job status using `squeue --me` (or the convenient shorter alias `sq`). The job will start once a compute node has enough available resources
@@ -60,4 +60,4 @@ The job allocation is **entirely yours**, which means you cannot affect other pe
     When the job completes or fails, **!!!ALWAYS!!!** inspect the CPU and memory usage of the job in either the notification email received or using [these commands](accounting.md#job-efficiency-summary) and adjust the next job accordingly! This is essential to avoid wasting resources which other people could have used.
 
 ## Choosing the right compute node partition
-If the CPU and memory efficiency/usage of a job was >75%, you are allowed to submit to other partitions (`general`, or `high-mem` if you need lots of memory, see [hardware overview](partitions.md)) than the `default` partition, which can potentially get things done quicker - a win for everyone. But if not, you will waste resources which could have been used by others. The `default` partition has less memory available per CPU, however the physical CPUs are shared across jobs to help keep them as busy as possible at all times. The allocated amount of memory will always be yours and yours alone, on the other hand. Many processes will not use all CPUs available for the full duration. This depends heavily on the particular software/tools in use and how they are implemented, as well as the actual input data. Sometimes there is just nothing you can do, but often there is. More details [here](jobsubmission.md#how-many-resources-should-i-request-for-my-jobs). 
+If the CPU and memory efficiency/usage of a job was >75%, you are allowed to submit to other partitions (`general`, or `high-mem` if you need lots of memory, see [hardware overview](partitions.md)) than the `shared` partition, which can potentially get things done quicker - a win for everyone. But if not, you will waste resources which could have been used by others. The `shared` partition has less memory available per CPU, however the physical CPUs are shared across jobs to help keep them as busy as possible at all times. The allocated amount of memory will always be yours and yours alone, on the other hand. Many processes will not use all CPUs available for the full duration. This depends heavily on the particular software/tools in use and how they are implemented, as well as the actual input data. Sometimes there is just nothing you can do, but often there is. More details [here](jobsubmission.md#how-many-resources-should-i-request-for-my-jobs). 
