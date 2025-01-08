@@ -209,7 +209,7 @@ $ reportseff -u $(whoami) --format partition,jobid,state,jobname,alloccpus,reqme
    general      306630     COMPLETED      smk-concatenate_fastq-sample=barcode34        1         1G       00:00:07       00:00:07     57.1%     0.0%     1.2%   
 ```
 
-In the example above, way too much memory was requested for all the jobs in general, and also the time limit was way too long. The most important is the CPU efficiency, however, which was generally good except for one job, but it was a very small job.
+In the example above, way too much memory was requested for all the jobs in general, and also the time limits were way too long. The most important is the CPU efficiency, however, which was generally good except for one job, but it was a very small job.
 
 ## Usage reports
 `sreport` can be used to summarize usage in many different ways, below are some examples.
