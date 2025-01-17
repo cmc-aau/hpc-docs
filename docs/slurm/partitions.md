@@ -46,7 +46,7 @@ The `high-mem` partition is only for high efficiency jobs that also require lots
 | `bio-oscloud08` | 192 | 2 TB | - |
 
 ### The `gpu` partition
-This partition is ONLY for jobs that require a GPU. Please do not submit jobs to this partition if you don't need a GPU. There is otherwise no max memory per CPU or over-provisioning configured for this partition. The job time limit for this partition is 14 days.
+This partition is ONLY for jobs that require a GPU. Please do not submit jobs to this partition if you don't need a GPU. There is otherwise no max memory per CPU or over-subscription configured for this partition. The job time limit for this partition is 14 days.
 
 | Hostname | vCPUs | Memory | Scratch space | GPU |
 | :--- | :---: | :---: | :---: | :---: |
