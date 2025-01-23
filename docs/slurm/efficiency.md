@@ -26,34 +26,3 @@ Our compute nodes have plenty of memory, but some tools require lots of memory. 
 If you know that you are almost going to fully saturate the memory on a compute node (depending on partition), you might as well also request more CPUs up to the total of a single compute node, since your job will likely allocate a full compute node alone, and CPU's can end up idle, while you could have finished the job faster. If needed you can also submit directly to the individual compute nodes specifically using the `nodelist` option (and potentially also `--exclusive`), refer to [hardware partitions](partitions.md) for hostnames and compute node specs.
 
 Also keep in mind that the effective amount of memory available to SLURM jobs is less than what the physical machines have available because they are virtual machines running on a hypervisor OS that also needs some memory. A 1 TB machine roughly has 950 GB available and the 2 TB ones have 1.9 TB. See `sinfo -N -l` for details of each node.
-
-## Interactive jobs
-![interactive jobs are inefficient](img/eff_interactive.png)
-
-## Large and complex workflows
-!!understand what you are running!!
-
-![complex workflow](img/eff_workflow.png)
-
-![complex workflow - steps as individual jobs](img/eff_stepsasjobs.png)
-
-
-### Job dependencies
-Individual resource requested
-
-**launchscript.sh**
-```
-#!/usr/bin/env bash -l
-set -euo pipefail
-
-# Submit the first job step and capture its job ID
-step1_jobid=$(sbatch step1_script.sbatch | awk '{print $4}')
-
-# Submit the second job with dependency on the step1, ensuring it runs only if step1 finished successfully
-step2_jobid=$(sbatch --dependency=afterok:$step1_jobid step2_script.sbatch | awk '{print $4}')
-
-# Submit the third/last job with dependency on step2, ensuring it runs only if step2 finished successfully
-sbatch --dependency=afterok:$step2_jobid step3_script.sbatch
-```
-
-Submit using `bash launchscript.sh`, not using `sbatch`.
