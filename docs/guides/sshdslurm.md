@@ -18,6 +18,8 @@ When you normally connect to a remote server, you use an SSH client to connect t
 #SBATCH --partition=shared
 #SBATCH --cpus-per-task=4
 #SBATCH --mem=6G
+#SBATCH --mail-type=END,FAIL
+#SBATCH --mail-user=abc@bio.aau.dk
 
 # exit on first error or unset variable
 set -eu

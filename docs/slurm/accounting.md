@@ -2,7 +2,7 @@
 All users belong to an account (usually their PI) where all usage is tracked on a per-user basis, but limitations and priorities can be set at a few different levels: at the cluster, partition, account, user, or QOS level. User associations with accounts rarely change, so in order to be able to temporarily request additional resources or obtain higher priority for certain projects, users can submit to different SLURM "Quality of Service"s (QOS). By default, all users can only submit jobs to the `normal` QOS with equal resource limits and base priority for everyone. Periodically users may submit to the `highprio` QOS instead, which has extra resources and higher priority (and therefore the usage is also billed 2x), however this must first be discussed among the owners of the hardware (PI's), and then you must contact an administrator to grant your user permission to submit jobs to it.
 
 ## Job priority
-When a job is submitted a priority value is calculated based on several factors, where a higher number indicates a higher priority in the queue. This does not impact running jobs, and the effect of prioritization is only noticable when the cluster is operating near peak capacity, or when the hardware partition to which the job has been submitted is nearly fully allocated. Otherwise jobs will usually start immediately as long as there are resources available and you haven't reached the maximum CPU's per user limit.
+When a job is submitted a priority value is calculated based on several factors, where a higher number indicates a higher priority in the queue. This does not impact running jobs, and the effect of prioritization is only noticable when the cluster is operating near peak capacity, or when the hardware partition to which the job has been submitted is nearly fully allocated. Otherwise jobs will usually start immediately as long as there are resources available and you haven't reached the [maximum CPU's per user limit](#qos-info-and-limitations).
 
 Different weights are given to the individual priority factors, where the most significant ones are the account fair-share factor (described in more detail below) and the QOS, as described above. All factors are normalized to a value between 0-1, then weighted by an adjustable scalar, which may be adjusted occasionally depending on the overall cluster usage. Users can also be nice to other users and reduce the priority of their own jobs by setting a "nice" value using `--nice` when submitting for example less time-critical jobs. Job priorities are then calculated according to the following formula:
 
@@ -82,8 +82,8 @@ See all available QOS and their limitations:
 $ sacctmgr show qos format="name,priority,usagefactor,mintres%20,maxtrespu,maxjobspu"
       Name   Priority UsageFactor              MinTRES     MaxTRESPU MaxJobsPU 
 ---------- ---------- ----------- -------------------- ------------- --------- 
-    normal          0    1.000000       cpu=1,mem=512M       cpu=192       500 
-  highprio          1    2.000000       cpu=1,mem=512M       cpu=512      2000 
+    normal          0    1.000000       cpu=1,mem=512M       cpu=384       500 
+  highprio          1    2.000000       cpu=1,mem=512M       cpu=1024     2000 
 ```
 
 See details about account associations, allowed QOS's, and more, for your user:
