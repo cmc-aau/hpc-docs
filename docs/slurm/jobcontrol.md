@@ -36,7 +36,7 @@ squeue
 
 To show only your own jobs use `squeue --me`. This is used quite often so `sq` has been made an alias of `squeue --me`. You can for example also append `--partition`, `--nodelist`, `--reservation`, and more, to only show the queue for those select partitions, nodes, or reservations.
 
-You can also get an estimated start time for pending jobs by using `squeue --start`. Jobs will in most cases start earlier than this time, as the calculation is based on the time limit set for current jobs, but they cannot start later, unless new jobs with a higher priority get submitted before they start:
+You can also get an estimated start time for pending jobs by using `squeue --start`. Jobs will in most cases start earlier than this time, as the calculation is based on the time limit set for current running jobs, and most finish in time. They can only start later if new jobs with a higher priority get submitted to the queue before they start:
 
 ```
 $ squeue --start
