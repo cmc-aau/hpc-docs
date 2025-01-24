@@ -1,5 +1,5 @@
 # Job control and useful commands
-Below are some nice to know commands for controlling and checking up on jobs, current and past.
+Below are some nice to know commands for controlling and checking up on running or queued jobs.
 
 ## Overall cluster status
 This will normally show some colored bars for each partition, which unfortunately doesn't render here.
@@ -34,7 +34,21 @@ squeue
     1275170   VirtualDesktop user03@bio     acc2      35:54     5:24:06   2    10G  R    6    general bio-oscloud05
 ```
 
-To show only your own jobs use `squeue --me`. This is used quite often so `sq` has been made an alias of `squeue --me`. You can for example also append `--partition`, `--nodelist`, `--reservation`, and more to only show the queue for those select partitions, nodes, or reservation.
+To show only your own jobs use `squeue --me`. This is used quite often so `sq` has been made an alias of `squeue --me`. You can for example also append `--partition`, `--nodelist`, `--reservation`, and more, to only show the queue for those select partitions, nodes, or reservations.
+
+You can also get an estimated start time for pending jobs by using `squeue --start`. Jobs will in most cases start earlier than this time, as the calculation is based on the time limit set for current jobs, but they cannot start later:
+
+```
+$ squeue --start
+    JOBID PARTITION     NAME     USER ST          START_TIME  NODES SCHEDNODES           NODELIST(REASON)
+  1306529   general smk-mapp user01@b PD 2025-01-24T12:25:15      1 bio-oscloud02        (Resources)
+  1306530   general smk-mapp user01@b PD 2025-01-24T12:25:15      1 bio-oscloud04        (Priority)
+  1309386   general cq_EV_me user02@b PD 2025-01-24T12:25:15      1 bio-oscloud05        (Priority)
+  1306531   general smk-mapp user01@b PD 2025-01-24T12:27:02      1 bio-oscloud03        (Priority)
+  1306532   general smk-mapp user01@b PD 2025-01-25T14:46:56      1 (null)               (Priority)
+  1306533   general smk-mapp user01@b PD 2025-01-25T14:46:56      1 (null)               (Priority)
+...
+```
 
 ??? "Job state codes (ST)"
       | Status	Code | Explaination |
