@@ -1,6 +1,8 @@
 # RStudio
 [RStudio](https://posit.co/products/open-source/rstudio/) is an integrated development environment (IDE) for R and Python. It includes a console, syntax-highlighting editor that supports direct code execution, and tools for plotting, history, debugging, and workspace management. This app will allow you to run an RStudio server in a SLURM job and access it directly from your browser.
 
+Before continuing, please first follow the guide to [getting access to the OpenOndemand web portal](../../../access/webportal.md).
+
 ## Starting the app
 Start by selecting the desired R version and the amount of resources that you expect to use and for how long:
 

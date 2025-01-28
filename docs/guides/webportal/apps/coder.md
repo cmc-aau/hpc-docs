@@ -1,6 +1,8 @@
 # Code server
 [Code Server](https://github.com/coder/code-server) is an open source alternative to [Visual Studio Code](https://code.visualstudio.com/) provided by [Coder](https://coder.com/), which can be run through a web browser. It's based on much of the same code base and has the exact same features overall, however there are minor differences. If you want the full VS Code experience you must follow [this guide](../../sshdslurm.md) instead. This app will allow you to run a Code Server in a SLURM job and access it directly from your browser.
 
+Before continuing, please first follow the guide to [getting access to the OpenOndemand web portal](../../../access/webportal.md).
+
 ## Starting the app
 Start by selecting the desired working directory where Code will start (you can also change this inside), and the amount of resources that you expect to use and for how long:
 

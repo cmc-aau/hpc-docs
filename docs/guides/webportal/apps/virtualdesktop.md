@@ -1,6 +1,8 @@
 # Virtual Desktop
 You can start a virtual desktop on any compute node and access it directly through the browser without having to install and set up any software on your own computer first to access it. This is useful for running GUI software that doesn't run from a command line, but instead needs to show up in graphical windows where you can click around like you are used to on your personal computer.
 
+Before continuing, please first follow the guide to [getting access to the OpenOndemand web portal](../../../access/webportal.md).
+
 ## Starting the app
 Click the **Virtual Desktop** app icon on the front page or select it from the **Interactive Apps** menu bar at the top:
 

@@ -1,6 +1,8 @@
 # Jupyter notebook
 [Jupyter Notebook](https://jupyter.org/) is a web application for creating and sharing computational documents. It offers a simple, streamlined, document-centric experience. This app will allow you to run a Jupyter Notebook server in a SLURM job and access it directly from your browser.
 
+Before continuing, please first follow the guide to [getting access to the OpenOndemand web portal](../../../access/webportal.md).
+
 ## Starting the app
 Start by selecting the amount of resources that you expect to use and for how long:
 
